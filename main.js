@@ -11,7 +11,8 @@ function getEmptyExecutionFrame() {
 		parentFrame:null,
 		start:null,
 		divisions:[],
-		result:null
+		result:null,
+		originalToResult:null
 	};
 }
 
@@ -28,6 +29,9 @@ function printFrame(frame, indents) {
 	print(frame["result"]);
 	print("\n");
 	printTabs(indents);
+	print(frame["originalToResult"]);
+	print("\n");
+	printTabs(indents);
 	print("}\n");
 }
 
@@ -39,6 +43,7 @@ function printTabs(count) {
 function Tracker() {
 	this.execution = getEmptyExecutionFrame();
 	this.currentFrame = this.execution;
+	this.type = "rearrange";
 }
 
 Tracker.prototype.traceExecution = function() {
@@ -55,6 +60,23 @@ Tracker.prototype.logEntry = function(list) {
 
 Tracker.prototype.logExit = function(list) {
 	this.currentFrame["result"] = list;
+
+	if(this.type == "rearrange") {
+		var original = this.currentFrame["start"];
+		var origToResult = [];
+		
+		for(var i = 0; i < list.length; i++) {
+			for(var j = 0; j < list.length; j++) {
+				if(original[i] == list[j]) {
+					origToResult.push(j);
+					break;
+				}
+			}
+		}
+
+		this.currentFrame["originalToResult"] = origToResult;
+	}
+
 	this.currentFrame = this.currentFrame["parentFrame"];
 }
 
@@ -68,7 +90,9 @@ Container.prototype.runDivideAndConquer = function() {
 	print("\n");
 	this.tracker.logEntry(arguments[0]);
 	var result = this["dAndC"].apply(this, arguments);
+	print("logging exit: " + result + "\n");
 	this.tracker.logExit(result);
+	print("done logging\n");
 
 	return result;
 }
