@@ -85,14 +85,14 @@ function Container() {
 }
 
 Container.prototype.runDivideAndConquer = function() {
-	print("currentList: " + arguments[0] + "\n");
-	this.tracker.traceExecution();
-	print("\n");
+	//print("currentList: " + arguments[0] + "\n");
+	//this.tracker.traceExecution();
+	//print("\n");
 	this.tracker.logEntry(arguments[0]);
 	var result = this["dAndC"].apply(this, arguments);
-	print("logging exit: " + result + "\n");
+	//print("logging exit: " + result + "\n");
 	this.tracker.logExit(result);
-	print("done logging\n");
+	//print("done logging\n");
 
 	return result;
 }
