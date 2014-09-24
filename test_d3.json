@@ -1,0 +1,13 @@
+{
+	"name": "root",
+	"children": [
+		{
+			"name": "level1_1",
+			"size": 10
+		},
+		{
+			"name": "level1_2",
+			"size": 10
+		}
+	]
+}
