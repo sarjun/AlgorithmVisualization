@@ -1,7 +1,7 @@
-var util = require('util'); //required to print to console
+//var util = require('util'); //required to print to console
 
 function print(msg) {
-    util.print(msg);
+    console.log(msg);
 }
 
 // Begin real code
@@ -10,7 +10,7 @@ function getEmptyExecutionFrame() {
 	return {
 		parentFrame:null,
 		start:null,
-		divisions:[],
+		children:[],
 		result:null,
 		originalToResult:null
 	};
@@ -22,8 +22,8 @@ function printFrame(frame, indents) {
 	printTabs(indents);
 	print(frame["start"]);
 	print("\n");
-	for(var i = 0; i<frame["divisions"].length; i++) {
-		printFrame(frame["divisions"][i], indents+1);
+	for(var i = 0; i<frame["children"].length; i++) {
+		printFrame(frame["children"][i], indents+1);
 	}
 	printTabs(indents);
 	print(frame["result"]);
@@ -53,7 +53,7 @@ Tracker.prototype.traceExecution = function() {
 Tracker.prototype.logEntry = function(list) {
 	var newFrame = getEmptyExecutionFrame();
 	newFrame["parentFrame"] = this.currentFrame;
-	this.currentFrame["divisions"].push(newFrame);
+	this.currentFrame["children"].push(newFrame);
 	this.currentFrame = newFrame;
 	this.currentFrame["start"] = list;
 }
@@ -119,6 +119,19 @@ Container.prototype.dAndC = function(list) {
 	return sorted;
 }
 
+function addSize(frame) {
+	if (frame["children"].length == 0) {
+		frame.size = 10;
+	}
+	else {
+		for(var i=0; i < frame["children"].length; i++) {
+			addSize(frame["children"][i]);
+		}
+	}
+}
+
 var test = new Container();
 test.runDivideAndConquer([8, 7, 6, 5, 4, 3, 2, 1]);
 test.tracker.traceExecution();
+addSize(test.tracker.execution);
+var data = test.tracker.execution;
