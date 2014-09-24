@@ -54,6 +54,7 @@ append.append("svg:text")
   .attr("y", function(d) { return d.y - (d.r / 2); })
   .attr("dy", ".35em")
   .attr("text-anchor", "middle")
+	.attr("is-start", "true")
   .style("opacity", function(d) { return d.r > 20 ? 1 : 0; })
   .text(function(d) { return d.start + ""; });
 append.append("svg:text")
@@ -62,6 +63,7 @@ append.append("svg:text")
   .attr("y", function(d) { return d.y + (d.r / 2); })
   .attr("dy", ".35em")
   .attr("text-anchor", "middle")
+	.attr("is-start", "false")
   .style("opacity", function(d) { return d.r > 20 ? 1 : 0; })
   .text(function(d) { return d.result + ""; });
 
@@ -82,8 +84,13 @@ function zoom(d, i) {
 
   t.selectAll("text")
       .attr("x", function(d) { return x(d.x); })
-      .attr("y", function(d) { return y(d.y); })
       .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
+
+	t.selectAll("text[is-start=true]")
+		.attr("y", function(d) { return y(d.y) - d.r*k / 2; });
+
+	t.selectAll("text[is-start=false]")
+		.attr("y", function(d) { return y(d.y) + d.r*k / 2; });
 
   node = d;
   d3.event.stopPropagation();
