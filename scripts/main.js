@@ -12,10 +12,33 @@ function getEmptyExecutionFrame() {
 		start:null,
 		children:[],
 		result:null,
-		originalToResult:null
+		originalToResult:null,
+		animations:[]
 	};
 }
 
+function getEmptyHighlightAnimation() {
+	return {
+		animationType:"highlight",
+		nodes:[],
+		color:"orange"
+	}
+}
+
+function getEmptyTranslateAnimation() {
+	return {
+		animationType:"translate",
+		sourceNodes:[],
+		destNode:null
+	}
+}
+
+function getEmptyUnhighlightAnimation() {
+	return {
+		animationType:"unhighlight",
+		nodes:[]
+	}
+}
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");
@@ -84,54 +107,86 @@ function Container() {
 	this.tracker = new Tracker();
 }
 
-Container.prototype.runDivideAndConquer = function() {
-	//print("currentList: " + arguments[0] + "\n");
-	//this.tracker.traceExecution();
-	//print("\n");
-	this.tracker.logEntry(arguments[0]);
-	var result = this["dAndC"].apply(this, arguments);
-	//print("logging exit: " + result + "\n");
-	this.tracker.logExit(result);
-	//print("done logging\n");
-
-	return result;
-}
-
-Container.prototype.dAndC = function(list) {
+Container.prototype.dAndC = function(tracker, list) {
 	// Divide and conquer algorithm
 	// eventually this would come from the web page
 	// for now, we will use mergesort
-	if(list.length == 1) return list;
+	console.log(tracker);
+	tracker.logEntry(list);
+	if(list.length == 1) {
+		tracker.logExit(list);
+		return list;
+	}
 	var firstHalf = list.slice(0, list.length/2);
 	var secondHalf = list.slice(list.length/2);
-	firstHalf = this.runDivideAndConquer(firstHalf);
-	secondHalf = this.runDivideAndConquer(secondHalf);
+	firstHalf = this.dAndC(tracker, firstHalf);
+	secondHalf = this.dAndC(tracker, secondHalf);
 
 	var sorted = [];
 	var first = 0, second = 0;
+	var highlightStart = getEmptyHighlightAnimation();
+	highlightStart.nodes.push(firstHalf[first]);
+	highlightStart.nodes.push(secondHalf[second]);
+	tracker.animations.push(highlightStart);
 	for(var i=0; i<list.length; i++) {
-		if(first > firstHalf.length) sorted.push(secondHalf[second++]);
-		if(second > secondHalf.length) sorted.push(firstHalf[first++]);
-		if(firstHalf[first] > secondHalf[second]) sorted.push(secondHalf[second++]);
-		else sorted.push(firstHalf[first++]);
+		if(first > firstHalf.length) {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceNodes.push(secondHalf[second]);
+			translate.destNode = secondHalf[second];
+			tracker.animations.add(translate);
+			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.nodes.push(secondHalf[second]);
+			tracker.animations.push(unhighlight);
+		}
+		if(second > secondHalf.length) {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceNodes.push(firstHalf[first]);
+			translate.destNode = firstHalf[first];
+			tracker.animations.add(translate);
+			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.nodes.push(firstHalf[first]);
+			tracker.animations.push(unhighlight);
+			sorted.push(firstHalf[first++]);
+		}
+		if(firstHalf[first] > secondHalf[second]) {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceNodes.push(secondHalf[second]);
+			translate.destNode = secondHalf[second];
+			tracker.animations.add(translate);
+			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.nodes.push(secondHalf[second]);
+			tracker.animations.push(unhighlight);
+			sorted.push(secondHalf[second++]);
+			if(second < secondHalf.length) {
+				var highlight = getEmptyHighlightAnimation();
+				highlight.nodes.push(highlight);
+				tracker.animations.push(highlight);
+			}
+		}
+		else {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceNodes.push(firstHalf[first]);
+			translate.destNode = firstHalf[first];
+			tracker.animations.add(translate);
+			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.nodes.push(firstHalf[first]);
+			tracker.animations.push(unhighlight);
+			sorted.push(firstHalf[first++]);
+			if(first < firstHalf.length) {
+				var highlight = getEmptyHighlightAnimation();
+				highlight.nodes.push(highlight);
+				tracker.animations.push(highlight);
+			}
+			sorted.push(firstHalf[first++]);
+		}
 	}
 
+	tracker.logExit(sorted);
 	return sorted;
 }
 
-function addSize(frame) {
-	if (frame["children"].length == 0) {
-		frame.size = 10;
-	}
-	else {
-		for(var i=0; i < frame["children"].length; i++) {
-			addSize(frame["children"][i]);
-		}
-	}
-}
-
 var test = new Container();
-test.runDivideAndConquer([8, 7, 6, 5, 4, 3, 2, 1]);
+var track = new Tracker();
+test.dAndC(track, [8, 7, 6, 5, 4, 3, 2, 1]);
 //test.tracker.traceExecution();
-addSize(test.tracker.execution);
-var data = test.tracker.execution.children[0];
+var data = track.execution.children[0];
