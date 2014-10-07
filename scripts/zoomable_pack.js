@@ -1,25 +1,41 @@
 $(init);
+var root;
+var rootSize;
+var centerOfScreen;
 function init(){
 	if (data == null) return;
 	var parent = $("<div class='main'></div>");
 	$("body").append(parent);
-	makeCircle(data, parent, Math.min($(document).height(), $(document).width()) * 0.9);
+	centerOfScreen = [$(document).width() / 2, $(document).height() / 2];
+	makeCircle(data, parent, Math.floor(Math.min($(document).height(), $(document).width()) * 0.9));
 }
 function makeCircle(node, parentElem, size) {
 	var myCircle = $("<div class='circle'></div>");
+	if (root == null) {
+		root = myCircle;
+		rootSize = size;
+	}
 	myCircle.width(size).height(size);
 	parentElem.append(myCircle);
 	myCircle.append("<div class='align-helper'></div>");
 	if (node.children.length > 0) {
 		myCircle.addClass("circle-node");
-		var childSize = size / node.children.length - 2;
+		var childSize = 100 / node.children.length + "%";
 		for (var i = 0; i < node.children.length; i++) {
 			makeCircle(node.children[i], myCircle, childSize);
 		}
-		//console.log(node);
+		myCircle.bind("click", function (e) {
+			var zoomSize = rootSize * root.width() / myCircle.width();
+			root.width(zoomSize).height(zoomSize);
+			root.css({top: 0, left: 0});
+			var circleCenter = getCenter(myCircle);
+			root.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
+			e.stopPropagation();
+		});
 	} else {
 		myCircle.addClass("circle-leaf");
 	}
+	if (root == myCircle) myCircle.click();
 	var startNodeList = $("<div class='start node-list'></div>");
 	for (var i = 0; i < node.start.length; i++) {
 		new Node(node.start[i], startNodeList);
@@ -30,6 +46,11 @@ function makeCircle(node, parentElem, size) {
 		new Node(node.result[i], resultNodeList);
 	}
 	myCircle.append(resultNodeList);
+}
+
+function getCenter(elem) {
+	var offset = elem.offset();
+	return [offset.left + elem.width() / 2, offset.top + elem.height() / 2];
 }
 /*
 var w = 1280,

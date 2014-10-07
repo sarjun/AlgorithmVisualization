@@ -27,9 +27,13 @@ circle.parent:hover {
 circle.child {
   pointer-events: none;
 }
-
+body {
+    overflow: hidden;
+    position: relative;
+}
 div.main{
-    text-align: center;
+    display: inline-block;
+    position: absolute;
 }
 div.circle {
     background: rgba(31, 119, 180, 0.1);
@@ -38,6 +42,7 @@ div.circle {
     display: inline-block;
     vertical-align: middle;
     position: relative;
+    margin: 0 -1px;
 }
 div.circle-leaf {
     background: rgba(255, 0, 0, 0.1);
@@ -58,9 +63,9 @@ div.node-list {
     text-align: center;
 }
 div.node-list.start {
-    top: 20%;
+    top: 13%;
 }div.node-list.result {
-    bottom: 20%;
+    bottom: 13%;
 }
 
 span.text-node {
