@@ -37,6 +37,7 @@ div.circle {
     border-radius: 50%;
     display: inline-block;
     vertical-align: middle;
+    position: relative;
 }
 div.circle-leaf {
     background: rgba(255, 0, 0, 0.1);
@@ -46,17 +47,24 @@ div.align-helper {
     vertical-align: middle;
     height:100%;
 }
-/*div.circle::before {*/
-    /*content: "a";*/
-    /*float: left;*/
-    /*display: inline-block;*/
-    /*position: relative;*/
-    /*left: -15px;*/
-    /*width: 0px;*/
-    /*height: 100%;*/
-    /*vertical-align: middle;*/
-/*}*/
 
 div.circle:hover {
     border-color: #ff7f0e;
+}
+
+div.node-list {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+div.node-list.start {
+    top: 20%;
+}div.node-list.result {
+    bottom: 20%;
+}
+
+span.text-node {
+    padding: 0 3px;
+    border: 1px solid black;
+    margin: 0 1px;
 }

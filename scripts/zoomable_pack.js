@@ -20,9 +20,16 @@ function makeCircle(node, parentElem, size) {
 	} else {
 		myCircle.addClass("circle-leaf");
 	}
-	//for (var i = 0; i < node.start.length; i++) {
-	//	var nodeList = $("<div")
-	//}
+	var startNodeList = $("<div class='start node-list'></div>");
+	for (var i = 0; i < node.start.length; i++) {
+		new Node(node.start[i], startNodeList);
+	}
+	myCircle.append(startNodeList);
+	var resultNodeList = $("<div class='result node-list'></div>");
+	for (var i = 0; i < node.result.length; i++) {
+		new Node(node.result[i], resultNodeList);
+	}
+	myCircle.append(resultNodeList);
 }
 /*
 var w = 1280,

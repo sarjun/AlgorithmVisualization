@@ -12,9 +12,9 @@ Node.displayType = DisplayType.TEXT;
 Node.prototype.generateElement = function() {
 	switch (Node.displayType) {
 		case DisplayType.TEXT:
-			var parentBox = $("<svg:text class='text-node'></svg:text>");
+			var parentBox = $("<span class='text-node'></span>");
 			parentBox.text(this.value);
-			//this.parentElem.append(parentBox);
+			this.parentElem.append(parentBox);
 			break;
 	}
 }
