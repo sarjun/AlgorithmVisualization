@@ -132,6 +132,6 @@ function addSize(frame) {
 
 var test = new Container();
 test.runDivideAndConquer([8, 7, 6, 5, 4, 3, 2, 1]);
-test.tracker.traceExecution();
+//test.tracker.traceExecution();
 addSize(test.tracker.execution);
 var data = test.tracker.execution.children[0];

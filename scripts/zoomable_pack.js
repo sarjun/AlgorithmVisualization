@@ -1,3 +1,30 @@
+$(init);
+function init(){
+	if (data == null) return;
+	var parent = $("<div class='main'></div>");
+	$("body").append(parent);
+	makeCircle(data, parent, Math.min($(document).height(), $(document).width()) * 0.9);
+}
+function makeCircle(node, parentElem, size) {
+	var myCircle = $("<div class='circle'></div>");
+	myCircle.width(size).height(size);
+	parentElem.append(myCircle);
+	myCircle.append("<div class='align-helper'></div>");
+	if (node.children.length > 0) {
+		myCircle.addClass("circle-node");
+		var childSize = size / node.children.length - 2;
+		for (var i = 0; i < node.children.length; i++) {
+			makeCircle(node.children[i], myCircle, childSize);
+		}
+		//console.log(node);
+	} else {
+		myCircle.addClass("circle-leaf");
+	}
+	//for (var i = 0; i < node.start.length; i++) {
+	//	var nodeList = $("<div")
+	//}
+}
+/*
 var w = 1280,
     h = 800,
     r = 720,
@@ -95,3 +122,4 @@ function zoom(d, i) {
   node = d;
   d3.event.stopPropagation();
 }
+*/

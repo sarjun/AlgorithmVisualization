@@ -27,3 +27,36 @@ circle.parent:hover {
 circle.child {
   pointer-events: none;
 }
+
+div.main{
+    text-align: center;
+}
+div.circle {
+    background: rgba(31, 119, 180, 0.1);
+    border: 1px solid steelblue;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+}
+div.circle-leaf {
+    background: rgba(255, 0, 0, 0.1);
+}
+div.align-helper {
+    display: inline-block;
+    vertical-align: middle;
+    height:100%;
+}
+/*div.circle::before {*/
+    /*content: "a";*/
+    /*float: left;*/
+    /*display: inline-block;*/
+    /*position: relative;*/
+    /*left: -15px;*/
+    /*width: 0px;*/
+    /*height: 100%;*/
+    /*vertical-align: middle;*/
+/*}*/
+
+div.circle:hover {
+    border-color: #ff7f0e;
+}
