@@ -25,11 +25,21 @@ function makeCircle(node, parentElem, size) {
 			makeCircle(node.children[i], myCircle, childSize);
 		}
 		myCircle.bind("click", function (e) {
+			var currentSize = root.width();
 			var zoomSize = rootSize * root.width() / myCircle.width();
 			root.width(zoomSize).height(zoomSize);
+			var currentPos = {top: root.css("top"), left: root.css("left")};
 			root.css({top: 0, left: 0});
 			var circleCenter = getCenter(myCircle);
-			root.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
+			root.css(currentPos);
+			root.width(currentSize).height(currentSize);
+			root.animate({
+				width: zoomSize,
+				height: zoomSize,
+				top: centerOfScreen[1] - circleCenter[1],
+				left: centerOfScreen[0] - circleCenter[0]
+			}, 750, "easeInOutQuad");
+			//root.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
 			e.stopPropagation();
 		});
 	} else {
