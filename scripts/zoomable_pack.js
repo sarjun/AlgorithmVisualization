@@ -47,26 +47,18 @@ function makeCircle(node, parentElem, size) {
 		myCircle.addClass("circle-leaf");
 	}
 
-	var animType = new BoxedList();
-	switch (node.animType) {
-		case "text":
-			animType = new BoxedList();
-			break;
-		default:
-			break;
-	}
-
-	var startNodeList = $("<div class='start node-list'></div>");
-	for (var i = 0; i < node.start.length; i++) {
-		new Node(node.start[i], startNodeList, animType);
-	}
-	myCircle.append(startNodeList);
-
-	var resultNodeList = $("<div class='result node-list'></div>");
-	for (var i = 0; i < node.result.length; i++) {
-		new Node(node.result[i], resultNodeList, animType);
-	}
-	myCircle.append(resultNodeList);
+	var startList = new BoxedList(myCircle, true, node.start);
+	var endList = new BoxedList(myCircle, false, node.result);
+	startList.generateChildren();
+	endList.generateChildren();
+	//switch (node.animType) {
+	//	case "text":
+	//		startList = new BoxedList();
+	//		endList = new BoxedList();
+	//		break;
+	//	default:
+	//		break;
+	//}
 }
 
 function getCenter(elem) {

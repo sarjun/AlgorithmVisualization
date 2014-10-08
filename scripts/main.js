@@ -129,7 +129,7 @@ Container.prototype.dAndC = function(tracker, list) {
 	highlightStart.nodes.push(secondHalf[second]);
 	tracker.execution.animations.push(highlightStart);
 	for(var i=0; i<list.length; i++) {
-		if(first > firstHalf.length) {
+		if(first == firstHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
@@ -137,8 +137,9 @@ Container.prototype.dAndC = function(tracker, list) {
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
 			tracker.execution.animations.push(unhighlight);
+			continue;
 		}
-		if(second > secondHalf.length) {
+		if(second == secondHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
@@ -147,8 +148,12 @@ Container.prototype.dAndC = function(tracker, list) {
 			unhighlight.nodes.push(firstHalf[first]);
 			tracker.execution.animations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
+			continue;
 		}
-		if(firstHalf[first] > secondHalf[second]) {
+		console.log(first);
+		console.log(firstHalf);
+		console.log(firstHalf.length);
+		if(firstHalf[first].value > secondHalf[second].value) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
@@ -186,6 +191,11 @@ Container.prototype.dAndC = function(tracker, list) {
 
 var test = new Container();
 var track = new Tracker();
-test.dAndC(track, [8, 7, 6, 5, 4, 3, 2, 1]);
+var toSort = [];
+for(var i=8; i>=1; i--) {
+	var newNode = new Node(i);
+	toSort.push(newNode);
+}
+test.dAndC(track, toSort);
 //test.tracker.traceExecution();
 var data = track.execution.children[0];
