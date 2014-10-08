@@ -13,7 +13,8 @@ function getEmptyExecutionFrame() {
 		children:[],
 		result:null,
 		originalToResult:null,
-		animations:[]
+		animations:[],
+		animType:"text"
 	};
 }
 
