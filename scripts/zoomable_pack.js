@@ -8,6 +8,7 @@ function init(){
 	$("body").append(parent);
 	centerOfScreen = [$(document).width() / 2, $(document).height() / 2];
 	makeCircle(data, parent, Math.floor(Math.min($(document).height(), $(document).width()) * 0.9));
+	root.click();
 }
 function makeCircle(node, parentElem, size) {
 	var myCircle = $("<div class='circle'></div>");
@@ -45,7 +46,6 @@ function makeCircle(node, parentElem, size) {
 	} else {
 		myCircle.addClass("circle-leaf");
 	}
-	if (root == myCircle) myCircle.click();
 	var startNodeList = $("<div class='start node-list'></div>");
 	for (var i = 0; i < node.start.length; i++) {
 		new Node(node.start[i], startNodeList);

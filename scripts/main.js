@@ -111,7 +111,6 @@ Container.prototype.dAndC = function(tracker, list) {
 	// Divide and conquer algorithm
 	// eventually this would come from the web page
 	// for now, we will use mergesort
-	console.log(tracker);
 	tracker.logEntry(list);
 	if(list.length == 1) {
 		tracker.logExit(list);
@@ -127,55 +126,54 @@ Container.prototype.dAndC = function(tracker, list) {
 	var highlightStart = getEmptyHighlightAnimation();
 	highlightStart.nodes.push(firstHalf[first]);
 	highlightStart.nodes.push(secondHalf[second]);
-	tracker.animations.push(highlightStart);
+	tracker.execution.animations.push(highlightStart);
 	for(var i=0; i<list.length; i++) {
 		if(first > firstHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
-			tracker.animations.add(translate);
+			tracker.execution.animations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
-			tracker.animations.push(unhighlight);
+			tracker.execution.animations.push(unhighlight);
 		}
 		if(second > secondHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
-			tracker.animations.add(translate);
+			tracker.execution.animations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
-			tracker.animations.push(unhighlight);
+			tracker.execution.animations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
 		}
 		if(firstHalf[first] > secondHalf[second]) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
-			tracker.animations.add(translate);
+			tracker.execution.animations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
-			tracker.animations.push(unhighlight);
+			tracker.execution.animations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(highlight);
-				tracker.animations.push(highlight);
+				tracker.execution.animations.push(highlight);
 			}
 		}
 		else {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
-			tracker.animations.add(translate);
+			tracker.execution.animations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
-			tracker.animations.push(unhighlight);
-			sorted.push(firstHalf[first++]);
+			tracker.execution.animations.push(unhighlight);
 			if(first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(highlight);
-				tracker.animations.push(highlight);
+				tracker.execution.animations.push(highlight);
 			}
 			sorted.push(firstHalf[first++]);
 		}
