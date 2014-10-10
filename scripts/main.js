@@ -127,59 +127,69 @@ Container.prototype.dAndC = function(tracker, list) {
 	var highlightStart = getEmptyHighlightAnimation();
 	highlightStart.nodes.push(firstHalf[first]);
 	highlightStart.nodes.push(secondHalf[second]);
-	tracker.execution.animations.push(highlightStart);
+	tracker.currentFrame.animations.push(highlightStart);
 	for(var i=0; i<list.length; i++) {
 		if(first == firstHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
-			tracker.execution.animations.push(translate);
+			tracker.currentFrame.animations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
-			tracker.execution.animations.push(unhighlight);
+			tracker.currentFrame.animations.push(unhighlight);
+			if(second < secondHalf.length) {
+				var highlight = getEmptyHighlightAnimation();
+				highlight.nodes.push(secondHalf[second]);
+				tracker.currentFrame.animations.push(highlight);
+			}
 			continue;
 		}
 		if(second == secondHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
-			tracker.execution.animations.push(translate);
+			tracker.currentFrame.animations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
-			tracker.execution.animations.push(unhighlight);
+			tracker.currentFrame.animations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
+			if(first < firstHalf.length) {
+				var highlight = getEmptyHighlightAnimation();
+				highlight.nodes.push(firstHalf[first]);
+				tracker.currentFrame.animations.push(highlight);
+			}
 			continue;
 		}
-		console.log(first);
-		console.log(firstHalf);
-		console.log(firstHalf.length);
+		//console.log(first);
+		//console.log(firstHalf);
+		//console.log(firstHalf.length);
 		if(firstHalf[first].value > secondHalf[second].value) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
-			tracker.execution.animations.push(translate);
+			tracker.currentFrame.animations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
-			tracker.execution.animations.push(unhighlight);
+			tracker.currentFrame.animations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
-				highlight.nodes.push(highlight);
-				tracker.execution.animations.push(highlight);
+				highlight.nodes.push(secondHalf[second]);
+				tracker.currentFrame.animations.push(highlight);
 			}
 		}
 		else {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
-			tracker.execution.animations.push(translate);
+			tracker.currentFrame.animations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
-			tracker.execution.animations.push(unhighlight);
+			tracker.currentFrame.animations.push(unhighlight);
 			if(first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
-				highlight.nodes.push(highlight);
-				tracker.execution.animations.push(highlight);
+				highlight.nodes.push(firstHalf[first]);
+				tracker.currentFrame.animations.push(highlight);
 			}
 			sorted.push(firstHalf[first++]);
 		}
