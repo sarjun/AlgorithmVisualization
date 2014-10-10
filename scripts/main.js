@@ -133,6 +133,8 @@ dAndC = function(tracker, list) {
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
 			tracker.currentFrame.animations.push(unhighlight);
+			sorted.push(secondHalf[second++]);
+			tracker.currentFrame.animations.push(unhighlight);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(secondHalf[second]);
@@ -182,12 +184,12 @@ dAndC = function(tracker, list) {
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.animations.push(unhighlight);
+			sorted.push(firstHalf[first++]);
 			if(first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(firstHalf[first]);
 				tracker.currentFrame.animations.push(highlight);
 			}
-			sorted.push(firstHalf[first++]);
 		}
 	}
 
@@ -197,7 +199,7 @@ dAndC = function(tracker, list) {
 
 var track = new Tracker();
 var toSort = [];
-for(var i=8; i>=1; i--) {
+for(var i=1; i<=8; i++) {
 	var newNode = new Node(i);
 	toSort.push(newNode);
 }
