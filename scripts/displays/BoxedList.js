@@ -34,9 +34,11 @@ BoxedList.prototype.generateChildElement = function (thisNode) {
 };
 
 BoxedList.prototype.animate = function (animationList) {
+	for (var i in this.nodeMap) {
+		this.nodeMap[i].css("visibility", "hidden");
+	}
 	var i = 0;
 	var doAnim = function (boxedList) {
-		console.log(i);
 		if (i >= animationList.length) {
 			boxedList.animating = null;
 			return;
@@ -87,6 +89,7 @@ BoxedList.prototype.animate = function (animationList) {
 							}).css(childPosition);
 							$("div.main").append(ghost);
 							ghost.animate(dest.offset(), TIME_TRANSLATE, function () {
+								dest.css("visibility", "initial");
 								ghost.remove();
 							});
 						}
