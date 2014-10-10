@@ -60,6 +60,18 @@ BoxedList.prototype.animate = function (animationList) {
 				boxedList.animating = setTimeout(doAnim, TIME_HIGHLIGHT, boxedList);
 				break;
 			case "unhighlight":
+				var nodes = animationList[i].nodes;
+				var childLists = [];
+				for (var j = 0; j < boxedList.parent.children.length; j++) {
+					childLists.push(boxedList.parent.children[j].endList.nodeMap);
+				}
+				for (var j = 0; j < nodes.length; j++) {
+					for (var k = 0; k < childLists.length; k++) {
+						if (childLists[k].hasOwnProperty(nodes[j].id)) {
+							childLists[k][nodes[j].id].css("border-color", "black");
+						}
+					}
+				}
 				boxedList.animating = setTimeout(doAnim, TIME_UNHIGHLIGHT, boxedList);
 				break;
 			case "translate":
