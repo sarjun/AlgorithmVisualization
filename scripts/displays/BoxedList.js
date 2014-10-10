@@ -41,15 +41,15 @@ BoxedList.prototype.animate = function (animationList) {
 			boxedList.animating = null;
 			return;
 		}
+		var childLists = [];
+		for (var j = 0; j < boxedList.parent.children.length; j++) {
+			childLists.push(boxedList.parent.children[j].endList.nodeMap);
+		}
 		switch (animationList[i].animationType) {
 			case "highlight":
 				//console.log(animationList[i]);
 				var nodes = animationList[i].nodes;
 				var color = animationList[i].color;
-				var childLists = [];
-				for (var j = 0; j < boxedList.parent.children.length; j++) {
-					childLists.push(boxedList.parent.children[j].endList.nodeMap);
-				}
 				for (var j = 0; j < nodes.length; j++) {
 					for (var k = 0; k < childLists.length; k++) {
 						if (childLists[k].hasOwnProperty(nodes[j].id)) {
@@ -61,10 +61,6 @@ BoxedList.prototype.animate = function (animationList) {
 				break;
 			case "unhighlight":
 				var nodes = animationList[i].nodes;
-				var childLists = [];
-				for (var j = 0; j < boxedList.parent.children.length; j++) {
-					childLists.push(boxedList.parent.children[j].endList.nodeMap);
-				}
 				for (var j = 0; j < nodes.length; j++) {
 					for (var k = 0; k < childLists.length; k++) {
 						if (childLists[k].hasOwnProperty(nodes[j].id)) {
@@ -75,6 +71,27 @@ BoxedList.prototype.animate = function (animationList) {
 				boxedList.animating = setTimeout(doAnim, TIME_UNHIGHLIGHT, boxedList);
 				break;
 			case "translate":
+				var nodes = animationList[i].sourceNodes;
+				var dest = boxedList.nodeMap[animationList[i].destNode.id];
+				for (var j = 0; j < nodes.length; j++) {
+					for (var k = 0; k < childLists.length; k++) {
+						if (childLists[k].hasOwnProperty(nodes[j].id)) {
+							var childElem = childLists[k][nodes[j].id];
+							var childPosition = childElem.offset();
+							var ghost = $(childElem[0].outerHTML);
+							ghost.addClass("ghost");
+							ghost.css({
+								position: "absolute",
+								width: childElem.width(),
+								height: childElem.height()
+							}).css(childPosition);
+							$("div.main").append(ghost);
+							ghost.animate(dest.offset(), TIME_TRANSLATE, function () {
+								ghost.remove();
+							});
+						}
+					}
+				}
 				boxedList.animating = setTimeout(doAnim, TIME_TRANSLATE, boxedList);
 				break;
 			default:

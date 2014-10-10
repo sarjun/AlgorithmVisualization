@@ -30,10 +30,11 @@ circle.child {
 body {
     overflow: hidden;
     position: relative;
+    margin: 0;
 }
 div.main{
     display: inline-block;
-    position: absolute;
+    position: relative;
 }
 div.circle {
     background: rgba(31, 119, 180, 0.1);
@@ -72,4 +73,7 @@ span.text-node {
     padding: 0 3px;
     border: 1px solid black;
     margin: 0 1px;
+}
+span.text-node.ghost {
+    margin: 0;
 }
