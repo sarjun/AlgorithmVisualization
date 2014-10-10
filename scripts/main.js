@@ -104,11 +104,7 @@ Tracker.prototype.logExit = function(list) {
 	this.currentFrame = this.currentFrame["parentFrame"];
 }
 
-function Container() {
-	this.tracker = new Tracker();
-}
-
-Container.prototype.dAndC = function(tracker, list) {
+dAndC = function(tracker, list) {
 	// Divide and conquer algorithm
 	// eventually this would come from the web page
 	// for now, we will use mergesort
@@ -199,13 +195,12 @@ Container.prototype.dAndC = function(tracker, list) {
 	return sorted;
 }
 
-var test = new Container();
 var track = new Tracker();
 var toSort = [];
 for(var i=8; i>=1; i--) {
 	var newNode = new Node(i);
 	toSort.push(newNode);
 }
-test.dAndC(track, toSort);
+dAndC(track, toSort);
 //test.tracker.traceExecution();
 var data = track.execution.children[0];
