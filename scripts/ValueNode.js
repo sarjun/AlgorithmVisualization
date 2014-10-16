@@ -1,11 +1,11 @@
 /**
  * Created by Sun on 9/23/2014.
  */
-Node.ID = 0;
+ValueNode.ID = 0;
 
-function Node(val){
+function ValueNode(val){
     this.value = val;
-	this.id = Node.ID++ + "";
+	this.id = ValueNode.ID++ + "";
 	//this.parentElem = parent;
 	//this.animationStyle = anim;
 	//this.elem = this.animationStyle.generateElement(this);

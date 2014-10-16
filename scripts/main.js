@@ -200,7 +200,7 @@ dAndC = function(tracker, list) {
 var track = new Tracker();
 var toSort = [];
 for(var i=1; i<=8; i++) {
-	var newNode = new Node(i);
+	var newNode = new ValueNode(i);
 	toSort.push(newNode);
 }
 dAndC(track, toSort);

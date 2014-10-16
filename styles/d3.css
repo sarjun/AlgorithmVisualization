@@ -99,3 +99,22 @@ core-toolbar {
 #mainheader {
   background-color: #56BA89;
 }
+core-menu {
+    /*padding: 8px;*/
+}
+paper-input {
+    width: auto;
+}
+paper-button[raisedButton].colored {
+    background: #526E9C;
+    color: #fff;
+}
+paper-button[raisedButton].colored #ripple,
+paper-button[raisedButton].colored::shadow #ripple {
+    color: #56BA89;
+}
+
+paper-button[raisedButton].colored #focusBg,
+paper-button[raisedButton].colored::shadow #focusBg {
+    background: #56BA89;
+}
