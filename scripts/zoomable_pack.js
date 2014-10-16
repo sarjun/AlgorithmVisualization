@@ -5,9 +5,12 @@ var root;
 var rootSize;
 var centerOfScreen;
 var mainDiv;
+var initList, btnSetRoot;
 function init(){
 	if (data == null) return;
 	var mainPanel = $("core-header-panel[main]");
+	initList = document.querySelector("#init-list");
+	btnSetRoot = document.querySelector("#btnSetRoot");
 	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden"
 	mainDiv = $("<div class='main'></div>");
 	$("div.content").append(mainDiv);
@@ -17,6 +20,21 @@ function init(){
 	mainDiv.width(parentWidth).height(parentHeight);
 	makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 	root.click();
+	$(btnSetRoot).click(function () {
+		toSort = [];
+		track = new Tracker();
+		var newList = initList.value.split(",");
+		for (var i in newList) {
+			var newNode = new ValueNode(newList[i] * 1);
+			toSort.push(newNode);
+		}
+		dAndC(track, toSort);
+		data = track.execution.children[0];
+		mainDiv.empty();
+		root = null;
+		makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
+		root.click();
+	});
 }
 function makeCircle(node, parentElem, size) {
 	var newCircle = new Circle(parentElem, node, size);
