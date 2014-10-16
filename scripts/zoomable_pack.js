@@ -1,13 +1,21 @@
-$(init);
+//$(init);
+
+document.addEventListener('polymer-ready', init);
 var root;
 var rootSize;
 var centerOfScreen;
+var mainDiv;
 function init(){
 	if (data == null) return;
-	var parent = $("<div class='main'></div>");
-	$("body").append(parent);
-	centerOfScreen = [$(document).width() / 2, $(document).height() / 2];
-	makeCircle(data, parent, Math.floor(Math.min($(document).height(), $(document).width()) * 0.9));
+	var mainPanel = $("core-header-panel[main]");
+	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden"
+	mainDiv = $("<div class='main'></div>");
+	$("div.content").append(mainDiv);
+	var parentHeight = mainPanel.height() - $("core-header-panel[main] core-toolbar#mainheader").height();
+	var parentWidth = mainPanel.width();
+	centerOfScreen = [parentWidth / 2, parentHeight / 2];
+	mainDiv.width(parentWidth).height(parentHeight);
+	makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 	root.click();
 }
 function makeCircle(node, parentElem, size) {
@@ -26,6 +34,14 @@ function makeCircle(node, parentElem, size) {
 }
 
 function getCenter(elem) {
-	var offset = elem.offset();
+	var offset = offsetFrom(elem, mainDiv);
 	return [offset.left + elem.width() / 2, offset.top + elem.height() / 2];
+}
+
+function offsetFrom(elem, parent) {
+	var offset = elem.offset();
+	var parentOffset = parent.offset();
+	offset.top -= parentOffset.top;
+	offset.left -= parentOffset.left;
+	return offset;
 }

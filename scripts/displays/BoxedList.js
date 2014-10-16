@@ -11,9 +11,12 @@ function BoxedList(parent, start, nodeList) {
 	this.nodeList = nodeList;
 	this.nodeMap = {};
 	this.parent = parent;
+
+	var container = $("<div class='node-list-container'></div>");
+	container.addClass(start ? "start" : "result");
+	parent.elem.append(container);
 	this.elem = $("<div class='node-list'></div>");
-	this.elem.addClass(start ? "start" : "result");
-	parent.elem.append(this.elem);
+	container.append(this.elem);
 }
 
 BoxedList.prototype.addNode = function (node) {
@@ -79,7 +82,7 @@ BoxedList.prototype.animate = function (animationList) {
 					for (var k = 0; k < childLists.length; k++) {
 						if (childLists[k].hasOwnProperty(nodes[j].id)) {
 							var childElem = childLists[k][nodes[j].id];
-							var childPosition = childElem.offset();
+							var childPosition = offsetFrom(childElem, mainDiv);
 							var ghost = $(childElem[0].outerHTML);
 							ghost.addClass("ghost");
 							ghost.css({
@@ -88,7 +91,7 @@ BoxedList.prototype.animate = function (animationList) {
 								height: childElem.height()
 							}).css(childPosition);
 							$("div.main").append(ghost);
-							ghost.animate(dest.offset(), TIME_TRANSLATE, function () {
+							ghost.animate(offsetFrom(dest, mainDiv), TIME_TRANSLATE, function () {
 								dest.css("visibility", "initial");
 								ghost.remove();
 							});

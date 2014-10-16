@@ -12,7 +12,6 @@ circle {
   stroke: #999;
   pointer-events: all;
 }
-
 circle.parent {
   fill: #1f77b4;
   fill-opacity: .1;
@@ -28,13 +27,22 @@ circle.child {
   pointer-events: none;
 }
 body {
-    overflow: hidden;
-    position: relative;
+    /*overflow: hidden;*/
+    /*position: relative;*/
     margin: 0;
+    background: #eee;
+    font-family: sans-serif;
+}
+div.content {
+    /*height: 600px;*/
+    /*display: inline-block;*/
+    /*width: 50%;*/
 }
 div.main{
     display: inline-block;
     position: relative;
+    background: white;
+    font-family: serif;
 }
 div.circle {
     background: rgba(31, 119, 180, 0.1);
@@ -58,15 +66,19 @@ div.circle:hover {
     border-color: #ff7f0e;
 }
 
-div.node-list {
+div.node-list-container {
     position: absolute;
     width: 100%;
     text-align: center;
 }
-div.node-list.start {
+div.node-list-container.start {
     top: 13%;
-}div.node-list.result {
+}
+div.node-list-container.result {
     bottom: 13%;
+}
+div.node-list {
+    display: inline-block;
 }
 
 span.text-node {
@@ -76,4 +88,14 @@ span.text-node {
 }
 span.text-node.ghost {
     margin: 0;
+}
+
+core-header-panel {
+  /*background: white;*/
+}
+core-toolbar {
+  background-color: #526E9C;
+}
+#mainheader {
+  background-color: #56BA89;
 }
