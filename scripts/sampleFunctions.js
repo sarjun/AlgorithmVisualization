@@ -1,10 +1,16 @@
-var util = require('util'); //required to print to console
+var funcNames = [];
+var funcMapping = {};
+var overviewMapping = {};
+var divideMapping = {};
+var conquerMapping = {};
 
-function print(msg) {
-    util.print(msg);
-}
+var funcName = "";
 
-// Begin real code
+// ******************
+// Skyline Function
+// ******************
+funcName = "Skyline";
+funcNames.push(funcName);
 
 function skyline(buildings) {
 	if(buildings.length == 1) return [0,0, buildings];
@@ -49,5 +55,11 @@ function skyline(buildings) {
 	return sub;
 }
 
-var test = skyline([7,1,2,3,4,5]);
-print(test[0] + ", " +  test[1] + "\n")
+funcMapping.funcName = skyline;
+overviewMapping.funcName = "This function computes the left and right skyline values of a particular skyline. " +
+"The left skyline value of one building is the number of buildings to the left of that building that it is taller than. " +
+"The left skyline value of a skyline is the sum of the left skyline value of each building in the skyline. " +
+"The right skyline function is defined similarly";
+divideMapping.funcName = "Find the right and left skyline values of two halves of the skyline recursively. " +
+"This is done by dividing the skyline in half.";
+conquerMapping.funcName = "Modification of Mergesort. Whenever an item is added to the result list, update the skyline counters.";
