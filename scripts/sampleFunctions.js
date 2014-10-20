@@ -63,3 +63,110 @@ overviewMapping.funcName = "This function computes the left and right skyline va
 divideMapping.funcName = "Find the right and left skyline values of two halves of the skyline recursively. " +
 "This is done by dividing the skyline in half.";
 conquerMapping.funcName = "Modification of Mergesort. Whenever an item is added to the result list, update the skyline counters.";
+
+
+// ******************
+// Skyline Function
+// ******************
+funcName = "Merge Sort";
+funcNames.push(funcName);
+
+function mergeSort(tracker, list) {
+	// Divide and conquer algorithm
+	// eventually this would come from the web page
+	// for now, we will use mergesort
+	tracker.logEntry(list);
+	if(list.length == 1) {
+		tracker.logExit(list);
+		return list;
+	}
+	var firstHalf = list.slice(0, list.length/2);
+	var secondHalf = list.slice(list.length/2);
+	firstHalf = this.dAndC(tracker, firstHalf);
+	secondHalf = this.dAndC(tracker, secondHalf);
+
+	var sorted = [];
+	var first = 0, second = 0;
+	var highlightStart = getEmptyHighlightAnimation();
+	highlightStart.nodes.push(firstHalf[first]);
+	highlightStart.nodes.push(secondHalf[second]);
+	tracker.currentFrame.animations.push(highlightStart);
+	for(var i=0; i<list.length; i++) {
+		if(first == firstHalf.length) {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceNodes.push(secondHalf[second]);
+			translate.destNode = secondHalf[second];
+			tracker.currentFrame.animations.push(translate);
+			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.nodes.push(secondHalf[second]);
+			tracker.currentFrame.animations.push(unhighlight);
+			sorted.push(secondHalf[second++]);
+			tracker.currentFrame.animations.push(unhighlight);
+			if(second < secondHalf.length) {
+				var highlight = getEmptyHighlightAnimation();
+				highlight.nodes.push(secondHalf[second]);
+				tracker.currentFrame.animations.push(highlight);
+			}
+			continue;
+		}
+		if(second == secondHalf.length) {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceNodes.push(firstHalf[first]);
+			translate.destNode = firstHalf[first];
+			tracker.currentFrame.animations.push(translate);
+			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.nodes.push(firstHalf[first]);
+			tracker.currentFrame.animations.push(unhighlight);
+			sorted.push(firstHalf[first++]);
+			if(first < firstHalf.length) {
+				var highlight = getEmptyHighlightAnimation();
+				highlight.nodes.push(firstHalf[first]);
+				tracker.currentFrame.animations.push(highlight);
+			}
+			continue;
+		}
+		//console.log(first);
+		//console.log(firstHalf);
+		//console.log(firstHalf.length);
+		if(firstHalf[first].value > secondHalf[second].value) {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceNodes.push(secondHalf[second]);
+			translate.destNode = secondHalf[second];
+			tracker.currentFrame.animations.push(translate);
+			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.nodes.push(secondHalf[second]);
+			tracker.currentFrame.animations.push(unhighlight);
+			sorted.push(secondHalf[second++]);
+			if(second < secondHalf.length) {
+				var highlight = getEmptyHighlightAnimation();
+				highlight.nodes.push(secondHalf[second]);
+				tracker.currentFrame.animations.push(highlight);
+			}
+		}
+		else {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceNodes.push(firstHalf[first]);
+			translate.destNode = firstHalf[first];
+			tracker.currentFrame.animations.push(translate);
+			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.nodes.push(firstHalf[first]);
+			tracker.currentFrame.animations.push(unhighlight);
+			sorted.push(firstHalf[first++]);
+			if(first < firstHalf.length) {
+				var highlight = getEmptyHighlightAnimation();
+				highlight.nodes.push(firstHalf[first]);
+				tracker.currentFrame.animations.push(highlight);
+			}
+		}
+	}
+
+	tracker.logExit(sorted);
+	return sorted;
+}
+
+funcMapping.funcName = mergeSort;
+overviewMapping.funcName = "This function sorts a list of elements by recursively sorting two halves and then merging the " +
+"result such that the combination is sorted.";
+divideMapping.funcName = "The input list is divided into tow halves by splitting in the middle.";
+conquerMapping.funcName = "The two sorted halves are merged by iteratively selecting elements from the two sorted halves " +
+"in overall sorted order.";

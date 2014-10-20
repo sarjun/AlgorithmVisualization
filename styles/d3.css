@@ -34,10 +34,19 @@ body {
     font-family: sans-serif;
 }
 div.content {
-    /*height: 600px;*/
-    /*display: inline-block;*/
-    /*width: 50%;*/
+    width: 75%;
+    position: relative;
+    display: inline-block;
+    height: 100%;
 }
+
+div.console {
+    display: inline-block;
+    position: relative;
+    width: 25%;
+    height: 100%;
+}
+
 div.main{
     display: inline-block;
     position: relative;
