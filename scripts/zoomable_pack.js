@@ -18,7 +18,7 @@ function init(){
 	var parentHeight = mainPanel.height() - $("core-header-panel[main] core-toolbar#mainheader").height();
 	var parentWidth = contentDiv.width();
 	centerOfScreen = [parentWidth / 2, parentHeight / 2];
-	mainDiv.width(parentWidth).height(parentHeight);
+	//mainDiv.width(parentWidth).height(parentHeight);
 	makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 	root.click();
 	$(btnSetRoot).click(function () {

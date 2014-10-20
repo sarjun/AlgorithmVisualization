@@ -1,31 +1,33 @@
 text {
-  font-size: 11px;
-  pointer-events: none;
+    font-size: 11px;
+    pointer-events: none;
 }
 
 text.parent {
-  fill: #1f77b4;
+    fill: #1f77b4;
 }
 
 circle {
-  fill: #ccc;
-  stroke: #999;
-  pointer-events: all;
+    fill: #ccc;
+    stroke: #999;
+    pointer-events: all;
 }
+
 circle.parent {
-  fill: #1f77b4;
-  fill-opacity: .1;
-  stroke: steelblue;
+    fill: #1f77b4;
+    fill-opacity: .1;
+    stroke: steelblue;
 }
 
 circle.parent:hover {
-  stroke: #ff7f0e;
-  stroke-width: .5px;
+    stroke: #ff7f0e;
+    stroke-width: .5px;
 }
 
 circle.child {
-  pointer-events: none;
+    pointer-events: none;
 }
+
 body {
     /*overflow: hidden;*/
     /*position: relative;*/
@@ -33,26 +35,39 @@ body {
     background: #eee;
     font-family: sans-serif;
 }
+
 div.content {
     width: 75%;
-    position: relative;
+    position: absolute;
     display: inline-block;
     height: 100%;
+    background: white;
 }
 
 div.console {
     display: inline-block;
-    position: relative;
+    position: absolute;
     width: 25%;
     height: 100%;
+    right: 0;
+}
+div.console div.inner {
+    position: relative;
+}
+div.console div.inner > div {
+    background: lightcyan;
+    padding: 4px;
+    border-radius: 2px;
+    margin: 10px 8px;
 }
 
-div.main{
+div.main {
     display: inline-block;
     position: relative;
     background: white;
     font-family: serif;
 }
+
 div.circle {
     background: rgba(31, 119, 180, 0.1);
     border: 1px solid steelblue;
@@ -62,13 +77,15 @@ div.circle {
     position: relative;
     margin: 0 -1px;
 }
+
 div.circle-leaf {
     background: rgba(255, 0, 0, 0.1);
 }
+
 div.align-helper {
     display: inline-block;
     vertical-align: middle;
-    height:100%;
+    height: 100%;
 }
 
 div.circle:hover {
@@ -80,12 +97,15 @@ div.node-list-container {
     width: 100%;
     text-align: center;
 }
+
 div.node-list-container.start {
     top: 13%;
 }
+
 div.node-list-container.result {
     bottom: 13%;
 }
+
 div.node-list {
     display: inline-block;
 }
@@ -95,29 +115,36 @@ span.text-node {
     border: 1px solid black;
     margin: 0 1px;
 }
+
 span.text-node.ghost {
     margin: 0;
 }
 
 core-header-panel {
-  /*background: white;*/
+    /*background: white;*/
 }
+
 core-toolbar {
-  background-color: #526E9C;
+    background-color: #526E9C;
 }
+
 #mainheader {
-  background-color: #56BA89;
+    background-color: #56BA89;
 }
+
 core-menu {
     /*padding: 8px;*/
 }
+
 paper-input {
     width: auto;
 }
+
 paper-button[raisedButton].colored {
     background: #526E9C;
     color: #fff;
 }
+
 paper-button[raisedButton].colored #ripple,
 paper-button[raisedButton].colored::shadow #ripple {
     color: #56BA89;
