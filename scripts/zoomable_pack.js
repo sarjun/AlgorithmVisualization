@@ -44,6 +44,7 @@ function init() {
 
 function initConsole() {
 	cardConsole = $("div.console");
+	$("a#btnClearConsole").click(clearConsole);
 	addConsoleCard(overviewMapping[funcName]);
 	addConsoleCard(divideMapping[funcName]);
 	addConsoleCard(conquerMapping[funcName]);
