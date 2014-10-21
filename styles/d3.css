@@ -48,7 +48,7 @@ div.content {
 div.console {
     display: inline-block;
     position: absolute;
-    overflow-y: scroll;
+    overflow-y: auto;
     width: 25%;
     height: 100%;
     right: 0;
