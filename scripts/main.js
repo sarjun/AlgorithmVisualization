@@ -105,7 +105,7 @@ Tracker.prototype.logExit = function(list) {
 }
 
 
-dAndC = mergeSort;
+dAndC = funcMapping[funcName];
 var track = new Tracker();
 var toSort = [];
 for(var i=1; i<=8; i++) {

@@ -55,14 +55,14 @@ function skyline(buildings) {
 	return sub;
 }
 
-funcMapping.funcName = skyline;
-overviewMapping.funcName = "This function computes the left and right skyline values of a particular skyline. " +
+funcMapping[funcName] = skyline;
+overviewMapping[funcName] = "This function computes the left and right skyline values of a particular skyline. " +
 "The left skyline value of one building is the number of buildings to the left of that building that it is taller than. " +
 "The left skyline value of a skyline is the sum of the left skyline value of each building in the skyline. " +
 "The right skyline function is defined similarly";
-divideMapping.funcName = "Find the right and left skyline values of two halves of the skyline recursively. " +
+divideMapping[funcName] = "Find the right and left skyline values of two halves of the skyline recursively. " +
 "This is done by dividing the skyline in half.";
-conquerMapping.funcName = "Modification of Mergesort. Whenever an item is added to the result list, update the skyline counters.";
+conquerMapping[funcName] = "Modification of Mergesort. Whenever an item is added to the result list, update the skyline counters.";
 
 
 // ******************
@@ -164,9 +164,13 @@ function mergeSort(tracker, list) {
 	return sorted;
 }
 
-funcMapping.funcName = mergeSort;
-overviewMapping.funcName = "This function sorts a list of elements by recursively sorting two halves and then merging the " +
+funcMapping[funcName] = mergeSort;
+overviewMapping[funcName] = "This function sorts a list of elements by recursively sorting two halves and then merging the " +
 "result such that the combination is sorted.";
-divideMapping.funcName = "The input list is divided into tow halves by splitting in the middle.";
-conquerMapping.funcName = "The two sorted halves are merged by iteratively selecting elements from the two sorted halves " +
+divideMapping[funcName] = "The input list is divided into two halves by splitting in the middle.";
+conquerMapping[funcName] = "The two sorted halves are merged by iteratively selecting elements from the two sorted halves " +
 "in overall sorted order.";
+
+
+// Set Starting Function
+funcName = "Merge Sort";

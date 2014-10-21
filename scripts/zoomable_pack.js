@@ -6,7 +6,9 @@ var rootSize;
 var centerOfScreen;
 var mainDiv;
 var initList, btnSetRoot;
-function init(){
+var console;
+
+function init() {
 	if (data == null) return;
 	var mainPanel = $("core-header-panel[main]");
 	initList = document.querySelector("#init-list");
@@ -36,7 +38,17 @@ function init(){
 		makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 		root.click();
 	});
+
+	initConsole();
 }
+
+function initConsole() {
+	console = $("div.console");
+	addPolymerCard(overviewMapping[funcName]);
+	addPolymerCard(divideMapping[funcName]);
+	addPolymerCard(conquerMapping[funcName]);
+}
+
 function makeCircle(node, parentElem, size) {
 	var newCircle = new Circle(parentElem, node, size);
 	if (root == null) {
