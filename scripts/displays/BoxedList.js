@@ -5,7 +5,8 @@
 
 var TIME_HIGHLIGHT = 1000;
 var TIME_TRANSLATE = 1000;
-var TIME_UNHIGHLIGHT = 1000;
+var TIME_UNHIGHLIGHT = 300;
+var TIME_TEXT_PER_WORD = 300;
 
 function BoxedList(parent, start, nodeList) {
 	this.nodeList = nodeList;
@@ -100,6 +101,9 @@ BoxedList.prototype.animate = function (animationList) {
 				}
 				boxedList.animating = setTimeout(doAnim, TIME_TRANSLATE, boxedList);
 				break;
+			case "text":
+				addConsoleCard(animationList[i].text, animationList[i].cardColor);
+				boxedList.animating = setTimeout(doAnim, TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length, boxedList);
 			default:
 				break;
 		}

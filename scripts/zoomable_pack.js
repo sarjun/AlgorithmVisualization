@@ -6,7 +6,7 @@ var rootSize;
 var centerOfScreen;
 var mainDiv;
 var initList, btnSetRoot;
-var console;
+var cardConsole;
 
 function init() {
 	if (data == null) return;
@@ -43,10 +43,10 @@ function init() {
 }
 
 function initConsole() {
-	console = $("div.console");
-	addPolymerCard(overviewMapping[funcName]);
-	addPolymerCard(divideMapping[funcName]);
-	addPolymerCard(conquerMapping[funcName]);
+	cardConsole = $("div.console");
+	addConsoleCard(overviewMapping[funcName]);
+	addConsoleCard(divideMapping[funcName]);
+	addConsoleCard(conquerMapping[funcName]);
 }
 
 function makeCircle(node, parentElem, size) {

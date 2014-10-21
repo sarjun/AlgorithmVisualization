@@ -40,6 +40,15 @@ function getEmptyUnhighlightAnimation() {
 		nodes:[]
 	}
 }
+
+function getEmptyTextAnimation() {
+	return {
+		animationType:"text",
+		text:null,
+		cardColor:null
+	}
+}
+
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");
@@ -108,7 +117,7 @@ Tracker.prototype.logExit = function(list) {
 dAndC = funcMapping[funcName];
 var track = new Tracker();
 var toSort = [];
-for(var i=1; i<=8; i++) {
+for(var i=8; i>0; i--) {
 	var newNode = new ValueNode(i);
 	toSort.push(newNode);
 }

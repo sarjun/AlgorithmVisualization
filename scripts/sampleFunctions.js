@@ -129,6 +129,8 @@ function mergeSort(tracker, list) {
 		//console.log(firstHalf);
 		//console.log(firstHalf.length);
 		if(firstHalf[first].value > secondHalf[second].value) {
+			tracker.currentFrame.animations.push(textAnimateSelect(firstHalf[first].value,
+				secondHalf[second].value, secondHalf[second].value));
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
@@ -142,8 +144,11 @@ function mergeSort(tracker, list) {
 				highlight.nodes.push(secondHalf[second]);
 				tracker.currentFrame.animations.push(highlight);
 			}
+			if(second == secondHalf.length) tracker.currentFrame.animations.push(textAnimateDoneList(1));
 		}
 		else {
+			tracker.currentFrame.animations.push(textAnimateSelect(firstHalf[first].value,
+				secondHalf[second].value, firstHalf[first].value));
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
@@ -157,11 +162,29 @@ function mergeSort(tracker, list) {
 				highlight.nodes.push(firstHalf[first]);
 				tracker.currentFrame.animations.push(highlight);
 			}
+			if(first == firstHalf.length) tracker.currentFrame.animations.push(textAnimateDoneList(2));
 		}
 	}
 
 	tracker.logExit(sorted);
 	return sorted;
+}
+
+function textAnimateSelect(val1, val2, sel) {
+	var anim = getEmptyTextAnimation();
+	anim.text = "We select the minimum of " + val1 + " and " + val2 + ".";
+	anim.text += val1 == val2 ? "Since they are the same, it doesn't matter which one is added to the result list first." : "";
+	anim.cardColor = "lightcyan";
+
+	return anim;
+}
+
+function textAnimateDoneList(num) {
+	var anim = getEmptyTextAnimation();
+	anim.text = "Now we just add the remaining elements from the " + (num==1 ? "first" : "second") + " list.";
+	anim.cardColor = "lightcyan";
+
+	return anim;
 }
 
 funcMapping[funcName] = mergeSort;
