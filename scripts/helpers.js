@@ -13,3 +13,7 @@ function addConsoleCard(text, background) {
 	cardConsole.append(card);
 	cardConsole.scrollTop(cardConsole.height());
 }
+
+function clearConsole(){
+	cardConsole.find("div.inner").remove();
+}
