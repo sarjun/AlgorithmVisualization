@@ -195,5 +195,56 @@ conquerMapping[funcName] = "The two sorted halves are merged by iteratively sele
 "in overall sorted order.";
 
 
+// ******************
+// Quick Select
+// ******************
+funcName = "Quick Select";
+function quickSelect(k, list) {
+	// Base case
+	if(list.length == 1) {
+		if(k!=0) {
+			console.log("shouldn't happen " + k);
+			return null;
+		}
+		else return list[0];
+	}
+
+	// Get the list of medians in buckets of size 5
+	var medians = [];
+	for(var i=0; i<list.length; i+=5) {
+		var bucket = list.slice(i, i+5);
+		bucket.sort(function(a, b) {
+			return a.value - b.value;
+		});
+		medians.push(bucket[Math.floor(bucket.length / 2)]);
+	}
+
+
+	var pivot = quickSelect(Math.floor(medians.length / 2), medians);
+	// Check if the pivot is the kth value. If not, recurse on the greater partition or the lesser partition
+	var donePivot = false;
+	var partitioned = [pivot];
+	var pivotIndex = 0;
+	for(var i=0; i<list.length; i++) {
+		if(list[i].value==pivot.value && !donePivot) {
+			donePivot = true;
+			continue;
+		}
+		else if(list[i].value > pivot.value) {
+			partitioned.push(list[i]);
+		}
+		else {
+			partitioned.unshift(list[i]);
+			pivotIndex++;
+		}
+	}
+
+	if(pivotIndex == k) return pivot;
+	else {
+		if(pivotIndex > k) return quickSelect(k, partitioned.slice(0, pivotIndex));
+		else return quickSelect(k - pivotIndex, partitioned.slice(pivotIndex));
+	}
+}
+
 // Set Starting Function
 funcName = "Merge Sort";
