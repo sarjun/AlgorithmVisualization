@@ -14,7 +14,7 @@ function init() {
 	var mainPanel = $("core-header-panel[main]");
 	initList = document.querySelector("#param0");
 	btnSetRoot = document.querySelector("#btnSetRoot");
-	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden"
+	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden";
 	mainDiv = $("<div class='main'></div>");
 	var contentDiv = $("div.content");
 	contentDiv.append(mainDiv);

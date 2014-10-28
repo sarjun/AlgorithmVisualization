@@ -368,7 +368,7 @@ function quickSelect(tracker, k, list, selMedian) {
 			return answer;
 		}
 		else {
-			var answer = quickSelect(tracker, k - pivotIndex, partitioned.slice(pivotIndex), false);
+			var answer = quickSelect(tracker, k - pivotIndex, partitioned.slice(pivotIndex + 1), false);
 			tracker.logExit([answer]);
 			console.log("exit: " + answer.value);
 			console.log(tracker.currentFrame);

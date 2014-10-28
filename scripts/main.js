@@ -1,66 +1,66 @@
 //var util = require('util'); //required to print to console
 
 function print(msg) {
-    console.log(msg);
+	console.log(msg);
 }
 
 // Begin real code
 
 function getEmptyExecutionFrame() {
 	return {
-		parentFrame:null,
-		start:null,
-		children:[],
-		result:null,
-		originalToResult:null,
-		startAnimations:[],
-		endAnimations:[],
-		animType:"text"
+		parentFrame: null,
+		start: null,
+		children: [],
+		result: null,
+		originalToResult: null,
+		startAnimations: [],
+		endAnimations: [],
+		animType: "text"
 	};
 }
 
 function getEmptyHighlightAnimation() {
 	return {
-		animationType:"highlight",
-		nodes:[],
-		circles:[],
-		lists:[],
-		color:"orange"
+		animationType: "highlight",
+		nodes: [],
+		circles: [],
+		lists: [],
+		color: "orange"
 	}
 }
 
 function getEmptyTranslateAnimation() {
 	return {
-		animationType:"translate",
-		sourceNode:null,
-		destNode:null,
-		sourceCircle:null,
-		sourceList:null,
-		destCircle:null,
-		destList:null
+		animationType: "translate",
+		sourceNode: null,
+		destNode: null,
+		sourceCircle: null,
+		sourceList: null,
+		destCircle: null,
+		destList: null
 	}
 }
 
 function getEmptyUnhighlightAnimation() {
 	return {
-		animationType:"unhighlight",
-		nodes:[],
-		circles:[],
-		lists:[]
+		animationType: "unhighlight",
+		nodes: [],
+		circles: [],
+		lists: []
 	}
 }
 
 function getEmptyTextAnimation() {
 	return {
-		animationType:"text",
-		text:null,
-		cardColor:null
+		animationType: "text",
+		text: null,
+		cardColor: null
 	}
 }
 
 function getEmptyBucketAnimation() {
 	return {
-		animationType:"bucket",
+		animationType: "bucket",
 		addBuckets: [],
 		removeBuckets: []
 	}
@@ -68,7 +68,7 @@ function getEmptyBucketAnimation() {
 
 function getEmptyVisibilityAnimation() {
 	return {
-		animationType:"visibility",
+		animationType: "visibility",
 		showRanges: [],
 		hideRanges: []
 	}
@@ -76,14 +76,14 @@ function getEmptyVisibilityAnimation() {
 
 function getEmptySwapAnimation() {
 	return {
-		animationType:"swap",
+		animationType: "swap",
 		nodePair: []
 	}
 }
 
 function getEmptyBundleAnimation() {
 	return {
-		animationType:"bundle",
+		animationType: "bundle",
 		animations: []
 	}
 }
@@ -94,8 +94,8 @@ function printFrame(frame, indents) {
 	printTabs(indents);
 	print(frame["start"]);
 	print("\n");
-	for(var i = 0; i<frame["children"].length; i++) {
-		printFrame(frame["children"][i], indents+1);
+	for (var i = 0; i < frame["children"].length; i++) {
+		printFrame(frame["children"][i], indents + 1);
 	}
 	printTabs(indents);
 	print(frame["result"]);
@@ -108,7 +108,7 @@ function printFrame(frame, indents) {
 }
 
 function printTabs(count) {
-	for(var i = 0; i < count; i++) print("\t");
+	for (var i = 0; i < count; i++) print("\t");
 }
 
 
@@ -118,11 +118,11 @@ function Tracker() {
 	this.type = "rearrange";
 }
 
-Tracker.prototype.traceExecution = function() {
+Tracker.prototype.traceExecution = function () {
 	printFrame(this.execution, 0);
 }
 
-Tracker.prototype.logEntry = function(list) {
+Tracker.prototype.logEntry = function (list) {
 	var newFrame = getEmptyExecutionFrame();
 	newFrame["parentFrame"] = this.currentFrame;
 	this.currentFrame["children"].push(newFrame);
@@ -130,16 +130,16 @@ Tracker.prototype.logEntry = function(list) {
 	this.currentFrame["start"] = list;
 }
 
-Tracker.prototype.logExit = function(list) {
+Tracker.prototype.logExit = function (list) {
 	this.currentFrame["result"] = list;
 
-	if(this.type == "rearrange") {
+	if (this.type == "rearrange") {
 		var original = this.currentFrame["start"];
 		var origToResult = [];
-		
-		for(var i = 0; i < list.length; i++) {
-			for(var j = 0; j < list.length; j++) {
-				if(original[i] == list[j]) {
+
+		for (var i = 0; i < list.length; i++) {
+			for (var j = 0; j < list.length; j++) {
+				if (original[i] == list[j]) {
 					origToResult.push(j);
 					break;
 				}
@@ -155,7 +155,7 @@ Tracker.prototype.logExit = function(list) {
 
 var track = new Tracker();
 var toSort = [];
-for(var i=9; i>0; i--) {
+for (var i = 9; i > 0; i--) {
 	var newNode = new ValueNode(i);
 	toSort.push(newNode);
 }
@@ -165,7 +165,7 @@ console.log("done");
 dAndC = funcMapping[funcName];
 var track = new Tracker();
 var toSort = [];
-for(var i=9; i>0; i--) {
+for (var i = 29; i > 0; i--) {
 	var newNode = new ValueNode(i);
 	toSort.push(newNode);
 }
