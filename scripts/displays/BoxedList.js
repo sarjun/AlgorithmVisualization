@@ -54,11 +54,11 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 		childStartLists.push(this.parent.children[j].startList.nodeMap);
 	}
 	var doAnim = function (boxedList) {
-		// TODO: We probably shouldn't calculate this every time an animation occurs!! Maybe once when the animation starts?
 		if (i >= animationList.length) {
 			boxedList.animating = null;
 			return;
 		}
+		var delay = 0;
 		switch (animationList[i].animationType) {
 			case "highlight":
 				//console.log(animationList[i]);
@@ -72,7 +72,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					}
 				}
 				maxDelay = Math.max(maxDelay, TIME_HIGHLIGHT);
-				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_HIGHLIGHT, boxedList);
+				delay = skipDelays ? 0 : TIME_HIGHLIGHT;
 				break;
 			case "unhighlight":
 				var nodes = animationList[i].nodes;
@@ -84,7 +84,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					}
 				}
 				maxDelay = Math.max(maxDelay, TIME_UNHIGHLIGHT);
-				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_UNHIGHLIGHT, boxedList);
+				delay = skipDelays ? 0 : TIME_UNHIGHLIGHT;
 				break;
 			case "translate":
 				var source = animationList[i].sourceNode;
@@ -145,7 +145,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				});
 
 				maxDelay = Math.max(maxDelay, TIME_TRANSLATE);
-				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_TRANSLATE, boxedList);
+				delay = skipDelays ? 0 : TIME_TRANSLATE;
 				break;
 			case "bucket":
 				animationList[i].addBuckets.forEach(function (e) {
@@ -164,13 +164,13 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					boxedList.elem.find("td:nth-child(" + (1 + bucket[1]) + ")").addClass("end");
 				});
 				maxDelay = Math.max(maxDelay, TIME_BUCKET);
-				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_BUCKET, boxedList);
+				delay = skipDelays ? 0 : TIME_BUCKET;
 				break;
 			case "text":
 				addConsoleCard(animationList[i].text, animationList[i].cardColor);
-				var delay = TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length;
+				delay = TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length;
 				maxDelay = Math.max(maxDelay, delay);
-				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : delay, boxedList);
+				delay = skipDelays ? 0 : delay;
 				break;
 			case "visibility":
 				animationList[i].showRanges.forEach(function (e) {
@@ -182,7 +182,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 						.css("visibility", "hidden");
 				});
 				maxDelay = Math.max(maxDelay, TIME_SET_VISIBILITY);
-				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_SET_VISIBILITY, boxedList);
+				delay = skipDelays ? 0 : TIME_SET_VISIBILITY;
 				break;
 			case "swap":
 				var node1 = animationList[i].nodePair[0] + 1;
@@ -247,20 +247,26 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 							ghostRight.css("top", -Math.sin(Math.PI * (now - fx.end) / (fx.start - fx.end)) * parentRight.height() + posRight.top);
 						}
 					});
+					maxDelay = Math.max(maxDelay, TIME_SWAP);
+					delay = skipDelays ? 0 : TIME_SWAP;
 				}
 				break;
 			case "bundle":
 				//console.log(animationList[i]);
-				var delay = boxedList.animate(animationList[i].animations, true);
+				delay = boxedList.animate(animationList[i].animations, true);
 				//console.log(delay);
-				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : delay, boxedList);
 				maxDelay = Math.max(maxDelay, delay);
+				delay = skipDelays ? 0 : delay;
 				break;
 			default:
 				break;
 		}
-
 		i++;
+		if (delay > 0) {
+			boxedList.animating = setTimeout(doAnim, delay, boxedList);
+		} else {
+			doAnim(boxedList);
+		}
 	};
 	doAnim(this);
 	return maxDelay;
