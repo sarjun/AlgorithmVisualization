@@ -111,6 +111,7 @@ div.circle:hover {
 
 div.node-list-container {
     position: absolute;
+    pointer-events: none;
     width: 100%;
     text-align: center;
 }
@@ -126,6 +127,7 @@ div.node-list-container.result {
 *.node-list {
     display: inline-block;
     border-collapse: collapse;
+    pointer-events: auto;
     border-spacing: 0;
 }
 *.node-list td {

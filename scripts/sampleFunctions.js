@@ -88,8 +88,10 @@ function mergeSort(tracker, list) {
 	bucket = getEmptyBucketAnimation();
 	bucket.addBuckets.push([list.length / 2, list.length - 1]);
 	tracker.currentFrame.startAnimations.push(bucket);
-	firstHalf = this.dAndC(tracker, firstHalf);
-	secondHalf = this.dAndC(tracker, secondHalf);
+	firstHalf = mergeSort(tracker, firstHalf);
+	secondHalf = mergeSort(tracker, secondHalf);
+	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, 0, list.length/2 - 1));
+	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, list.length/2, list.length - 1));
 
 	var sorted = [];
 	var first = 0, second = 0;
@@ -187,6 +189,17 @@ function getShowDestAnimation(i) {
 	var showResult = getEmptyVisibilityAnimation();
 	showResult.showRanges.push([i, i]);
 	return showResult;
+}
+
+function getDivideInputAnimation(list, start, end) {
+	var bundle = getEmptyBundleAnimation();
+	for(var i=start; i<=end; i++) {
+		var translate = getEmptyTranslateAnimation();
+		translate.sourceNodes.push(list[i]);
+		translate.destNode = list[i];
+		bundle.animations.push(translate);
+	}
+	return bundle;
 }
 
 function textAnimateSelect(val1, val2, sel) {

@@ -66,6 +66,13 @@ function getEmptyVisibilityAnimation() {
 	}
 }
 
+function getEmptyBundleAnimation() {
+	return {
+		animationType:"bundle",
+		animations: []
+	}
+}
+
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");

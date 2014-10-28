@@ -15,6 +15,7 @@ function BoxedList(parent, start, nodeList) {
 	this.nodeMap = {};
 	this.parent = parent;
 	this.buckets = new Set();
+	this.isStart = start;
 
 	var container = $("<div class='node-list-container'><table class='node-list'></table></div>");
 	container.addClass(start ? "start" : "result");
@@ -40,8 +41,9 @@ BoxedList.prototype.generateChildElement = function (thisNode) {
 	this.elem.append(childElem);
 };
 
-BoxedList.prototype.animate = function (animationList) {
+BoxedList.prototype.animate = function (animationList, skipDelays) {
 	var i = 0;
+	var maxDelay = -1;
 	var doAnim = function (boxedList) {
 		if (i >= animationList.length) {
 			boxedList.animating = null;
@@ -63,7 +65,8 @@ BoxedList.prototype.animate = function (animationList) {
 						}
 					}
 				}
-				boxedList.animating = setTimeout(doAnim, TIME_HIGHLIGHT, boxedList);
+				maxDelay = Math.max(maxDelay, TIME_HIGHLIGHT);
+				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_HIGHLIGHT, boxedList);
 				break;
 			case "unhighlight":
 				var nodes = animationList[i].nodes;
@@ -74,7 +77,8 @@ BoxedList.prototype.animate = function (animationList) {
 						}
 					}
 				}
-				boxedList.animating = setTimeout(doAnim, TIME_UNHIGHLIGHT, boxedList);
+				maxDelay = Math.max(maxDelay, TIME_UNHIGHLIGHT);
+				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_UNHIGHLIGHT, boxedList);
 				break;
 			case "translate":
 				var nodes = animationList[i].sourceNodes;
@@ -98,7 +102,8 @@ BoxedList.prototype.animate = function (animationList) {
 						}
 					}
 				}
-				boxedList.animating = setTimeout(doAnim, TIME_TRANSLATE, boxedList);
+				maxDelay = Math.max(maxDelay, TIME_TRANSLATE);
+				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_TRANSLATE, boxedList);
 				break;
 			case "bucket":
 				animationList[i].addBuckets.forEach(function (e) {
@@ -116,11 +121,14 @@ BoxedList.prototype.animate = function (animationList) {
 					boxedList.elem.find("td:nth-child(" + (1 + bucket[0]) + ")").addClass("start");
 					boxedList.elem.find("td:nth-child(" + (1 + bucket[1]) + ")").addClass("end");
 				});
-				boxedList.animating = setTimeout(doAnim, TIME_BUCKET, boxedList);
+				maxDelay = Math.max(maxDelay, TIME_BUCKET);
+				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_BUCKET, boxedList);
 				break;
 			case "text":
 				addConsoleCard(animationList[i].text, animationList[i].cardColor);
-				boxedList.animating = setTimeout(doAnim, TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length, boxedList);
+				var delay = TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length;
+				maxDelay = Math.max(maxDelay, delay);
+				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : delay, boxedList);
 				break;
 			case "visibility":
 				animationList[i].showRanges.forEach(function (e) {
@@ -131,8 +139,13 @@ BoxedList.prototype.animate = function (animationList) {
 					boxedList.elem.find("td").slice(e[0], e[1] + 1)
 						.css("visibility", "hidden");
 				});
-				boxedList.animating = setTimeout(doAnim, TIME_SET_VISIBILITY, boxedList);
+				maxDelay = Math.max(maxDelay, TIME_SET_VISIBILITY);
+				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_SET_VISIBILITY, boxedList);
 				break;
+			case "bundle":
+				var delay = boxedList.animate(animationList[i].animations);
+				maxDelay = Math.max(maxDelay, delay);
+				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : delay, boxedList);
 			default:
 				break;
 		}
@@ -140,4 +153,5 @@ BoxedList.prototype.animate = function (animationList) {
 		i++;
 	};
 	doAnim(this);
+	return maxDelay;
 };
