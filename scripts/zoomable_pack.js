@@ -10,8 +10,9 @@ var cardConsole;
 
 function init() {
 	if (data == null) return;
+	initAlgorithm(funcName);
 	var mainPanel = $("core-header-panel[main]");
-	initList = document.querySelector("#init-list");
+	initList = document.querySelector("#param0");
 	btnSetRoot = document.querySelector("#btnSetRoot");
 	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden"
 	mainDiv = $("<div class='main'></div>");
@@ -40,6 +41,13 @@ function init() {
 	});
 
 	initConsole();
+}
+
+function initAlgorithm(funcName) {
+	var params = parameterMapping[funcName];
+	for (var i in params) {
+		$("section#params").append('<paper-input floatingLabel id="param' + i + '" label="' + params[i] + '"></paper-input>');
+	}
 }
 
 function initConsole() {

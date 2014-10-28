@@ -3,6 +3,7 @@ var funcMapping = {};
 var overviewMapping = {};
 var divideMapping = {};
 var conquerMapping = {};
+var parameterMapping = {};
 
 var funcName = "";
 
@@ -13,7 +14,7 @@ funcName = "Skyline";
 funcNames.push(funcName);
 
 function skyline(buildings) {
-	if(buildings.length == 1) return [0,0, buildings];
+	if (buildings.length == 1) return [0, 0, buildings];
 
 	var half1 = buildings.slice(0, Math.floor(buildings.length / 2));
 	var half2 = buildings.slice(Math.floor(buildings.length / 2), buildings.length);
@@ -28,24 +29,24 @@ function skyline(buildings) {
 	var i = 0;
 	var j = 0;
 	var sorted = [];
-	while(i < half1.length && j < half2.length) {
-		if(half1[i] < half2[j]) {
+	while (i < half1.length && j < half2.length) {
+		if (half1[i] < half2[j]) {
 			sub[0] += half2.length - j;
 			sorted.push(half1[i]);
 			i++;
 		}
-		else if(half1[i] > half2[j]) {
+		else if (half1[i] > half2[j]) {
 			sub[1] += half1.length - i;
 			sorted.push(half2[j]);
 			j++;
 		}
-		if(i==half1.length) {
-			while(j < half2.length) {
+		if (i == half1.length) {
+			while (j < half2.length) {
 				sorted.push(half2[j++]);
 			}
 		}
-		if(j==half2.length) {
-			while(i < half1.length) {
+		if (j == half2.length) {
+			while (i < half1.length) {
 				sorted.push(half1[i++]);
 			}
 		}
@@ -76,22 +77,22 @@ function mergeSort(tracker, list) {
 	// eventually this would come from the web page
 	// for now, we will use mergesort
 	tracker.logEntry(list);
-	if(list.length == 1) {
+	if (list.length == 1) {
 		tracker.logExit(list);
 		return list;
 	}
-	var firstHalf = list.slice(0, list.length/2);
-	var secondHalf = list.slice(list.length/2);
+	var firstHalf = list.slice(0, Math.floor(list.length / 2));
+	var secondHalf = list.slice(Math.floor(list.length / 2));
 	var bucket = getEmptyBucketAnimation();
-	bucket.addBuckets.push([0, list.length / 2 - 1]);
+	bucket.addBuckets.push([0, Math.floor(list.length / 2) - 1]);
 	tracker.currentFrame.startAnimations.push(bucket);
 	bucket = getEmptyBucketAnimation();
-	bucket.addBuckets.push([list.length / 2, list.length - 1]);
+	bucket.addBuckets.push([Math.floor(list.length / 2), list.length - 1]);
 	tracker.currentFrame.startAnimations.push(bucket);
 	firstHalf = mergeSort(tracker, firstHalf);
 	secondHalf = mergeSort(tracker, secondHalf);
-	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, 0, list.length/2 - 1, 0));
-	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, list.length/2, list.length - 1, 1));
+	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, 0, Math.floor(list.length / 2) - 1, 0));
+	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, Math.floor(list.length / 2), list.length - 1, 1));
 
 	var sorted = [];
 	var first = 0, second = 0;
@@ -106,8 +107,8 @@ function mergeSort(tracker, list) {
 	highlightStart.lists.push("end");
 	highlightStart.lists.push("end");
 	tracker.currentFrame.endAnimations.push(highlightStart);
-	for(var i=0; i<list.length; i++) {
-		if(first == firstHalf.length) {
+	for (var i = 0; i < list.length; i++) {
+		if (first == firstHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNode = secondHalf[second];
 			translate.destNode = secondHalf[second];
@@ -133,7 +134,7 @@ function mergeSort(tracker, list) {
 			}
 			continue;
 		}
-		if(second == secondHalf.length) {
+		if (second == secondHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNode = firstHalf[first];
 			translate.destNode = firstHalf[first];
@@ -149,7 +150,7 @@ function mergeSort(tracker, list) {
 			unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
-			if(first < firstHalf.length) {
+			if (first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(firstHalf[first]);
 				highlight.circles.push(0);
@@ -161,7 +162,7 @@ function mergeSort(tracker, list) {
 		//console.log(first);
 		//console.log(firstHalf);
 		//console.log(firstHalf.length);
-		if(firstHalf[first].value > secondHalf[second].value) {
+		if (firstHalf[first].value > secondHalf[second].value) {
 			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, secondHalf[second].value));
 			var translate = getEmptyTranslateAnimation();
@@ -179,14 +180,14 @@ function mergeSort(tracker, list) {
 			unhighlight.nodes.push(secondHalf[second]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
-			if(second < secondHalf.length) {
+			if (second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(secondHalf[second]);
 				highlight.circles.push(1);
 				highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
-			if(second == secondHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(1));
+			if (second == secondHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(1));
 		}
 		else {
 			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
@@ -206,14 +207,14 @@ function mergeSort(tracker, list) {
 			unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
-			if(first < firstHalf.length) {
+			if (first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(firstHalf[first]);
 				highlight.circles.push(0);
 				highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
-			if(first == firstHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(2));
+			if (first == firstHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(2));
 		}
 	}
 
@@ -229,7 +230,7 @@ function getShowDestAnimation(i) {
 
 function getDivideInputAnimation(list, start, end, circle) {
 	var bundle = getEmptyBundleAnimation();
-	for(var i=start; i<=end; i++) {
+	for (var i = start; i <= end; i++) {
 		var translate = getEmptyTranslateAnimation();
 		translate.sourceNode = list[i];
 		translate.destNode = list[i];
@@ -253,7 +254,7 @@ function textAnimateSelect(val1, val2, sel) {
 
 function textAnimateDoneList(num) {
 	var anim = getEmptyTextAnimation();
-	anim.text = "Now we just add the remaining elements from the " + (num==1 ? "first" : "second") + " list.";
+	anim.text = "Now we just add the remaining elements from the " + (num == 1 ? "first" : "second") + " list.";
 	anim.cardColor = "lightcyan";
 
 	return anim;
@@ -265,7 +266,7 @@ overviewMapping[funcName] = "This function sorts a list of elements by recursive
 divideMapping[funcName] = "The input list is divided into two halves by splitting in the middle.";
 conquerMapping[funcName] = "The two sorted halves are merged by iteratively selecting elements from the two sorted halves " +
 "in overall sorted order.";
-
+parameterMapping[funcName] = ["Input List"];
 
 // ******************
 // Quick Select
@@ -340,12 +341,11 @@ function quickSelect(tracker, k, list, selMedian) {
 	var donePivot = false;
 	var partitioned = [pivot];
 	var pivotIndex = 0;
-	for(var i=0; i<list.length; i++) {
-		if(list[i].value==pivot.value && !donePivot) {
+	for (var i = 0; i < list.length; i++) {
+		if (list[i].value == pivot.value && !donePivot) {
 			donePivot = true;
-			continue;
 		}
-		else if(list[i].value > pivot.value) {
+		else if (list[i].value > pivot.value) {
 			partitioned.push(list[i]);
 		}
 		else {
@@ -378,9 +378,11 @@ function quickSelect(tracker, k, list, selMedian) {
 }
 
 funcMapping[funcName] = quickSelect;
-overviewMapping[funcName] = "TODO";
-divideMapping[funcName] = "TODO";
-conquerMapping[funcName] = "TODO";
+overviewMapping[funcName] = "This function selects the kth smallest element from the input list.";
+divideMapping[funcName] = "The input list is divided into the medians of buckets of size 5. " +
+"The median of these medians is then used as a pivot to partition the input list.";
+conquerMapping[funcName] = "The return value is simply the value returned by the second recursive call.";
+parameterMapping[funcName] = ["K", "Input List"];
 
 // Set Starting Function
 funcName = "Quick Select";
