@@ -5,10 +5,11 @@
 
 var TIME_HIGHLIGHT = 1000;
 var TIME_TRANSLATE = 1000;
-var TIME_UNHIGHLIGHT = 300;
+var TIME_UNHIGHLIGHT = 100;
 var TIME_BUCKET = 1000;
 var TIME_TEXT_PER_WORD = 300;
 var TIME_SET_VISIBILITY = 0;
+var TIME_SWAP = 750;
 
 function BoxedList(parent, start, nodeList) {
 	this.nodeList = nodeList;
@@ -44,19 +45,19 @@ BoxedList.prototype.generateChildElement = function (thisNode) {
 BoxedList.prototype.animate = function (animationList, skipDelays) {
 	var i = 0;
 	var maxDelay = -1;
+	var childEndLists = [];
+	for (var j = 0; j < this.parent.children.length; j++) {
+		childEndLists.push(this.parent.children[j].endList.nodeMap);
+	}
+	var childStartLists = [];
+	for (var j = 0; j < this.parent.children.length; j++) {
+		childStartLists.push(this.parent.children[j].startList.nodeMap);
+	}
 	var doAnim = function (boxedList) {
+		// TODO: We probably shouldn't calculate this every time an animation occurs!! Maybe once when the animation starts?
 		if (i >= animationList.length) {
 			boxedList.animating = null;
 			return;
-		}
-		// TODO: We probably shouldn't calculate this every time an animation occurs!! Maybe once when the animation starts?
-		var childEndLists = [];
-		for (var j = 0; j < boxedList.parent.children.length; j++) {
-			childEndLists.push(boxedList.parent.children[j].endList.nodeMap);
-		}
-		var childStartLists = [];
-		for (var j = 0; j < boxedList.parent.children.length; j++) {
-			childStartLists.push(boxedList.parent.children[j].startList.nodeMap);
 		}
 		switch (animationList[i].animationType) {
 			case "highlight":
@@ -86,7 +87,6 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_UNHIGHLIGHT, boxedList);
 				break;
 			case "translate":
-				console.log(animationList[i]);
 				var source = animationList[i].sourceNode;
 				var sourceElem = null;
 				if(animationList[i].sourceCircle == -1) {
@@ -131,8 +131,6 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					}
 				}
 
-				console.log(sourceElem);
-				console.log(destElem);
 				var sourcePosition = offsetFrom(sourceElem, mainDiv);
 				var ghost = $(sourceElem[0].outerHTML);
 				ghost.addClass("ghost");
@@ -141,7 +139,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					width: sourceElem.width(),
 					height: sourceElem.height()
 				}).css(sourcePosition);
-				$("div.main").append(ghost);
+				mainDiv.append(ghost);
 				ghost.animate(offsetFrom(destElem, mainDiv), TIME_TRANSLATE, function () {
 					ghost.remove();
 				});
@@ -186,10 +184,75 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				maxDelay = Math.max(maxDelay, TIME_SET_VISIBILITY);
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_SET_VISIBILITY, boxedList);
 				break;
+			case "swap":
+				var node1 = animationList[i].nodePair[0] + 1;
+				var node2 = animationList[i].nodePair[1] + 1;
+				if (node1 != node2) {
+					var elem1 = boxedList.elem.find("td:nth-child(" + node1 + ") span");
+					var elem2 = boxedList.elem.find("td:nth-child(" + node2 + ") span");
+					var pos1 = offsetFrom(elem1, mainDiv);
+					var pos2 = offsetFrom(elem2, mainDiv);
+					var elemLeft = null, elemRight = null;
+					var posLeft = null, posRight = null;
+					if (pos1.left < pos2.left) {
+						elemLeft = elem1;
+						posLeft = pos1;
+						elemRight = elem2;
+						posRight = pos2;
+					} else {
+						elemLeft = elem2;
+						posLeft = pos2;
+						elemRight = elem1;
+						posRight = pos1;
+					}
+					var ghostLeft = $(elemLeft[0].outerHTML);
+					var ghostRight = $(elemRight[0].outerHTML);
+					ghostLeft.addClass("ghost");
+					ghostRight.addClass("ghost");
+					ghostLeft.css({
+						position: "absolute",
+						width: elemLeft.width(),
+						height: elemLeft.height()
+					}).css(posLeft);
+					ghostRight.css({
+						position: "absolute",
+						width: elemRight.width(),
+						height: elemRight.height()
+					}).css(posRight);
+					mainDiv.append(ghostLeft);
+					mainDiv.append(ghostRight);
+					elemLeft.css("visibility", "hidden");
+					elemRight.css("visibility", "hidden");
+					var parentLeft = elemLeft.parent();
+					var parentRight = elemRight.parent();
+					parentLeft.append(elemRight);
+					parentRight.append(elemLeft);
+					ghostLeft.animate(posRight,{
+						duration: TIME_SWAP,
+						complete: function () {
+							elemLeft.css("visibility", "initial");
+							ghostLeft.remove();
+						},
+						step: function (now, fx) {
+							ghostLeft.css("top", Math.sin(Math.PI * (now - fx.end) / (fx.start - fx.end)) * parentLeft.height() + posLeft.top);
+						}
+					});
+					ghostRight.animate(posLeft,{
+						duration: TIME_SWAP,
+						complete: function () {
+							elemRight.css("visibility", "initial");
+							ghostRight.remove();
+						},
+						step: function (now, fx) {
+							ghostRight.css("top", -Math.sin(Math.PI * (now - fx.end) / (fx.start - fx.end)) * parentRight.height() + posRight.top);
+						}
+					});
+				}
+				break;
 			case "bundle":
-				console.log(animationList[i]);
+				//console.log(animationList[i]);
 				var delay = boxedList.animate(animationList[i].animations, true);
-				console.log(delay);
+				//console.log(delay);
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : delay, boxedList);
 				maxDelay = Math.max(maxDelay, delay);
 				break;
