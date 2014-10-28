@@ -31,7 +31,11 @@ function getEmptyTranslateAnimation() {
 	return {
 		animationType:"translate",
 		sourceNode:null,
-		destNode:null
+		destNode:null,
+		sourceCircle:null,
+		sourceList:null,
+		destCircle:null,
+		destList:null
 	}
 }
 

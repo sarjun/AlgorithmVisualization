@@ -49,9 +49,14 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			boxedList.animating = null;
 			return;
 		}
-		var childLists = [];
+		// We probably shouldn't calculate this every time an animation occurs!! Maybe once when the animation starts?
+		var childEndLists = [];
 		for (var j = 0; j < boxedList.parent.children.length; j++) {
-			childLists.push(boxedList.parent.children[j].endList.nodeMap);
+			childEndLists.push(boxedList.parent.children[j].endList.nodeMap);
+		}
+		var childStartLists = [];
+		for (var j = 0; j < boxedList.parent.children.length; j++) {
+			childStartLists.push(boxedList.parent.children[j].startList.nodeMap);
 		}
 		switch (animationList[i].animationType) {
 			case "highlight":
@@ -59,9 +64,9 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var nodes = animationList[i].nodes;
 				var color = animationList[i].color;
 				for (var j = 0; j < nodes.length; j++) {
-					for (var k = 0; k < childLists.length; k++) {
-						if (childLists[k].hasOwnProperty(nodes[j].id)) {
-							childLists[k][nodes[j].id].css("border-color", color);
+					for (var k = 0; k < childEndLists.length; k++) {
+						if (childEndLists[k].hasOwnProperty(nodes[j].id)) {
+							childEndLists[k][nodes[j].id].css("border-color", color);
 						}
 					}
 				}
@@ -71,9 +76,9 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			case "unhighlight":
 				var nodes = animationList[i].nodes;
 				for (var j = 0; j < nodes.length; j++) {
-					for (var k = 0; k < childLists.length; k++) {
-						if (childLists[k].hasOwnProperty(nodes[j].id)) {
-							childLists[k][nodes[j].id].css("border-color", "black");
+					for (var k = 0; k < childEndLists.length; k++) {
+						if (childEndLists[k].hasOwnProperty(nodes[j].id)) {
+							childEndLists[k][nodes[j].id].css("border-color", "black");
 						}
 					}
 				}
@@ -82,24 +87,62 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				break;
 			case "translate":
 				var source = animationList[i].sourceNode;
-				var dest = boxedList.nodeMap[animationList[i].destNode.id];
-				for (var k = 0; k < childLists.length; k++) {
-					if (childLists[k].hasOwnProperty(source.id)) {
-						var childElem = childLists[k][source.id];
-						var childPosition = offsetFrom(childElem, mainDiv);
-						var ghost = $(childElem[0].outerHTML);
-						ghost.addClass("ghost");
-						ghost.css({
-							position: "absolute",
-							width: childElem.width(),
-							height: childElem.height()
-						}).css(childPosition);
-						$("div.main").append(ghost);
-						ghost.animate(offsetFrom(dest, mainDiv), TIME_TRANSLATE, function () {
-							$("div.main .ghost").remove();
-						});
+				var sourceElem = null;
+				if(animationList[i].sourceCircle == -1) {
+					if((animationList[i].sourceList == "start") == boxedList.isStart) {
+						sourceElem = boxedList.nodeMap[source.id];
+					}
+					else {
+						if(boxedList.isStart) {
+							sourceElem = boxedList.parent.endList.nodeMap[animationList[i].sourceNode.id];
+						}
+						else {
+							sourceElem = boxedList.parent.startList.nodeMap[source.id];
+						}
 					}
 				}
+				else {
+					var search = animationList[i].sourceList == "start" ? childStartLists : childEndLists;
+					if (search[animationList[i].sourceCircle].hasOwnProperty(source.id)) {
+						sourceElem = search[animationList[i].sourceCircle][source.id];
+					}
+				}
+
+				var dest = animationList[i].destNode;
+				var destElem = null;
+				if(animationList[i].destCircle == -1) {
+					if((animationList[i].destList == "start") == boxedList.isStart) {
+						destElem = boxedList.nodeMap[animationList[i].destNode.id];
+					}
+					else {
+						if(boxedList.isStart) {
+							destElem = boxedList.parent.endList.nodeMap[dest.id];
+						}
+						else {
+							destElem = boxedList.parent.startList.nodeMap[dest.id];
+						}
+					}
+				}
+				else {
+					var search = animationList[i].destList == "start" ? childStartLists : childEndLists;
+					if (search[animationList[i].destCircle].hasOwnProperty(dest.id)) {
+						destElem = search[animationList[i].destCircle][dest.id];
+					}
+				}
+
+				var sourcePosition = offsetFrom(sourceElem, mainDiv);
+				var ghost = $(sourceElem[0].outerHTML);
+				ghost.addClass("ghost");
+				ghost.css({
+					position: "absolute",
+					width: sourceElem.width(),
+					height: sourceElem.height()
+				}).css(sourcePosition);
+				$("div.main").append(ghost);
+				ghost.animate(offsetFrom(destElem, mainDiv), TIME_TRANSLATE, function () {
+					$("div.main .ghost").remove();
+				});
+
 				maxDelay = Math.max(maxDelay, TIME_TRANSLATE);
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_TRANSLATE, boxedList);
 				break;
@@ -141,6 +184,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_SET_VISIBILITY, boxedList);
 				break;
 			case "bundle":
+				console.log(animationList[i]);
 				var delay = boxedList.animate(animationList[i].animations);
 				maxDelay = Math.max(maxDelay, delay);
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : delay, boxedList);

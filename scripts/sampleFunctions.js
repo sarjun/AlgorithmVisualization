@@ -90,8 +90,8 @@ function mergeSort(tracker, list) {
 	tracker.currentFrame.startAnimations.push(bucket);
 	firstHalf = mergeSort(tracker, firstHalf);
 	secondHalf = mergeSort(tracker, secondHalf);
-	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, 0, list.length/2 - 1));
-	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, list.length/2, list.length - 1));
+	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, 0, list.length/2 - 1, 0));
+	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, list.length/2, list.length - 1, 1));
 
 	var sorted = [];
 	var first = 0, second = 0;
@@ -107,6 +107,10 @@ function mergeSort(tracker, list) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNode = secondHalf[second];
 			translate.destNode = secondHalf[second];
+			translate.sourceCircle = 1;
+			translate.sourceList = "end";
+			translate.destCircle = -1;
+			translate.destList = "end";
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
@@ -125,6 +129,10 @@ function mergeSort(tracker, list) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNode = firstHalf[first];
 			translate.destNode = firstHalf[first];
+			translate.sourceCircle = 0;
+			translate.sourceList = "end";
+			translate.destCircle = -1;
+			translate.destList = "end";
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
@@ -147,6 +155,10 @@ function mergeSort(tracker, list) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNode = secondHalf[second];
 			translate.destNode = secondHalf[second];
+			translate.sourceCircle = 1;
+			translate.sourceList = "end";
+			translate.destCircle = -1;
+			translate.destList = "end";
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
@@ -166,6 +178,10 @@ function mergeSort(tracker, list) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNode = firstHalf[first];
 			translate.destNode = firstHalf[first];
+			translate.sourceCircle = 0;
+			translate.sourceList = "end";
+			translate.destCircle = -1;
+			translate.destList = "end";
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
@@ -191,12 +207,16 @@ function getShowDestAnimation(i) {
 	return showResult;
 }
 
-function getDivideInputAnimation(list, start, end) {
+function getDivideInputAnimation(list, start, end, circle) {
 	var bundle = getEmptyBundleAnimation();
 	for(var i=start; i<=end; i++) {
 		var translate = getEmptyTranslateAnimation();
 		translate.sourceNode = list[i];
 		translate.destNode = list[i];
+		translate.sourceCircle = -1;
+		translate.sourceList = "start";
+		translate.destCircle = circle;
+		translate.destList = "start";
 		bundle.animations.push(translate);
 	}
 	return bundle;
