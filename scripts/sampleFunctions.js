@@ -271,28 +271,71 @@ conquerMapping[funcName] = "The two sorted halves are merged by iteratively sele
 // Quick Select
 // ******************
 funcName = "Quick Select";
-function quickSelect(k, list) {
+function quickSelect(tracker, k, list, selMedian) {
+	//console.log(k + " from " + list.map(function(elem) {
+	//	return elem.value;
+	//}));
+	tracker.logEntry(list);
+	console.log("entry: " + tracker.currentFrame);
 	// Base case
-	if(list.length == 1) {
-		if(k!=0) {
-			console.log("shouldn't happen " + k);
+	if(list.length <= 5) {
+		if(k > 4) {
+			console.log("shouldn't happen!");
 			return null;
 		}
-		else return list[0];
+		else {
+			list.sort(function(a, b) {
+				return a.value - b.value;
+			});
+			console.log("exit: " + list[0].value);
+			tracker.logExit([list[0]]);
+			console.log(tracker.currentFrame);
+			return list[0];
+		}
 	}
 
 	// Get the list of medians in buckets of size 5
 	var medians = [];
+	var bucketAnim = getEmptyBucketAnimation();
+	var sortAnim = getEmptyBundleAnimation();
+	var medianSelAnim = getEmptyHighlightAnimation();
+	var medianListAnim = getEmptyBundleAnimation();
 	for(var i=0; i<list.length; i+=5) {
 		var bucket = list.slice(i, i+5);
+		bucketAnim.addBuckets.push([i, Math.min(i+4, list.length - 1)]);
+		var forTranslate = bucket.slice(0);
 		bucket.sort(function(a, b) {
 			return a.value - b.value;
 		});
+		for(var j=0; j<bucket.length; j++) {
+			var translate = getEmptyTranslateAnimation();
+			translate.sourceCircle = translate.destCircle = -1;
+			translate.sourceList = translate.destList = "start";
+			translate.sourceNode = bucket[j];
+			translate.destNode = forTranslate.filter(function(elem) {
+				return elem.id == bucket[j].id;
+			})[0];
+			sortAnim.animations.push(translate);
+		}
 		medians.push(bucket[Math.floor(bucket.length / 2)]);
+		medianSelAnim.nodes.push(bucket[Math.floor(bucket.length / 2)]);
+		medianSelAnim.circles.push(-1);
+		medianSelAnim.lists.push("start");
 	}
+	for(var i=0; i<medianSelAnim.nodes.length; i++) {
+		var translate = getEmptyTranslateAnimation();
+		translate.sourceCircle = -1;
+		translate.destCircle = 0;
+		translate.sourceList = translate.destList = "start";
+		translate.sourceNode = translate.destNode = medianSelAnim.nodes[i];
+		medianListAnim.animations.push(translate);
+	}
+	tracker.currentFrame.startAnimations.push(bucketAnim);
+	tracker.currentFrame.startAnimations.push(sortAnim);
+	tracker.currentFrame.startAnimations.push(medianSelAnim);
+	tracker.currentFrame.startAnimations.push(medianListAnim);
 
-
-	var pivot = quickSelect(Math.floor(medians.length / 2), medians);
+	var pivot = quickSelect(tracker, Math.floor(medians.length / 2), medians, true);
 	// Check if the pivot is the kth value. If not, recurse on the greater partition or the lesser partition
 	var donePivot = false;
 	var partitioned = [pivot];
@@ -311,12 +354,33 @@ function quickSelect(k, list) {
 		}
 	}
 
-	if(pivotIndex == k) return pivot;
+	if(pivotIndex == k) {
+		quickSelect(tracker, 0, [pivot], false);
+		tracker.logExit([pivot]);
+		return pivot;
+	}
 	else {
-		if(pivotIndex > k) return quickSelect(k, partitioned.slice(0, pivotIndex));
-		else return quickSelect(k - pivotIndex, partitioned.slice(pivotIndex));
+		if(pivotIndex > k) {
+			var answer = quickSelect(tracker, k, partitioned.slice(0, pivotIndex), false);
+			tracker.logExit([answer]);
+			console.log("exit: " + answer.value);
+			console.log(tracker.currentFrame);
+			return answer;
+		}
+		else {
+			var answer = quickSelect(tracker, k - pivotIndex, partitioned.slice(pivotIndex), false);
+			tracker.logExit([answer]);
+			console.log("exit: " + answer.value);
+			console.log(tracker.currentFrame);
+			return answer;
+		}
 	}
 }
 
+funcMapping[funcName] = quickSelect;
+overviewMapping[funcName] = "TODO";
+divideMapping[funcName] = "TODO";
+conquerMapping[funcName] = "TODO";
+
 // Set Starting Function
-funcName = "Merge Sort";
+funcName = "Quick Select";
