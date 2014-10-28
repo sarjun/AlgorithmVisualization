@@ -81,25 +81,23 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_UNHIGHLIGHT, boxedList);
 				break;
 			case "translate":
-				var nodes = animationList[i].sourceNodes;
+				var source = animationList[i].sourceNode;
 				var dest = boxedList.nodeMap[animationList[i].destNode.id];
-				for (var j = 0; j < nodes.length; j++) {
-					for (var k = 0; k < childLists.length; k++) {
-						if (childLists[k].hasOwnProperty(nodes[j].id)) {
-							var childElem = childLists[k][nodes[j].id];
-							var childPosition = offsetFrom(childElem, mainDiv);
-							var ghost = $(childElem[0].outerHTML);
-							ghost.addClass("ghost");
-							ghost.css({
-								position: "absolute",
-								width: childElem.width(),
-								height: childElem.height()
-							}).css(childPosition);
-							$("div.main").append(ghost);
-							ghost.animate(offsetFrom(dest, mainDiv), TIME_TRANSLATE, function () {
-								$("div.main .ghost").remove();
-							});
-						}
+				for (var k = 0; k < childLists.length; k++) {
+					if (childLists[k].hasOwnProperty(source.id)) {
+						var childElem = childLists[k][source.id];
+						var childPosition = offsetFrom(childElem, mainDiv);
+						var ghost = $(childElem[0].outerHTML);
+						ghost.addClass("ghost");
+						ghost.css({
+							position: "absolute",
+							width: childElem.width(),
+							height: childElem.height()
+						}).css(childPosition);
+						$("div.main").append(ghost);
+						ghost.animate(offsetFrom(dest, mainDiv), TIME_TRANSLATE, function () {
+							$("div.main .ghost").remove();
+						});
 					}
 				}
 				maxDelay = Math.max(maxDelay, TIME_TRANSLATE);

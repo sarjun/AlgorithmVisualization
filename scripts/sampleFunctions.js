@@ -105,7 +105,7 @@ function mergeSort(tracker, list) {
 	for(var i=0; i<list.length; i++) {
 		if(first == firstHalf.length) {
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceNodes.push(secondHalf[second]);
+			translate.sourceNode = secondHalf[second];
 			translate.destNode = secondHalf[second];
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
@@ -123,7 +123,7 @@ function mergeSort(tracker, list) {
 		}
 		if(second == secondHalf.length) {
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceNodes.push(firstHalf[first]);
+			translate.sourceNode = firstHalf[first];
 			translate.destNode = firstHalf[first];
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
@@ -145,7 +145,7 @@ function mergeSort(tracker, list) {
 			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, secondHalf[second].value));
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceNodes.push(secondHalf[second]);
+			translate.sourceNode = secondHalf[second];
 			translate.destNode = secondHalf[second];
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
@@ -164,7 +164,7 @@ function mergeSort(tracker, list) {
 			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, firstHalf[first].value));
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceNodes.push(firstHalf[first]);
+			translate.sourceNode = firstHalf[first];
 			translate.destNode = firstHalf[first];
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
@@ -195,7 +195,7 @@ function getDivideInputAnimation(list, start, end) {
 	var bundle = getEmptyBundleAnimation();
 	for(var i=start; i<=end; i++) {
 		var translate = getEmptyTranslateAnimation();
-		translate.sourceNodes.push(list[i]);
+		translate.sourceNode = list[i];
 		translate.destNode = list[i];
 		bundle.animations.push(translate);
 	}

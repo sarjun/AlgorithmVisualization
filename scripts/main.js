@@ -30,7 +30,7 @@ function getEmptyHighlightAnimation() {
 function getEmptyTranslateAnimation() {
 	return {
 		animationType:"translate",
-		sourceNodes:[],
+		sourceNode:null,
 		destNode:null
 	}
 }
