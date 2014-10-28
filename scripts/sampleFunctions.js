@@ -82,6 +82,12 @@ function mergeSort(tracker, list) {
 	}
 	var firstHalf = list.slice(0, list.length/2);
 	var secondHalf = list.slice(list.length/2);
+	var bucket = getEmptyBucketAnimation();
+	bucket.addBuckets.push([0, list.length / 2 - 1]);
+	tracker.currentFrame.startAnimations.push(bucket);
+	bucket = getEmptyBucketAnimation();
+	bucket.addBuckets.push([list.length / 2, list.length - 1]);
+	tracker.currentFrame.startAnimations.push(bucket);
 	firstHalf = this.dAndC(tracker, firstHalf);
 	secondHalf = this.dAndC(tracker, secondHalf);
 
@@ -90,22 +96,22 @@ function mergeSort(tracker, list) {
 	var highlightStart = getEmptyHighlightAnimation();
 	highlightStart.nodes.push(firstHalf[first]);
 	highlightStart.nodes.push(secondHalf[second]);
-	tracker.currentFrame.animations.push(highlightStart);
+	tracker.currentFrame.endAnimations.push(highlightStart);
 	for(var i=0; i<list.length; i++) {
 		if(first == firstHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
-			tracker.currentFrame.animations.push(translate);
+			tracker.currentFrame.endAnimations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
-			tracker.currentFrame.animations.push(unhighlight);
+			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
-			tracker.currentFrame.animations.push(unhighlight);
+			tracker.currentFrame.endAnimations.push(unhighlight);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(secondHalf[second]);
-				tracker.currentFrame.animations.push(highlight);
+				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			continue;
 		}
@@ -113,15 +119,15 @@ function mergeSort(tracker, list) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
-			tracker.currentFrame.animations.push(translate);
+			tracker.currentFrame.endAnimations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
-			tracker.currentFrame.animations.push(unhighlight);
+			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
 			if(first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(firstHalf[first]);
-				tracker.currentFrame.animations.push(highlight);
+				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			continue;
 		}
@@ -129,40 +135,40 @@ function mergeSort(tracker, list) {
 		//console.log(firstHalf);
 		//console.log(firstHalf.length);
 		if(firstHalf[first].value > secondHalf[second].value) {
-			tracker.currentFrame.animations.push(textAnimateSelect(firstHalf[first].value,
+			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, secondHalf[second].value));
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
-			tracker.currentFrame.animations.push(translate);
+			tracker.currentFrame.endAnimations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
-			tracker.currentFrame.animations.push(unhighlight);
+			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(secondHalf[second]);
-				tracker.currentFrame.animations.push(highlight);
+				tracker.currentFrame.endAnimations.push(highlight);
 			}
-			if(second == secondHalf.length) tracker.currentFrame.animations.push(textAnimateDoneList(1));
+			if(second == secondHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(1));
 		}
 		else {
-			tracker.currentFrame.animations.push(textAnimateSelect(firstHalf[first].value,
+			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, firstHalf[first].value));
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
-			tracker.currentFrame.animations.push(translate);
+			tracker.currentFrame.endAnimations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
-			tracker.currentFrame.animations.push(unhighlight);
+			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
 			if(first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(firstHalf[first]);
-				tracker.currentFrame.animations.push(highlight);
+				tracker.currentFrame.endAnimations.push(highlight);
 			}
-			if(first == firstHalf.length) tracker.currentFrame.animations.push(textAnimateDoneList(2));
+			if(first == firstHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(2));
 		}
 	}
 

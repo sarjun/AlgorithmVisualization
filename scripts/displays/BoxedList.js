@@ -6,18 +6,20 @@
 var TIME_HIGHLIGHT = 1000;
 var TIME_TRANSLATE = 1000;
 var TIME_UNHIGHLIGHT = 300;
+var TIME_BUCKET = 1000;
 var TIME_TEXT_PER_WORD = 300;
 
 function BoxedList(parent, start, nodeList) {
 	this.nodeList = nodeList;
 	this.nodeMap = {};
 	this.parent = parent;
+	this.buckets = new Set();
 
-	var container = $("<div class='node-list-container'></div>");
+	var container = $("<div class='node-list-container'><table class='node-list'></table></div>");
 	container.addClass(start ? "start" : "result");
 	parent.elem.append(container);
-	this.elem = $("<div class='node-list'></div>");
-	container.append(this.elem);
+	this.elem = $("<tr></tr>");
+	container.find("table").append(this.elem);
 }
 
 BoxedList.prototype.addNode = function (node) {
@@ -31,15 +33,15 @@ BoxedList.prototype.generateChildren = function () {
 };
 
 BoxedList.prototype.generateChildElement = function (thisNode) {
-	var childElem = $("<span class='text-node'></span>");
-	childElem.text(thisNode.value);
+	var childElem = $("<td><span class='text-node'></span></td>");
+	childElem.find("span").text(thisNode.value);
 	this.elem.append(childElem);
 	this.nodeMap[thisNode.id] = childElem;
 };
 
 BoxedList.prototype.animate = function (animationList) {
 	for (var i in this.nodeMap) {
-		this.nodeMap[i].css("visibility", "hidden");
+		//this.nodeMap[i].css("visibility", "hidden");
 	}
 	var i = 0;
 	var doAnim = function (boxedList) {
@@ -100,6 +102,24 @@ BoxedList.prototype.animate = function (animationList) {
 					}
 				}
 				boxedList.animating = setTimeout(doAnim, TIME_TRANSLATE, boxedList);
+				break;
+			case "bucket":
+				animationList[i].addBuckets.forEach(function (e) {
+					boxedList.buckets.add(e + "");
+				});
+				animationList[i].removeBuckets.forEach(function (e) {
+					boxedList.buckets.delete(e + "");
+				});
+				boxedList.elem.find("td").removeClass("bucket start end");
+				boxedList.buckets.forEach(function (e){
+					var bucket = e.split(",");
+					bucket[0] *= 1;
+					bucket[1] *= 1;
+					boxedList.elem.find("td").slice(bucket[0], bucket[1] + 1).addClass("bucket");
+					boxedList.elem.find("td:nth-child(" + (1 + bucket[0]) + ")").addClass("start");
+					boxedList.elem.find("td:nth-child(" + (1 + bucket[1]) + ")").addClass("end");
+				});
+				boxedList.animating = setTimeout(doAnim, TIME_BUCKET, boxedList);
 				break;
 			case "text":
 				addConsoleCard(animationList[i].text, animationList[i].cardColor);

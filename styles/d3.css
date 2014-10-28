@@ -123,14 +123,29 @@ div.node-list-container.result {
     bottom: 13%;
 }
 
-div.node-list {
+*.node-list {
     display: inline-block;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
-
+*.node-list td {
+    padding: 2px 1px;
+    border: 2px solid transparent;
+}
+*.node-list td.bucket {
+    border-top-color: #44b300;
+    border-bottom-color: #44b300;
+}
+*.node-list td.start {
+    border-left-color: #44b300;
+}
+*.node-list td.end {
+    border-right-color: #44b300;
+}
 span.text-node {
     padding: 0 3px;
     border: 1px solid black;
-    margin: 0 1px;
+    /*margin: 0 1px;*/
 }
 
 span.text-node.ghost {

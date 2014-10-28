@@ -13,7 +13,8 @@ function getEmptyExecutionFrame() {
 		children:[],
 		result:null,
 		originalToResult:null,
-		animations:[],
+		startAnimations:[],
+		endAnimations:[],
 		animType:"text"
 	};
 }
@@ -46,6 +47,14 @@ function getEmptyTextAnimation() {
 		animationType:"text",
 		text:null,
 		cardColor:null
+	}
+}
+
+function getEmptyBucketAnimation() {
+	return {
+		animationType:"bucket",
+		addBuckets: [],
+		removeBuckets: []
 	}
 }
 

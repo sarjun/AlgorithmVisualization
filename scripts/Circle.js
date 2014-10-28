@@ -24,7 +24,12 @@ function Circle(parent, node, size) {
 	this.endList.generateChildren();
 	this.endList.elem.bind("click", [this], function(e){
 		//console.log(node);
-		e.data[0].endList.animate(node.animations);
+		e.data[0].endList.animate(node.endAnimations);
+		e.stopPropagation();
+	});
+	this.startList.elem.bind("click", [this], function(e){
+		//console.log(node);
+		e.data[0].startList.animate(node.startAnimations);
 		e.stopPropagation();
 	});
 	//switch (node.animType) {
