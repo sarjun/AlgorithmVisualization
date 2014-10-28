@@ -74,6 +74,13 @@ function getEmptyVisibilityAnimation() {
 	}
 }
 
+function getEmptySwapAnimation() {
+	return {
+		animationType:"swap",
+		nodePair: []
+	}
+}
+
 function getEmptyBundleAnimation() {
 	return {
 		animationType:"bundle",
