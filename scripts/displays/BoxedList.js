@@ -49,7 +49,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			boxedList.animating = null;
 			return;
 		}
-		// We probably shouldn't calculate this every time an animation occurs!! Maybe once when the animation starts?
+		// TODO: We probably shouldn't calculate this every time an animation occurs!! Maybe once when the animation starts?
 		var childEndLists = [];
 		for (var j = 0; j < boxedList.parent.children.length; j++) {
 			childEndLists.push(boxedList.parent.children[j].endList.nodeMap);
@@ -86,6 +86,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : TIME_UNHIGHLIGHT, boxedList);
 				break;
 			case "translate":
+				console.log(animationList[i]);
 				var source = animationList[i].sourceNode;
 				var sourceElem = null;
 				if(animationList[i].sourceCircle == -1) {
@@ -130,6 +131,8 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					}
 				}
 
+				console.log(sourceElem);
+				console.log(destElem);
 				var sourcePosition = offsetFrom(sourceElem, mainDiv);
 				var ghost = $(sourceElem[0].outerHTML);
 				ghost.addClass("ghost");
@@ -140,7 +143,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				}).css(sourcePosition);
 				$("div.main").append(ghost);
 				ghost.animate(offsetFrom(destElem, mainDiv), TIME_TRANSLATE, function () {
-					$("div.main .ghost").remove();
+					ghost.remove();
 				});
 
 				maxDelay = Math.max(maxDelay, TIME_TRANSLATE);
@@ -185,9 +188,11 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				break;
 			case "bundle":
 				console.log(animationList[i]);
-				var delay = boxedList.animate(animationList[i].animations);
-				maxDelay = Math.max(maxDelay, delay);
+				var delay = boxedList.animate(animationList[i].animations, true);
+				console.log(delay);
 				boxedList.animating = setTimeout(doAnim, skipDelays ? 0 : delay, boxedList);
+				maxDelay = Math.max(maxDelay, delay);
+				break;
 			default:
 				break;
 		}
