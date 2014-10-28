@@ -8,6 +8,7 @@ var TIME_TRANSLATE = 1000;
 var TIME_UNHIGHLIGHT = 300;
 var TIME_BUCKET = 1000;
 var TIME_TEXT_PER_WORD = 300;
+var TIME_SET_VISIBILITY = 0;
 
 function BoxedList(parent, start, nodeList) {
 	this.nodeList = nodeList;
@@ -40,9 +41,6 @@ BoxedList.prototype.generateChildElement = function (thisNode) {
 };
 
 BoxedList.prototype.animate = function (animationList) {
-	for (var i in this.nodeMap) {
-		//this.nodeMap[i].css("visibility", "hidden");
-	}
 	var i = 0;
 	var doAnim = function (boxedList) {
 		if (i >= animationList.length) {
@@ -95,7 +93,6 @@ BoxedList.prototype.animate = function (animationList) {
 							}).css(childPosition);
 							$("div.main").append(ghost);
 							ghost.animate(offsetFrom(dest, mainDiv), TIME_TRANSLATE, function () {
-								dest.css("visibility", "initial");
 								$("div.main .ghost").remove();
 							});
 						}
@@ -124,6 +121,18 @@ BoxedList.prototype.animate = function (animationList) {
 			case "text":
 				addConsoleCard(animationList[i].text, animationList[i].cardColor);
 				boxedList.animating = setTimeout(doAnim, TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length, boxedList);
+				break;
+			case "visibility":
+				animationList[i].showRanges.forEach(function (e) {
+					boxedList.elem.find("td").slice(e[0], e[1] + 1)
+						.css("visibility", "initial");
+				});
+				animationList[i].hideRanges.forEach(function (e) {
+					boxedList.elem.find("td").slice(e[0], e[1] + 1)
+						.css("visibility", "hidden");
+				});
+				boxedList.animating = setTimeout(doAnim, TIME_SET_VISIBILITY, boxedList);
+				break;
 			default:
 				break;
 		}

@@ -93,6 +93,9 @@ function mergeSort(tracker, list) {
 
 	var sorted = [];
 	var first = 0, second = 0;
+	var hideResult = getEmptyVisibilityAnimation();
+	hideResult.hideRanges.push([0, list.length]);
+	tracker.currentFrame.endAnimations.push(hideResult);
 	var highlightStart = getEmptyHighlightAnimation();
 	highlightStart.nodes.push(firstHalf[first]);
 	highlightStart.nodes.push(secondHalf[second]);
@@ -103,6 +106,7 @@ function mergeSort(tracker, list) {
 			translate.sourceNodes.push(secondHalf[second]);
 			translate.destNode = secondHalf[second];
 			tracker.currentFrame.endAnimations.push(translate);
+			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
@@ -120,6 +124,7 @@ function mergeSort(tracker, list) {
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
 			tracker.currentFrame.endAnimations.push(translate);
+			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
@@ -139,9 +144,9 @@ function mergeSort(tracker, list) {
 				secondHalf[second].value, secondHalf[second].value));
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
-				translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = secondHalf[second];
 			tracker.currentFrame.endAnimations.push(translate);
+			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
@@ -160,6 +165,7 @@ function mergeSort(tracker, list) {
 			translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = firstHalf[first];
 			tracker.currentFrame.endAnimations.push(translate);
+			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
@@ -175,6 +181,12 @@ function mergeSort(tracker, list) {
 
 	tracker.logExit(sorted);
 	return sorted;
+}
+
+function getShowDestAnimation(i) {
+	var showResult = getEmptyVisibilityAnimation();
+	showResult.showRanges.push([i, i]);
+	return showResult;
 }
 
 function textAnimateSelect(val1, val2, sel) {

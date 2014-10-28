@@ -58,6 +58,14 @@ function getEmptyBucketAnimation() {
 	}
 }
 
+function getEmptyVisibilityAnimation() {
+	return {
+		animationType:"visibility",
+		showRanges: [],
+		hideRanges: []
+	}
+}
+
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");
