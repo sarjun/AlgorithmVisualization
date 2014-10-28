@@ -23,6 +23,8 @@ function getEmptyHighlightAnimation() {
 	return {
 		animationType:"highlight",
 		nodes:[],
+		circles:[],
+		lists:[],
 		color:"orange"
 	}
 }
@@ -42,7 +44,9 @@ function getEmptyTranslateAnimation() {
 function getEmptyUnhighlightAnimation() {
 	return {
 		animationType:"unhighlight",
-		nodes:[]
+		nodes:[],
+		circles:[],
+		lists:[]
 	}
 }
 

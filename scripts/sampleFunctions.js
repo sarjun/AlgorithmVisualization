@@ -101,6 +101,10 @@ function mergeSort(tracker, list) {
 	var highlightStart = getEmptyHighlightAnimation();
 	highlightStart.nodes.push(firstHalf[first]);
 	highlightStart.nodes.push(secondHalf[second]);
+	highlightStart.circles.push(0);
+	highlightStart.circles.push(1);
+	highlightStart.lists.push("end");
+	highlightStart.lists.push("end");
 	tracker.currentFrame.endAnimations.push(highlightStart);
 	for(var i=0; i<list.length; i++) {
 		if(first == firstHalf.length) {
@@ -115,12 +119,16 @@ function mergeSort(tracker, list) {
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodes.push(secondHalf[second]);
+			unhighlight.circles.push(1);
+			unhighlight.lists.push("end");
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(secondHalf[second]);
+				highlight.circles.push(1);
+				highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			continue;
@@ -136,12 +144,16 @@ function mergeSort(tracker, list) {
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.circles.push(0);
+			unhighlight.lists.push("end");
 			unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
 			if(first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(firstHalf[first]);
+				highlight.circles.push(0);
+				highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			continue;
@@ -162,12 +174,16 @@ function mergeSort(tracker, list) {
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.circles.push(1);
+			unhighlight.lists.push("end");
 			unhighlight.nodes.push(secondHalf[second]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(secondHalf[second]);
+				highlight.circles.push(1);
+				highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			if(second == secondHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(1));
@@ -185,12 +201,16 @@ function mergeSort(tracker, list) {
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
+			unhighlight.circles.push(0);
+			unhighlight.lists.push("end");
 			unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
 			if(first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodes.push(firstHalf[first]);
+				highlight.circles.push(0);
+				highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			if(first == firstHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(2));

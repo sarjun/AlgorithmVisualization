@@ -63,12 +63,13 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			case "highlight":
 				//console.log(animationList[i]);
 				var nodes = animationList[i].nodes;
+				var circles = animationList[i].circles;
+				var lists = animationList[i].lists;
 				var color = animationList[i].color;
 				for (var j = 0; j < nodes.length; j++) {
-					for (var k = 0; k < childEndLists.length; k++) {
-						if (childEndLists[k].hasOwnProperty(nodes[j].id)) {
-							childEndLists[k][nodes[j].id].css("border-color", color);
-						}
+					var elem = boxedList.getElem(childStartLists, childEndLists, nodes[j], circles[j], lists[j]);
+					if (elem != null) {
+						elem.css("border-color", color);
 					}
 				}
 				maxDelay = Math.max(maxDelay, TIME_HIGHLIGHT);
@@ -76,61 +77,24 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				break;
 			case "unhighlight":
 				var nodes = animationList[i].nodes;
+				var circles = animationList[i].circles;
+				var lists = animationList[i].lists;
 				for (var j = 0; j < nodes.length; j++) {
-					for (var k = 0; k < childEndLists.length; k++) {
-						if (childEndLists[k].hasOwnProperty(nodes[j].id)) {
-							childEndLists[k][nodes[j].id].css("border-color", "black");
-						}
+					var elem = boxedList.getElem(childStartLists, childEndLists, nodes[j], circles[j], lists[j]);
+					if (elem != null) {
+						elem.css("border-color", "black");
 					}
 				}
 				maxDelay = Math.max(maxDelay, TIME_UNHIGHLIGHT);
 				delay = skipDelays ? 0 : TIME_UNHIGHLIGHT;
 				break;
 			case "translate":
-				var source = animationList[i].sourceNode;
-				var sourceElem = null;
-				if(animationList[i].sourceCircle == -1) {
-					if((animationList[i].sourceList == "start") == boxedList.isStart) {
-						sourceElem = boxedList.nodeMap[source.id];
-					}
-					else {
-						if(boxedList.isStart) {
-							sourceElem = boxedList.parent.endList.nodeMap[animationList[i].sourceNode.id];
-						}
-						else {
-							sourceElem = boxedList.parent.startList.nodeMap[source.id];
-						}
-					}
-				}
-				else {
-					var search = animationList[i].sourceList == "start" ? childStartLists : childEndLists;
-					if (search[animationList[i].sourceCircle].hasOwnProperty(source.id)) {
-						sourceElem = search[animationList[i].sourceCircle][source.id];
-					}
-				}
+				var sourceElem = boxedList.getElem(childStartLists, childEndLists, animationList[i].sourceNode,
+					animationList[i].sourceCircle, animationList[i].sourceList);
+				var destElem = boxedList.getElem(childStartLists, childEndLists, animationList[i].destNode,
+					animationList[i].destCircle, animationList[i].destList);
 
-				var dest = animationList[i].destNode;
-				var destElem = null;
-				if(animationList[i].destCircle == -1) {
-					if((animationList[i].destList == "start") == boxedList.isStart) {
-						destElem = boxedList.nodeMap[animationList[i].destNode.id];
-					}
-					else {
-						if(boxedList.isStart) {
-							destElem = boxedList.parent.endList.nodeMap[dest.id];
-						}
-						else {
-							destElem = boxedList.parent.startList.nodeMap[dest.id];
-						}
-					}
-				}
-				else {
-					var search = animationList[i].destList == "start" ? childStartLists : childEndLists;
-					if (search[animationList[i].destCircle].hasOwnProperty(dest.id)) {
-						destElem = search[animationList[i].destCircle][dest.id];
-					}
-				}
-
+				if(sourceElem == null || destElem == null) break;
 				var sourcePosition = offsetFrom(sourceElem, mainDiv);
 				var ghost = $(sourceElem[0].outerHTML);
 				ghost.addClass("ghost");
@@ -271,3 +235,28 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 	doAnim(this);
 	return maxDelay;
 };
+
+BoxedList.prototype.getElem = function(childStartLists, childEndLists, node, circle, list) {
+	var elem = null;
+	if(circle == -1) {
+		if((list == "start") == this.isStart) {
+			elem = this.nodeMap[node.id];
+		}
+		else {
+			if(this.isStart) {
+				elem = this.parent.endList.nodeMap[node.id];
+			}
+			else {
+				elem = this.parent.startList.nodeMap[node.id];
+			}
+		}
+	}
+	else {
+		var search = list == "start" ? childStartLists : childEndLists;
+		if (search[circle].hasOwnProperty(node.id)) {
+			elem = search[circle][node.id];
+		}
+	}
+
+	return elem;
+}
