@@ -34,9 +34,9 @@ BoxedList.prototype.generateChildren = function () {
 
 BoxedList.prototype.generateChildElement = function (thisNode) {
 	var childElem = $("<td><span class='text-node'></span></td>");
-	childElem.find("span").text(thisNode.value);
+	this.nodeMap[thisNode.id] = childElem.find("span");
+	this.nodeMap[thisNode.id].text(thisNode.value);
 	this.elem.append(childElem);
-	this.nodeMap[thisNode.id] = childElem;
 };
 
 BoxedList.prototype.animate = function (animationList) {
@@ -96,7 +96,7 @@ BoxedList.prototype.animate = function (animationList) {
 							$("div.main").append(ghost);
 							ghost.animate(offsetFrom(dest, mainDiv), TIME_TRANSLATE, function () {
 								dest.css("visibility", "initial");
-								ghost.remove();
+								$("div.main .ghost").remove();
 							});
 						}
 					}

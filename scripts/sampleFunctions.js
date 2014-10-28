@@ -139,6 +139,7 @@ function mergeSort(tracker, list) {
 				secondHalf[second].value, secondHalf[second].value));
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceNodes.push(secondHalf[second]);
+				translate.sourceNodes.push(firstHalf[first]);
 			translate.destNode = secondHalf[second];
 			tracker.currentFrame.endAnimations.push(translate);
 			var unhighlight = getEmptyUnhighlightAnimation();
