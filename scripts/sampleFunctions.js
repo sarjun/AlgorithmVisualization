@@ -276,11 +276,11 @@ function quickSelect(tracker, k, list, selMedian) {
 	//console.log(k + " from " + list.map(function(elem) {
 	//	return elem.value;
 	//}));
-	tracker.logEntry(list);
-	console.log("entry: " + tracker.currentFrame);
+	tracker.logEntry([k, list]);
+	//console.log("entry: " + tracker.currentFrame);
 	// Base case
 	if(list.length <= 5) {
-		if(k > 4) {
+		if(k.value > 4) {
 			console.log("shouldn't happen!");
 			return null;
 		}
@@ -288,9 +288,9 @@ function quickSelect(tracker, k, list, selMedian) {
 			list.sort(function(a, b) {
 				return a.value - b.value;
 			});
-			console.log("exit: " + list[0].value);
+			//console.log("exit: " + list[0].value);
 			tracker.logExit([list[0]]);
-			console.log(tracker.currentFrame);
+			//console.log(tracker.currentFrame);
 			return list[0];
 		}
 	}
@@ -336,7 +336,7 @@ function quickSelect(tracker, k, list, selMedian) {
 	tracker.currentFrame.startAnimations.push(medianSelAnim);
 	tracker.currentFrame.startAnimations.push(medianListAnim);
 
-	var pivot = quickSelect(tracker, Math.floor(medians.length / 2), medians, true);
+	var pivot = quickSelect(tracker, new ValueNode(Math.floor(medians.length / 2)), medians, true);
 	// Check if the pivot is the kth value. If not, recurse on the greater partition or the lesser partition
 	var donePivot = false;
 	var partitioned = [pivot];
@@ -354,24 +354,24 @@ function quickSelect(tracker, k, list, selMedian) {
 		}
 	}
 
-	if(pivotIndex == k) {
-		quickSelect(tracker, 0, [pivot], false);
+	if(pivotIndex == k.value) {
+		quickSelect(tracker, new ValueNode(0), [pivot], false);
 		tracker.logExit([pivot]);
 		return pivot;
 	}
 	else {
-		if(pivotIndex > k) {
+		if(pivotIndex > k.value) {
 			var answer = quickSelect(tracker, k, partitioned.slice(0, pivotIndex), false);
 			tracker.logExit([answer]);
-			console.log("exit: " + answer.value);
-			console.log(tracker.currentFrame);
+			//console.log("exit: " + answer.value);
+			//console.log(tracker.currentFrame);
 			return answer;
 		}
 		else {
-			var answer = quickSelect(tracker, k - pivotIndex, partitioned.slice(pivotIndex + 1), false);
+			var answer = quickSelect(tracker, new ValueNode(k.value - pivotIndex), partitioned.slice(pivotIndex + 1), false);
 			tracker.logExit([answer]);
-			console.log("exit: " + answer.value);
-			console.log(tracker.currentFrame);
+			//console.log("exit: " + answer.value);
+			//console.log(tracker.currentFrame);
 			return answer;
 		}
 	}

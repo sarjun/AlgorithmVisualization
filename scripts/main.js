@@ -169,6 +169,6 @@ for (var i = 29; i > 0; i--) {
 	var newNode = new ValueNode(i);
 	toSort.push(newNode);
 }
-dAndC(track, 2, toSort);
+dAndC(track, new ValueNode(2), toSort);
 //test.tracker.traceExecution();
 var data = track.execution.children[0];

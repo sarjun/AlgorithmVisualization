@@ -99,7 +99,7 @@ div.circle-leaf {
     background: rgba(255, 0, 0, 0.1);
 }
 
-div.align-helper {
+div.circle-align-helper {
     display: inline-block;
     vertical-align: middle;
     height: 100%;
@@ -108,20 +108,31 @@ div.align-helper {
 div.circle:hover {
     border-color: #ff7f0e;
 }
-
-div.node-list-container {
+div.node-stack-container {
     position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+div.stack-align-helper {
+    display: inline-block;
+    vertical-align: baseline;
+}
+div.stack-align-helper.start {
+    height: 13%;
+}
+div.stack-align-helper.result {
+    height: 87%;
+}
+div.node-list-container {
+    display: inline-block;
+    vertical-align: middle;
+    /*position: absolute;*/
     pointer-events: none;
     width: 100%;
     text-align: center;
-}
-
-div.node-list-container.start {
-    top: 13%;
-}
-
-div.node-list-container.result {
-    bottom: 13%;
 }
 
 *.node-list {

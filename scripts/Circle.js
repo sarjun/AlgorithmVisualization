@@ -7,7 +7,7 @@ function Circle(parent, node, size) {
 
 	this.elem = $("<div class='circle'></div>");
 	this.elem.width(size).height(size);
-	this.elem.append("<div class='align-helper'></div>");
+	this.elem.append("<div class='circle-align-helper'></div>");
 	if (node.children.length > 0) {
 		this.elem.addClass("circle-node");
 		this.elem.bind("click", [this], function(e) {
@@ -17,29 +17,43 @@ function Circle(parent, node, size) {
 	} else {
 		this.elem.addClass("circle-leaf");
 	}
+	this.startStack = [];
+	this.endStack = [];
+	var startClicked = function (e) {
+		e.data[1].animate(node.startAnimations);
+		e.stopPropagation();
+	};
+	var endClicked = function (e) {
+		e.data[1].animate(node.endAnimations);
+		e.stopPropagation();
+	};
+	this.elem.append("<div class='node-stack-container start'><div class='stack-align-helper start'></div><div class='node-list-container'></div></div>")
+		.append("<div class='node-stack-container result'><div class='stack-align-helper result'></div><div class='node-list-container'></div></div>");
+	var startContainer = this.elem.find("div.start div.node-list-container");
+	var endContainer = this.elem.find("div.result div.node-list-container");
+	for (var i in node.start) {
+		var boxedList = null;
+		if (Array.isArray(node.start[i])) {
+			boxedList = new BoxedList(this, startContainer, true, node.start[i]);
+		} else {
+			boxedList = new BoxedList(this, startContainer, true, [node.start[i]]);
+		}
+		this.startStack.push(boxedList);
+		boxedList.generateChildren();
+		boxedList.elem.bind("click", [this, boxedList], startClicked);
+	}
+	for (var i in node.result) {
+		var boxedList = null;
+		if (Array.isArray(node.result[i])) {
+			boxedList = new BoxedList(this, endContainer, false, node.result[i]);
+		} else {
+			boxedList = new BoxedList(this, endContainer, false, [node.result[i]]);
+		}
+		this.endStack.push(boxedList);
+		boxedList.generateChildren();
+		boxedList.elem.bind("click", [this, boxedList], endClicked);
+	}
 
-	this.startList = new BoxedList(this, true, node.start);
-	this.endList = new BoxedList(this, false, node.result);
-	this.startList.generateChildren();
-	this.endList.generateChildren();
-	this.endList.elem.bind("click", [this], function(e){
-		//console.log(node);
-		e.data[0].endList.animate(node.endAnimations);
-		e.stopPropagation();
-	});
-	this.startList.elem.bind("click", [this], function(e){
-		//console.log(node);
-		e.data[0].startList.animate(node.startAnimations);
-		e.stopPropagation();
-	});
-	//switch (node.animType) {
-	//	case "text":
-	//		startList = new BoxedList();
-	//		endList = new BoxedList();
-	//		break;
-	//	default:
-	//		break;
-	//}
 	parent.append(this.elem);
 }
 

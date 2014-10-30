@@ -11,18 +11,17 @@ var TIME_TEXT_PER_WORD = 300;
 var TIME_SET_VISIBILITY = 0;
 var TIME_SWAP = 750;
 
-function BoxedList(parent, start, nodeList) {
+function BoxedList(parent, parentElem, start, nodeList) {
 	this.nodeList = nodeList;
 	this.nodeMap = {};
 	this.parent = parent;
 	this.buckets = new Set();
 	this.isStart = start;
 
-	var container = $("<div class='node-list-container'><table class='node-list'></table></div>");
-	container.addClass(start ? "start" : "result");
-	parent.elem.append(container);
+	var container = $("<table class='node-list'></table>");
+	parentElem.append(container).append("<br>");
 	this.elem = $("<tr></tr>");
-	container.find("table").append(this.elem);
+	container.append(this.elem);
 }
 
 BoxedList.prototype.addNode = function (node) {
@@ -45,13 +44,18 @@ BoxedList.prototype.generateChildElement = function (thisNode) {
 BoxedList.prototype.animate = function (animationList, skipDelays) {
 	var i = 0;
 	var maxDelay = -1;
-	var childEndLists = [];
+	var childStartLists = [], childEndLists = [];
 	for (var j = 0; j < this.parent.children.length; j++) {
-		childEndLists.push(this.parent.children[j].endList.nodeMap);
-	}
-	var childStartLists = [];
-	for (var j = 0; j < this.parent.children.length; j++) {
-		childStartLists.push(this.parent.children[j].startList.nodeMap);
+		var maps = [];
+		for (var k = 0; k < this.parent.children[j].endStack.length; k++) {
+			maps.push(this.parent.children[j].endStack[k].nodeMap);
+		}
+		if (maps.length > 0) childEndLists.push($.extend.apply($, maps));
+		maps = [];
+		for (var k = 0; k < this.parent.children[j].startStack.length; k++) {
+			maps.push(this.parent.children[j].startStack[k].nodeMap);
+		}
+		if (maps.length > 0) childStartLists.push($.extend.apply($, maps));
 	}
 	var doAnim = function (boxedList) {
 		if (i >= animationList.length) {
@@ -244,10 +248,11 @@ BoxedList.prototype.getElem = function(childStartLists, childEndLists, node, cir
 		}
 		else {
 			if(this.isStart) {
-				elem = this.parent.endList.nodeMap[node.id];
+				elem = this.parent.endStack.nodeMap[node.id];
+				// TODO: fix
 			}
 			else {
-				elem = this.parent.startList.nodeMap[node.id];
+				elem = this.parent.startStack.nodeMap[node.id];
 			}
 		}
 	}
