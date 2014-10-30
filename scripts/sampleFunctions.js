@@ -276,7 +276,7 @@ function quickSelect(tracker, k, list, selMedian) {
 	//console.log(k + " from " + list.map(function(elem) {
 	//	return elem.value;
 	//}));
-	tracker.logEntry([k, list]);
+	tracker.logEntry([k, list.slice(0)]);
 	//console.log("entry: " + tracker.currentFrame);
 	// Base case
 	if(list.length <= 5) {
@@ -289,9 +289,9 @@ function quickSelect(tracker, k, list, selMedian) {
 				return a.value - b.value;
 			});
 			//console.log("exit: " + list[0].value);
-			tracker.logExit([list[0]]);
+			tracker.logExit([list[k.value]]);
 			//console.log(tracker.currentFrame);
-			return list[0];
+			return list[k.value];
 		}
 	}
 
@@ -337,38 +337,80 @@ function quickSelect(tracker, k, list, selMedian) {
 	tracker.currentFrame.startAnimations.push(medianListAnim);
 
 	var pivot = quickSelect(tracker, new ValueNode(Math.floor(medians.length / 2)), medians, true);
+	console.log(k + " from " + list.map(function(elem) {
+		return elem.value;
+	}));
 	// Check if the pivot is the kth value. If not, recurse on the greater partition or the lesser partition
-	var donePivot = false;
-	var partitioned = [pivot];
-	var pivotIndex = 0;
-	for (var i = 0; i < list.length; i++) {
-		if (list[i].value == pivot.value && !donePivot) {
-			donePivot = true;
+	var temp = list[0];
+	var switchIndex = list.indexOf(pivot);
+	list[0] = pivot;
+	list[switchIndex] = temp;
+	var start = 1;
+	var end = list.length - 1;
+	console.log(end);
+	console.log(k + " from " + list.map(function(elem) {
+		return elem.value;
+	}));
+	var completedOne = false;
+	while(start < end) {
+		while(list[start].value <= pivot.value && start < end) {
+			start++;
 		}
-		else if (list[i].value > pivot.value) {
-			partitioned.push(list[i]);
+		while(list[end].value > pivot.value && start < end) {
+			end--;
 		}
-		else {
-			partitioned.unshift(list[i]);
-			pivotIndex++;
-		}
+			var swap = list[end];
+			list[end] = list[start];
+			list[start] = swap;
+		if(start == end) break;
+		console.log("after one swap: " + list.map(function(elem) {
+			return elem.value;
+		}));
+		completedOne = true;
 	}
+	console.log("done swaps: " + list.map(function(elem) {
+		return elem.value;
+	}));
+	var stop = completedOne ? end - 1 : end;
+	for(var i = 0; i < stop; i++) {
+		list[i] = list[i+1];
+	}
+	list[stop] = pivot;
+	console.log(end);
+	console.log("pivot in: " + list.map(function(elem) {
+		return elem.value;
+	}));
+	//var donePivot = false;
+	//var partitioned = [pivot];
+	//var pivotIndex = 0;
+	//for (var i = 0; i < list.length; i++) {
+	//	if (list[i].value == pivot.value && !donePivot) {
+	//		donePivot = true;
+	//	}
+	//	else if (list[i].value > pivot.value) {
+	//		partitioned.push(list[i]);
+	//	}
+	//	else {
+	//		partitioned.unshift(list[i]);
+	//		pivotIndex++;
+	//	}
+	//}
 
-	if(pivotIndex == k.value) {
+	if(stop == k.value) {
 		quickSelect(tracker, new ValueNode(0), [pivot], false);
 		tracker.logExit([pivot]);
 		return pivot;
 	}
 	else {
-		if(pivotIndex > k.value) {
-			var answer = quickSelect(tracker, k, partitioned.slice(0, pivotIndex), false);
+		if(stop > k.value) {
+			var answer = quickSelect(tracker, k, list.slice(0, stop), false);
 			tracker.logExit([answer]);
 			//console.log("exit: " + answer.value);
 			//console.log(tracker.currentFrame);
 			return answer;
 		}
 		else {
-			var answer = quickSelect(tracker, new ValueNode(k.value - pivotIndex), partitioned.slice(pivotIndex + 1), false);
+			var answer = quickSelect(tracker, new ValueNode(k.value - stop), list.slice(stop + 1), false);
 			tracker.logExit([answer]);
 			//console.log("exit: " + answer.value);
 			//console.log(tracker.currentFrame);
