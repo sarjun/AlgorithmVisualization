@@ -121,7 +121,7 @@ function Tracker() {
 
 Tracker.prototype.traceExecution = function () {
 	printFrame(this.execution, 0);
-}
+};
 
 Tracker.prototype.logEntry = function (list) {
 	var newFrame = getEmptyExecutionFrame();
@@ -129,7 +129,7 @@ Tracker.prototype.logEntry = function (list) {
 	this.currentFrame["children"].push(newFrame);
 	this.currentFrame = newFrame;
 	this.currentFrame["start"] = list;
-}
+};
 
 Tracker.prototype.logExit = function (list) {
 	this.currentFrame["result"] = list;
@@ -151,7 +151,7 @@ Tracker.prototype.logExit = function (list) {
 	}
 
 	this.currentFrame = this.currentFrame["parentFrame"];
-}
+};
 
 
 dAndC = funcMapping[funcName];
