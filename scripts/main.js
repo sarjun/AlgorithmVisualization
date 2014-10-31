@@ -37,7 +37,8 @@ function getEmptyTranslateAnimation() {
 		sourceCircle: null,
 		sourceList: null,
 		destCircle: null,
-		destList: null
+		destList: null,
+		moveSource: false
 	}
 }
 
@@ -165,7 +166,7 @@ console.log("done");
 dAndC = funcMapping[funcName];
 var track = new Tracker();
 var toSort = [];
-for (var i = 9; i > 0; i--) {
+for (var i = 15; i > 0; i--) {
 	var newNode = new ValueNode(i);
 	toSort.push(newNode);
 }

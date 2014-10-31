@@ -313,9 +313,8 @@ function quickSelect(tracker, k, list, selMedian) {
 			translate.sourceCircle = translate.destCircle = -1;
 			translate.sourceList = translate.destList = "start";
 			translate.sourceNode = bucket[j];
-			translate.destNode = forTranslate.filter(function(elem) {
-				return elem.id == bucket[j].id;
-			})[0];
+			translate.destNode = forTranslate[j];
+			translate.moveSource = true;
 			sortAnim.animations.push(translate);
 		}
 		medians.push(bucket[Math.floor(bucket.length / 2)]);

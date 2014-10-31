@@ -108,8 +108,13 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					height: sourceElem.height()
 				}).css(sourcePosition);
 				mainDiv.append(ghost);
+				var moveSource = animationList[i].moveSource;
+				var parentCell = destElem.parent();
 				ghost.animate(offsetFrom(destElem, mainDiv), TIME_TRANSLATE, function () {
 					ghost.remove();
+					if (moveSource) {
+						parentCell.append(sourceElem);
+					}
 				});
 
 				maxDelay = Math.max(maxDelay, TIME_TRANSLATE);
