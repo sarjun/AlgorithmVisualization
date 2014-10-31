@@ -154,22 +154,13 @@ Tracker.prototype.logExit = function (list) {
 }
 
 
-var track = new Tracker();
-var toSort = [];
-for (var i = 9; i > 0; i--) {
-	var newNode = new ValueNode(i);
-	toSort.push(newNode);
-}
-console.log(quickSelect(track, 2, toSort, false, 0));
-console.log("done");
-
 dAndC = funcMapping[funcName];
-var track = new Tracker();
+var tracker = new Tracker();
 var toSort = [];
 for (var i = 15; i > 0; i--) {
 	var newNode = new ValueNode(i);
 	toSort.push(newNode);
 }
-dAndC(track, new ValueNode(2), toSort);
+dAndC(new ValueNode(2), toSort);
 //test.tracker.traceExecution();
-var data = track.execution.children[0];
+var data = tracker.execution.children[0];

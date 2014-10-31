@@ -12,7 +12,6 @@ function init() {
 	if (data == null) return;
 	initAlgorithm(funcName);
 	var mainPanel = $("core-header-panel[main]");
-	initList = document.querySelector("#param0");
 	btnSetRoot = document.querySelector("#btnSetRoot");
 	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden";
 	mainDiv = $("<div class='main'></div>");
@@ -25,15 +24,25 @@ function init() {
 	makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 	root.click();
 	$(btnSetRoot).click(function () {
-		toSort = [];
-		track = new Tracker();
-		var newList = initList.value.split(",");
-		for (var i in newList) {
-			var newNode = new ValueNode(newList[i] * 1);
-			toSort.push(newNode);
-		}
-		dAndC(track, toSort);
-		data = track.execution.children[0];
+		var params = [];
+		$("section#params").children().each(function (i, e) {
+			var list = e.value.split(",");
+			if (list.length > 1) {
+				for (var i in list) {
+					if (list[i].trim().length > 0) {
+						list[i] = new ValueNode(list[i] * 1);
+					} else {
+						list.splice(i, 1);
+					}
+				}
+				params.push(list);
+			} else {
+				params.push(new ValueNode(list[0] * 1));
+			}
+		});
+		tracker = new Tracker();
+		dAndC.apply(this, params);
+		data = tracker.execution.children[0];
 		mainDiv.empty();
 		root = null;
 		makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));

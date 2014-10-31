@@ -72,7 +72,7 @@ conquerMapping[funcName] = "Modification of Mergesort. Whenever an item is added
 funcName = "Merge Sort";
 funcNames.push(funcName);
 
-function mergeSort(tracker, list) {
+function mergeSort(list) {
 	// Divide and conquer algorithm
 	// eventually this would come from the web page
 	// for now, we will use mergesort
@@ -89,8 +89,8 @@ function mergeSort(tracker, list) {
 	bucket = getEmptyBucketAnimation();
 	bucket.addBuckets.push([Math.floor(list.length / 2), list.length - 1]);
 	tracker.currentFrame.startAnimations.push(bucket);
-	firstHalf = mergeSort(tracker, firstHalf);
-	secondHalf = mergeSort(tracker, secondHalf);
+	firstHalf = mergeSort(firstHalf);
+	secondHalf = mergeSort(secondHalf);
 	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, 0, Math.floor(list.length / 2) - 1, 0));
 	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, Math.floor(list.length / 2), list.length - 1, 1));
 
@@ -272,7 +272,7 @@ parameterMapping[funcName] = ["Input List"];
 // Quick Select
 // ******************
 funcName = "Quick Select";
-function quickSelect(tracker, k, list, selMedian) {
+function quickSelect(k, list, selMedian) {
 	//console.log(k + " from " + list.map(function(elem) {
 	//	return elem.value;
 	//}));
@@ -335,7 +335,7 @@ function quickSelect(tracker, k, list, selMedian) {
 	tracker.currentFrame.startAnimations.push(medianSelAnim);
 	tracker.currentFrame.startAnimations.push(medianListAnim);
 
-	var pivot = quickSelect(tracker, new ValueNode(Math.floor(medians.length / 2)), medians, true);
+	var pivot = quickSelect(new ValueNode(Math.floor(medians.length / 2)), medians, true);
 	console.log(k + " from " + list.map(function(elem) {
 		return elem.value;
 	}));
@@ -396,20 +396,20 @@ function quickSelect(tracker, k, list, selMedian) {
 	//}
 
 	if(stop == k.value) {
-		quickSelect(tracker, new ValueNode(0), [pivot], false);
+		quickSelect(new ValueNode(0), [pivot], false);
 		tracker.logExit([pivot]);
 		return pivot;
 	}
 	else {
 		if(stop > k.value) {
-			var answer = quickSelect(tracker, k, list.slice(0, stop), false);
+			var answer = quickSelect(k, list.slice(0, stop), false);
 			tracker.logExit([answer]);
 			//console.log("exit: " + answer.value);
 			//console.log(tracker.currentFrame);
 			return answer;
 		}
 		else {
-			var answer = quickSelect(tracker, new ValueNode(k.value - stop), list.slice(stop + 1), false);
+			var answer = quickSelect(new ValueNode(k.value - stop), list.slice(stop + 1), false);
 			tracker.logExit([answer]);
 			//console.log("exit: " + answer.value);
 			//console.log(tracker.currentFrame);
