@@ -288,7 +288,7 @@ function quickSelect(k, list, selMedian) {
 				return a.value - b.value;
 			});
 			if(selMedian) {
-				animatePivot(list[k.value]);
+				animatePivotSelection(list[k.value]);
 			}
 			tracker.logExit([list[k.value]]);
 			return list[k.value];
@@ -350,6 +350,14 @@ function quickSelect(k, list, selMedian) {
 	var switchIndex = list.indexOf(pivot);
 	list[0] = pivot;
 	list[switchIndex] = temp;
+	var highlightPivot = getEmptyHighlightAnimation();
+	highlightPivot.nodes.push(pivot);
+	highlightPivot.circles.push(-2);
+	highlightPivot.lists.push("start");
+	tracker.currentFrame.children[0].endAnimations.push(highlightPivot);
+	animateSwapParentCircle(0, switchIndex);
+	// TODO: Make bucket animation work with more than just this list
+	//var highlightSwapArea = getEmptyBucketAnimation();
 	var start = 1;
 	var end = list.length - 1;
 	var completedOne = false;
@@ -360,9 +368,10 @@ function quickSelect(k, list, selMedian) {
 		while(list[end].value > pivot.value && start < end) {
 			end--;
 		}
-			var swap = list[end];
-			list[end] = list[start];
-			list[start] = swap;
+		var swap = list[end];
+		list[end] = list[start];
+		list[start] = swap;
+		animateSwapParentCircle(start, end);
 		if(start == end) break;
 		completedOne = true;
 	}
@@ -375,8 +384,9 @@ function quickSelect(k, list, selMedian) {
 	if(stop == k.value) {
 		quickSelect(new ValueNode(0), [pivot], false);
 		if(selMedian) {
-			animatePivot(pivot);
+			animatePivotSelection(pivot);
 		}
+		animateRecurseSubList([pivot]);
 		tracker.logExit([pivot]);
 		return pivot;
 	}
@@ -384,8 +394,9 @@ function quickSelect(k, list, selMedian) {
 		if(stop > k.value) {
 			var answer = quickSelect(k, list.slice(0, stop), false);
 			if(selMedian) {
-				animatePivot(answer);
+				animatePivotSelection(answer);
 			}
+			animateRecurseSubList(list.slice(0, stop));
 			tracker.logExit([answer]);
 			//console.log("exit: " + answer.value);
 			//console.log(tracker.currentFrame);
@@ -394,8 +405,9 @@ function quickSelect(k, list, selMedian) {
 		else {
 			var answer = quickSelect(new ValueNode(k.value - stop), list.slice(stop + 1), false);
 			if(selMedian) {
-				animatePivot(answer);
+				animatePivotSelection(answer);
 			}
+			animateRecurseSubList(list.slice(stop + 1));
 			tracker.logExit([answer]);
 			//console.log("exit: " + answer.value);
 			//console.log(tracker.currentFrame);
@@ -404,7 +416,7 @@ function quickSelect(k, list, selMedian) {
 	}
 }
 
-function animatePivot(pivot) {
+function animatePivotSelection(pivot) {
 	var showAnswer = getEmptyTranslateAnimation();
 	showAnswer.sourceCircle = -1;
 	showAnswer.destCircle = -2;
@@ -412,6 +424,28 @@ function animatePivot(pivot) {
 	showAnswer.destList = "start";
 	showAnswer.sourceNode = showAnswer.destNode = pivot;
 	tracker.currentFrame.endAnimations.push(showAnswer);
+}
+
+function animateSwapParentCircle(ind1, ind2) {
+	var swapAnim = getEmptySwapAnimation();
+	swapAnim.nodePairCircle = -2;
+	swapAnim.nodePairBoxedList = 1;
+	swapAnim.nodePairList = "start";
+	swapAnim.nodePair = [ind1, ind2];
+	tracker.currentFrame.children[0].endAnimations.push(swapAnim);
+}
+
+function animateRecurseSubList(subList) {
+	var bundle = getEmptyBundleAnimation();
+	for(var i=0; i<subList.length; i++) {
+		var translate = getEmptyTranslateAnimation();
+		translate.sourceList = translate.destList = "start";
+		translate.sourceNode = translate.destNode = subList[i];
+		translate.sourceCircle = -2;
+		translate.destSibling = 1;
+		bundle.animations.push(translate);
+	}
+	tracker.currentFrame.children[0].endAnimations.push(bundle);
 }
 
 funcMapping[funcName] = quickSelect;

@@ -38,6 +38,7 @@ function getEmptyTranslateAnimation() {
 		sourceList: null,
 		destCircle: null,
 		destList: null,
+		destSibling: null,
 		moveSource: false
 	}
 }
@@ -78,7 +79,10 @@ function getEmptyVisibilityAnimation() {
 function getEmptySwapAnimation() {
 	return {
 		animationType: "swap",
-		nodePair: []
+		nodePair: [],
+		nodePairCircle: -1,
+		nodePairList: null,
+		nodePairBoxedList: null
 	}
 }
 

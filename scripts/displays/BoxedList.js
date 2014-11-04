@@ -9,7 +9,7 @@ var TIME_UNHIGHLIGHT = 100;
 var TIME_BUCKET = 1000;
 var TIME_TEXT_PER_WORD = 300;
 var TIME_SET_VISIBILITY = 0;
-var TIME_SWAP = 750;
+var TIME_SWAP = 1000;
 
 function BoxedList(parent, parentElem, start, nodeList) {
 	this.nodeList = nodeList;
@@ -97,7 +97,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var sourceElem = boxedList.getElem(childStartLists, childEndLists, animationList[i].sourceNode,
 					animationList[i].sourceCircle, animationList[i].sourceList);
 				var destElem = boxedList.getElem(childStartLists, childEndLists, animationList[i].destNode,
-					animationList[i].destCircle, animationList[i].destList);
+					animationList[i].destCircle, animationList[i].destList, animationList[i].destSibling);
 
 				if(sourceElem == null || destElem == null) break;
 				var sourcePosition = offsetFrom(sourceElem, mainDiv);
@@ -162,8 +162,30 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var node1 = animationList[i].nodePair[0] + 1;
 				var node2 = animationList[i].nodePair[1] + 1;
 				if (node1 != node2) {
-					var elem1 = boxedList.elem.find("td:nth-child(" + node1 + ") span");
-					var elem2 = boxedList.elem.find("td:nth-child(" + node2 + ") span");
+					var elem1 = null;
+					var elem2 = null;
+					// TODO: The following code is very similar to existing code. Abstract it.
+					if(animationList[i].nodePairCircle == -1) {
+						elem1 = boxedList.elem.find("td:nth-child(" + node1 + ") span");
+						elem2 = boxedList.elem.find("td:nth-child(" + node2 + ") span");
+					}
+					else if(animationList[i].nodePairCircle < -1) {
+						var findCircle = boxedList.parent;
+						for(var count = animationList[i].nodePairCircle; count < -1; count++) {
+							findCircle = findCircle.parent;
+						}
+						if(animationList[i].nodePairList == "start") {
+							elem1 = findCircle.startStack[animationList[i].nodePairBoxedList].elem.find("td:nth-child(" + node1 + ") span");
+							elem2 = findCircle.startStack[animationList[i].nodePairBoxedList].elem.find("td:nth-child(" + node2 + ") span");
+						}
+						else {
+							elem1 = findCircle.endStack[animationList[i].nodePairBoxedList].elem.find("td:nth-child(" + node1 + ") span");
+							elem2 = findCircle.endStack[animationList[i].nodePairBoxedList].elem.find("td:nth-child(" + node2 + ") span");
+						}
+					}
+					else {
+						// TODO: This isn't done but this whole thing will be refactored anyway.
+					}
 					var pos1 = offsetFrom(elem1, mainDiv);
 					var pos2 = offsetFrom(elem2, mainDiv);
 					var elemLeft = null, elemRight = null;
@@ -246,15 +268,26 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 	return maxDelay;
 };
 
-BoxedList.prototype.getElem = function(childStartLists, childEndLists, node, circle, list) {
+BoxedList.prototype.getElem = function(childStartLists, childEndLists, node, circle, list, sibling) {
 	var elem = null;
+	if(sibling != null) {
+		if(list == "start") {
+			var nodeMap = $.extend.apply($, this.parent.parent.children[sibling].startStack.map(function(blist) {
+				return blist.nodeMap;
+			}));
+			elem = nodeMap[node.id];
+		}
+		else {
+			var nodeMap = $.extend.apply($, this.parent.parent.children[sibling].endStack.map(function(blist) {
+				return blist.nodeMap;
+			}));
+			elem = nodeMap[node.id];
+		}
+		return elem;
+	}
 	if(circle == -1) {
 		if((list == "start") == this.isStart) {
 			elem = this.nodeMap[node.id];
-			console.log(elem);
-			console.log(this.nodeMap);
-			console.log(node.id);
-			console.log(this.parent);
 		}
 		else {
 			if(this.isStart) {
@@ -289,6 +322,7 @@ BoxedList.prototype.getElem = function(childStartLists, childEndLists, node, cir
 	}
 	else {
 		var search = list == "start" ? childStartLists : childEndLists;
+		console.log(circle);
 		if (search[circle].hasOwnProperty(node.id)) {
 			elem = search[circle][node.id];
 		}
