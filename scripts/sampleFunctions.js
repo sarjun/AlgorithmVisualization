@@ -277,7 +277,6 @@ function quickSelect(k, list, selMedian) {
 	//	return elem.value;
 	//}));
 	tracker.logEntry([k, list.slice(0)]);
-	//console.log("entry: " + tracker.currentFrame);
 	// Base case
 	if(list.length <= 5) {
 		if(k.value > 4) {
@@ -288,9 +287,7 @@ function quickSelect(k, list, selMedian) {
 			list.sort(function(a, b) {
 				return a.value - b.value;
 			});
-			//console.log("exit: " + list[0].value);
 			tracker.logExit([list[k.value]]);
-			//console.log(tracker.currentFrame);
 			return list[k.value];
 		}
 	}
@@ -299,8 +296,12 @@ function quickSelect(k, list, selMedian) {
 	var medians = [];
 	var bucketAnim = getEmptyBucketAnimation();
 	var sortAnim = getEmptyBundleAnimation();
+	var showAnim = getEmptyVisibilityAnimation();
 	var medianSelAnim = getEmptyHighlightAnimation();
 	var medianListAnim = getEmptyBundleAnimation();
+
+	showAnim.showRanges.push([0, list.length - 1]);
+
 	for(var i=0; i<list.length; i+=5) {
 		var bucket = list.slice(i, i+5);
 		bucketAnim.addBuckets.push([i, Math.min(i+4, list.length - 1)]);
@@ -317,6 +318,10 @@ function quickSelect(k, list, selMedian) {
 			translate.moveSource = true;
 			sortAnim.animations.push(translate);
 		}
+		var hide = getEmptyVisibilityAnimation();
+		hide.hideRanges.push([0, list.length - 1]);
+		sortAnim.animations.push(hide);
+
 		medians.push(bucket[Math.floor(bucket.length / 2)]);
 		medianSelAnim.nodes.push(bucket[Math.floor(bucket.length / 2)]);
 		medianSelAnim.circles.push(-1);
@@ -332,13 +337,11 @@ function quickSelect(k, list, selMedian) {
 	}
 	tracker.currentFrame.startAnimations.push(bucketAnim);
 	tracker.currentFrame.startAnimations.push(sortAnim);
+	tracker.currentFrame.startAnimations.push(showAnim);
 	tracker.currentFrame.startAnimations.push(medianSelAnim);
 	tracker.currentFrame.startAnimations.push(medianListAnim);
 
 	var pivot = quickSelect(new ValueNode(Math.floor(medians.length / 2)), medians, true);
-	console.log(k + " from " + list.map(function(elem) {
-		return elem.value;
-	}));
 	// Check if the pivot is the kth value. If not, recurse on the greater partition or the lesser partition
 	var temp = list[0];
 	var switchIndex = list.indexOf(pivot);
@@ -346,10 +349,6 @@ function quickSelect(k, list, selMedian) {
 	list[switchIndex] = temp;
 	var start = 1;
 	var end = list.length - 1;
-	console.log(end);
-	console.log(k + " from " + list.map(function(elem) {
-		return elem.value;
-	}));
 	var completedOne = false;
 	while(start < end) {
 		while(list[start].value <= pivot.value && start < end) {
@@ -362,38 +361,13 @@ function quickSelect(k, list, selMedian) {
 			list[end] = list[start];
 			list[start] = swap;
 		if(start == end) break;
-		console.log("after one swap: " + list.map(function(elem) {
-			return elem.value;
-		}));
 		completedOne = true;
 	}
-	console.log("done swaps: " + list.map(function(elem) {
-		return elem.value;
-	}));
 	var stop = completedOne ? end - 1 : end;
 	for(var i = 0; i < stop; i++) {
 		list[i] = list[i+1];
 	}
 	list[stop] = pivot;
-	console.log(end);
-	console.log("pivot in: " + list.map(function(elem) {
-		return elem.value;
-	}));
-	//var donePivot = false;
-	//var partitioned = [pivot];
-	//var pivotIndex = 0;
-	//for (var i = 0; i < list.length; i++) {
-	//	if (list[i].value == pivot.value && !donePivot) {
-	//		donePivot = true;
-	//	}
-	//	else if (list[i].value > pivot.value) {
-	//		partitioned.push(list[i]);
-	//	}
-	//	else {
-	//		partitioned.unshift(list[i]);
-	//		pivotIndex++;
-	//	}
-	//}
 
 	if(stop == k.value) {
 		quickSelect(new ValueNode(0), [pivot], false);
