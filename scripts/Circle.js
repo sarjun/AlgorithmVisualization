@@ -2,10 +2,11 @@
  *
  * Created by Arjun on 10/7/2014.
  */
-function Circle(parent, node, size) {
+function Circle(parentCircle, parentElem, node, size) {
 	this.children = [];
 
 	this.elem = $("<div class='circle'></div>");
+	this.parent = parentCircle;
 	this.elem.width(size).height(size);
 	this.elem.append("<div class='circle-align-helper'></div>");
 	if (node.children.length > 0) {
@@ -54,7 +55,7 @@ function Circle(parent, node, size) {
 		boxedList.elem.bind("click", [this, boxedList], endClicked);
 	}
 
-	parent.append(this.elem);
+	parentElem.append(this.elem);
 }
 
 

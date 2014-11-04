@@ -287,6 +287,9 @@ function quickSelect(k, list, selMedian) {
 			list.sort(function(a, b) {
 				return a.value - b.value;
 			});
+			if(selMedian) {
+				animatePivot(list[k.value]);
+			}
 			tracker.logExit([list[k.value]]);
 			return list[k.value];
 		}
@@ -371,12 +374,18 @@ function quickSelect(k, list, selMedian) {
 
 	if(stop == k.value) {
 		quickSelect(new ValueNode(0), [pivot], false);
+		if(selMedian) {
+			animatePivot(pivot);
+		}
 		tracker.logExit([pivot]);
 		return pivot;
 	}
 	else {
 		if(stop > k.value) {
 			var answer = quickSelect(k, list.slice(0, stop), false);
+			if(selMedian) {
+				animatePivot(answer);
+			}
 			tracker.logExit([answer]);
 			//console.log("exit: " + answer.value);
 			//console.log(tracker.currentFrame);
@@ -384,12 +393,25 @@ function quickSelect(k, list, selMedian) {
 		}
 		else {
 			var answer = quickSelect(new ValueNode(k.value - stop), list.slice(stop + 1), false);
+			if(selMedian) {
+				animatePivot(answer);
+			}
 			tracker.logExit([answer]);
 			//console.log("exit: " + answer.value);
 			//console.log(tracker.currentFrame);
 			return answer;
 		}
 	}
+}
+
+function animatePivot(pivot) {
+	var showAnswer = getEmptyTranslateAnimation();
+	showAnswer.sourceCircle = -1;
+	showAnswer.destCircle = -2;
+	showAnswer.sourceList = "end";
+	showAnswer.destList = "start";
+	showAnswer.sourceNode = showAnswer.destNode = pivot;
+	tracker.currentFrame.endAnimations.push(showAnswer);
 }
 
 funcMapping[funcName] = quickSelect;

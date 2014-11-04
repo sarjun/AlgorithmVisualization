@@ -42,6 +42,7 @@ BoxedList.prototype.generateChildElement = function (thisNode) {
 };
 
 BoxedList.prototype.animate = function (animationList, skipDelays) {
+	console.log(animationList);
 	var i = 0;
 	var maxDelay = -1;
 	var childStartLists = [], childEndLists = [];
@@ -250,6 +251,10 @@ BoxedList.prototype.getElem = function(childStartLists, childEndLists, node, cir
 	if(circle == -1) {
 		if((list == "start") == this.isStart) {
 			elem = this.nodeMap[node.id];
+			console.log(elem);
+			console.log(this.nodeMap);
+			console.log(node.id);
+			console.log(this.parent);
 		}
 		else {
 			if(this.isStart) {
@@ -259,6 +264,27 @@ BoxedList.prototype.getElem = function(childStartLists, childEndLists, node, cir
 			else {
 				elem = this.parent.startStack.nodeMap[node.id];
 			}
+		}
+	}
+	else if (circle < -1) {
+		var findCircle = this.parent;
+		for(var i = circle; i < -1; i++) {
+			findCircle = findCircle.parent;
+		}
+
+		if(list == "start") {
+			//console.log(findCircle);
+			var nodeMap = $.extend.apply($, findCircle.startStack.map(function(blist) {
+				return blist.nodeMap;
+			}));
+			elem = nodeMap[node.id];
+			//console.log(elem);
+		}
+		else {
+			var nodeMap = $.extend.apply($, findCircle.endStack.map(function(blist) {
+				return blist.nodeMap;
+			}));
+			elem = nodeMap[node.id];
 		}
 	}
 	else {

@@ -21,7 +21,7 @@ function init() {
 	var parentWidth = contentDiv.width();
 	centerOfScreen = [parentWidth / 2, parentHeight / 2];
 	//mainDiv.width(parentWidth).height(parentHeight);
-	makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
+	makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 	root.click();
 	$(btnSetRoot).click(function () {
 		var params = [];
@@ -45,7 +45,7 @@ function init() {
 		data = tracker.execution.children[0];
 		mainDiv.empty();
 		root = null;
-		makeCircle(data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
+		makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 		root.click();
 	});
 
@@ -67,8 +67,8 @@ function initConsole() {
 	addConsoleCard(conquerMapping[funcName]);
 }
 
-function makeCircle(node, parentElem, size) {
-	var newCircle = new Circle(parentElem, node, size);
+function makeCircle(parentCircle, node, parentElem, size) {
+	var newCircle = new Circle(parentCircle, parentElem, node, size);
 	if (root == null) {
 		root = newCircle;
 		rootSize = size;
@@ -76,7 +76,7 @@ function makeCircle(node, parentElem, size) {
 	if (node.children.length > 0) {
 		var childSize = 100 / node.children.length + "%";
 		for (var i = 0; i < node.children.length; i++) {
-			newCircle.children.push(makeCircle(node.children[i], newCircle.elem, childSize));
+			newCircle.children.push(makeCircle(newCircle, node.children[i], newCircle.elem, childSize));
 		}
 	}
 	return newCircle;
