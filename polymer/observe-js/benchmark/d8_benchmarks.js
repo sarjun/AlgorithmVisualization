@@ -1,24 +1,17 @@
-// Copyright 2013 Google Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-// Flags: --allow-natives-syntax
+/*
+ * Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+ * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+ * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+ * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+ * Code distributed by Google as part of the polymer project is also
+ * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+ */
 
 var console = {
   log: print
 };
 
-var setTimeout = function(callback) {
+var requestAnimationFrame = function(callback) {
   callback();
 }
 
@@ -26,142 +19,22 @@ recordCount = 0;
 
 var alert = print;
 
-function reportResults(results) {
-  console.log('Avg time: ' + results[0][0]);
+function reportResults(times) {
+  console.log(JSON.stringify(times));
 }
 
-function reportStatus(setup, variant) {
-  console.log('Running: ' + setup + ' object count, ' + variant + ' mutations');
+function reportStatus(b, variation, count) {
+  console.log(b.objectCount + ' objects, ' + count + ' runs.');
 }
 
-function ObserveUnobserveBenchmark() {
-  this.objects = [];
-}
+var objectCounts = [ 4000, 8000, 16000 ];
 
-ObserveUnobserveBenchmark.prototype = {
-  __proto__: Benchmark.prototype,
+var benchmarks = [];
 
-  newObserver: function() {
-    return function() {};
-  },
+objectCounts.forEach(function(objectCount, i) {
+  benchmarks.push(
+    new SetupPathBenchmark('', objectCount));
+});
 
-  setupTest: function(count) {
-    for (var i = 0; i < count; i++) {
-      this.objects.push({});
-    }
-  },
+Benchmark.all(benchmarks, 0, reportStatus).then(reportResults);
 
-  setupVariant: function(observerCount) {
-    this.observers = [];
-    for (var i = 0; i < observerCount; i++) {
-      this.observers.push(this.newObserver());
-    }
-  },
-
-  run: function() {
-    for (var i = 0; i < this.objects.length; i++) {
-      for (var j = 0; j < this.observers.length; j++)
-        Object.observe(this.objects[i], this.observers[j]);
-    }
-
-    for (var i = 0; i < this.objects.length; i++) {
-      for (var j = 0; j < this.observers.length; j++)
-        Object.unobserve(this.objects[i], this.observers[j]);
-    }
-  },
-
-  teardownVariant: function() {},
-  teardownTest: function(count) {},
-  destroy: function() {}
-};
-
-var test;
-var runner;
-
-console.log('-----Observe/Unobserve Benchmarks-----');
-
-var objectCount = 100000;
-
-console.log('ObserveUnobserveBenchmark - 1');
-test = new ObserveUnobserveBenchmark();
-runner = new BenchmarkRunner(test, [objectCount], [1], reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('ObserveUnobserveBenchmark - 2');
-test = new ObserveUnobserveBenchmark();
-runner = new BenchmarkRunner(test, [objectCount], [2], reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('ObserveUnobserveBenchmark - 4');
-test = new ObserveUnobserveBenchmark();
-runner = new BenchmarkRunner(test, [objectCount], [4], reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('ObserveUnobserveBenchmark - 8');
-test = new ObserveUnobserveBenchmark();
-runner = new BenchmarkRunner(test, [objectCount], [8], reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('ObserveUnobserveBenchmark - 16');
-test = new ObserveUnobserveBenchmark();
-runner = new BenchmarkRunner(test, [objectCount], [16], reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('-----Mutation Benchmarks-----');
-
-var objectCount = 6400;
-var mutationCount = 1600;
-
-console.log('PathBenchmark - leaf');
-test = new PathBenchmark('leaf');
-runner = new BenchmarkRunner(test, [objectCount], [mutationCount],
-                             reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('PathBenchmark - root');
-test = new PathBenchmark('root');
-runner = new BenchmarkRunner(test, [objectCount], [mutationCount],
-                             reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('ArrayBenchmark - push/pop');
-test = new ArrayBenchmark('push/pop');
-runner = new BenchmarkRunner(test, [objectCount], [mutationCount],
-                             reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('ArrayBenchmark - update');
-test = new ArrayBenchmark('update');
-runner = new BenchmarkRunner(test, [objectCount], [mutationCount],
-                             reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('ArrayBenchmark - splice');
-test = new ArrayBenchmark('splice');
-runner = new BenchmarkRunner(test, [objectCount], [mutationCount],
-                             reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('ArrayBenchmark - shift/unshift');
-test = new ArrayBenchmark('shift/unshift');
-runner = new BenchmarkRunner(test, [objectCount], [mutationCount],
-                             reportResults,
-                             reportStatus);
-runner.go();
-
-console.log('Object');
-test = new ObjectBenchmark();
-runner = new BenchmarkRunner(test, [objectCount], [mutationCount],
-                             reportResults,
-                             reportStatus);
-runner.go();

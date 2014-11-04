@@ -5,12 +5,13 @@ var root;
 var rootSize;
 var centerOfScreen;
 var mainDiv;
-var initList, btnSetRoot;
+var btnSetRoot;
 var cardConsole;
 
 function init() {
 	if (data == null) return;
 	initAlgorithm(funcName);
+	initAlgoSelect();
 	var mainPanel = $("core-header-panel[main]");
 	btnSetRoot = document.querySelector("#btnSetRoot");
 	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden";
@@ -40,6 +41,7 @@ function init() {
 				params.push(new ValueNode(list[0] * 1));
 			}
 		});
+		dAndC = funcMapping[funcName];
 		tracker = new Tracker();
 		dAndC.apply(this, params);
 		data = tracker.execution.children[0];
@@ -51,9 +53,22 @@ function init() {
 
 	initConsole();
 }
-
+function initAlgoSelect() {
+	var algoTemplate = document.querySelector('template#algoTemplate');
+	algoTemplate.algorithms = [
+		{name: 'Merge Sort', value: 'Merge Sort'},
+		{name: 'Quick Select', value: 'Quick Select'}
+	];
+	algoTemplate.algoSelect = function (e, details) {
+		if (details.isSelected) {
+			funcName = details.item.templateInstance.model.value;
+			initAlgorithm(funcName);
+		}
+	};
+}
 function initAlgorithm(funcName) {
 	var params = parameterMapping[funcName];
+	$("section#params").empty();
 	for (var i in params) {
 		$("section#params").append('<paper-input floatingLabel id="param' + i + '" label="' + params[i] + '"></paper-input>');
 	}

@@ -1,8 +1,17 @@
+<!--
+    @license
+    Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+    The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+    The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+    Code distributed by Google as part of the polymer project is also
+    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
 <!DOCTYPE html>
 <html>
   <head>
     <title>core-animation</title>
-    <script src="../platform/platform.js"></script>
+    <script src="../webcomponentsjs/webcomponents.js"></script>
     <link rel="import" href="core-animation.html">
     <link rel="import" href="core-animation-group.html">
 
@@ -104,13 +113,13 @@
           </core-animation-prop>
         </core-animation-keyframe>
       </core-animation>
-      <polymer-bounce duration="1000">bounce</polymer-bounce>
+<!--       <polymer-bounce duration="1000">bounce</polymer-bounce>
       <polymer-shake>shake</polymer-shake>
       <polymer-flip>flip X</polymer-flip>
       <polymer-flip axis="y">flip Y</polymer-flip>
       <polymer-blink>blink</polymer-blink>
       <polymer-fadein>fade in</polymer-fadein>
-    </div>
+ -->    </div>
     <script>
       var customAnimationFn = function(timeFraction, target) {
         if (timeFraction < 1) {
