@@ -56,7 +56,7 @@ div.console {
 div.console div.inner {
     position: relative;
 }
-div.console div.inner > div {
+div.console div.inner > paper-shadow {
     background: lightcyan;
     padding: 4px;
     border-radius: 2px;
@@ -181,21 +181,25 @@ core-menu {
     /*padding: 8px;*/
 }
 
+core-menu.select {
+    margin: 0;
+}
+
 paper-input {
     width: auto;
 }
 
-paper-button[raisedButton].colored {
+paper-button[raised].colored {
     background: #526E9C;
     color: #fff;
 }
 
-paper-button[raisedButton].colored #ripple,
-paper-button[raisedButton].colored::shadow #ripple {
+paper-button[raised].colored #ripple,
+paper-button[raised].colored::shadow #ripple {
     color: #56BA89;
 }
 
-paper-button[raisedButton].colored #focusBg,
-paper-button[raisedButton].colored::shadow #focusBg {
+paper-button[raised].colored #focusBg,
+paper-button[raised].colored::shadow #focusBg {
     background: #56BA89;
 }

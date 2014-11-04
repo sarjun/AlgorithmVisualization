@@ -3,17 +3,13 @@
  */
 
 function addConsoleCard(text, background) {
-	var divText = "<div class='inner'>"
-		+ "<div>" +
-		"<paper-shadow z='2'></paper-shadow>"
-		+ text
-		+ "</div></div>";
+	var divText = "<div class='inner'><paper-shadow z='2'>" + text + "</paper-shadow></div>";
 	var card = $(divText);
-	if(background != undefined) card.find("div").css("background", background);
+	if (background != undefined) card.find("div").css("background", background);
 	cardConsole.append(card);
 	cardConsole.scrollTop(cardConsole.height());
 }
 
-function clearConsole(){
+function clearConsole() {
 	cardConsole.find("div.inner").remove();
 }
