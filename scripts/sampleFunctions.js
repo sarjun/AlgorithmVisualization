@@ -76,7 +76,7 @@ function mergeSort(list) {
 	// Divide and conquer algorithm
 	// eventually this would come from the web page
 	// for now, we will use mergesort
-	tracker.logEntry(list);
+	tracker.logEntry([list]);
 	if (list.length == 1) {
 		tracker.logExit(list);
 		return list;
@@ -218,7 +218,7 @@ function mergeSort(list) {
 		}
 	}
 
-	tracker.logExit(sorted);
+	tracker.logExit([sorted]);
 	return sorted;
 }
 
