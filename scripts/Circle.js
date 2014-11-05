@@ -12,7 +12,7 @@ function Circle(parentCircle, parentElem, node, size) {
 	if (node.children.length > 0) {
 		this.elem.addClass("circle-node");
 		this.elem.bind("click", [this], function(e) {
-			e.data[0].click();
+			e.data[0].center(true);
 			e.stopPropagation();
 		});
 	} else {
@@ -59,20 +59,56 @@ function Circle(parentCircle, parentElem, node, size) {
 }
 
 
-Circle.prototype.click = function () {
+Circle.prototype.center = function (animated) {
+	Circle.centered = this;
 	var currentSize = root.elem.width();
 	var zoomSize = rootSize * root.elem.width() / this.elem.width();
+	root.elem.width(zoomSize).height(zoomSize);
+	zoomSize = rootSize * root.elem.width() / this.elem.width();
 	root.elem.width(zoomSize).height(zoomSize);
 	var currentPos = {top: root.elem.css("top"), left: root.elem.css("left")};
 	root.elem.css({top: 0, left: 0});
 	var circleCenter = getCenter(this.elem);
-	root.elem.css(currentPos);
-	root.elem.width(currentSize).height(currentSize);
-	root.elem.animate({
-		width: zoomSize,
-		height: zoomSize,
-		top: centerOfScreen[1] - circleCenter[1],
-		left: centerOfScreen[0] - circleCenter[0]
-	}, 750, "easeInOutQuad");
-	//root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
+	if (animated) {
+		root.elem.css(currentPos);
+		root.elem.width(currentSize).height(currentSize);
+		root.elem.animate({
+			width: zoomSize,
+			height: zoomSize,
+			top: centerOfScreen[1] - circleCenter[1],
+			left: centerOfScreen[0] - circleCenter[0]
+		}, 750, "easeInOutQuad", refreshCircleOverflow);
+	} else {
+		root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
+		refreshCircleOverflow();
+	}
+};
+
+Circle.prototype.checkOverflow = function () {
+	var myOffset = offsetFrom(this.elem, mainDiv);
+	var centerX = myOffset.left + this.elem.width() / 2;
+	var centerY = myOffset.top + this.elem.height() / 2;
+	var rad = this.elem.width() * this.elem.width() / 4;
+	var tables = this.elem.find("> div.node-stack-container table.node-list");
+	for (var i = 0; i < tables.length; i++) {
+		var table = $(tables[i]);
+		var tableOffset = offsetFrom(table, mainDiv);
+		var corners = [
+			[tableOffset.left, tableOffset.top],
+			[tableOffset.left + table.width(), tableOffset.top],
+			[tableOffset.left, tableOffset.top + table.height()],
+			[tableOffset.left + table.width(), tableOffset.top + table.height()]
+		];
+		for (var c in corners) {
+			if ((centerX - corners[c][0]) * (centerX - corners[c][0]) + (centerY - corners[c][1]) * (centerY - corners[c][1]) >= rad) {
+				this.elem.addClass("abbrev");
+				return true;
+			}
+		}
+
+	}
+	for (var i in this.children) {
+		this.children[i].checkOverflow();
+	}
+	return false;
 };

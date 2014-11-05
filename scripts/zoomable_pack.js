@@ -23,7 +23,7 @@ function init() {
 	centerOfScreen = [parentWidth / 2, parentHeight / 2];
 	//mainDiv.width(parentWidth).height(parentHeight);
 	makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
-	root.click();
+	root.center(false);
 	$(btnSetRoot).click(function () {
 		var params = [];
 		$("section#params").children().each(function (i, e) {
@@ -48,7 +48,7 @@ function init() {
 		mainDiv.empty();
 		root = null;
 		makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
-		root.click();
+		root.center(false);
 	});
 
 	initConsole();
