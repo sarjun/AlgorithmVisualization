@@ -7,7 +7,7 @@ function addConsoleCard(text, background) {
 	var card = $(divText);
 	if (background != undefined) card.find("div").css("background", background);
 	cardConsole.append(card);
-	cardConsole.scrollTop(cardConsole.height());
+	cardConsole.scrollTop(cardConsole[0].scrollHeight);
 }
 
 function clearConsole() {
