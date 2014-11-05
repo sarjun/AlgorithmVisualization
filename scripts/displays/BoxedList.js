@@ -114,20 +114,21 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				delay = skipDelays ? 0 : TIME_TRANSLATE;
 				break;
 			case "bucket":
+				var thisList = boxedList.getAdjacentBoxedList(animationList[i].visualizationSpec);
 				animationList[i].addBuckets.forEach(function (e) {
-					boxedList.buckets.add(e + "");
+					thisList.buckets.add(e + "");
 				});
 				animationList[i].removeBuckets.forEach(function (e) {
-					boxedList.buckets.delete(e + "");
+					thisList.buckets.delete(e + "");
 				});
-				boxedList.elem.find("td").removeClass("bucket start end");
-				boxedList.buckets.forEach(function (e){
+				thisList.elem.find("td").removeClass("bucket start end");
+				thisList.buckets.forEach(function (e){
 					var bucket = e.split(",");
 					bucket[0] *= 1;
 					bucket[1] *= 1;
-					boxedList.elem.find("td").slice(bucket[0], bucket[1] + 1).addClass("bucket");
-					boxedList.elem.find("td:nth-child(" + (1 + bucket[0]) + ")").addClass("start");
-					boxedList.elem.find("td:nth-child(" + (1 + bucket[1]) + ")").addClass("end");
+					thisList.elem.find("td").slice(bucket[0], bucket[1] + 1).addClass("bucket");
+					thisList.elem.find("td:nth-child(" + (1 + bucket[0]) + ")").addClass("start");
+					thisList.elem.find("td:nth-child(" + (1 + bucket[1]) + ")").addClass("end");
 				});
 				maxDelay = Math.max(maxDelay, TIME_BUCKET);
 				delay = skipDelays ? 0 : TIME_BUCKET;
@@ -139,12 +140,13 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				delay = skipDelays ? 0 : delay;
 				break;
 			case "visibility":
+				var thisList = boxedList.getAdjacentBoxedList(animationList[i].visualizationSpec);
 				animationList[i].showRanges.forEach(function (e) {
-					boxedList.elem.find("td").slice(e[0], e[1] + 1)
+					thisList.elem.find("td").slice(e[0], e[1] + 1)
 						.css("visibility", "initial");
 				});
 				animationList[i].hideRanges.forEach(function (e) {
-					boxedList.elem.find("td").slice(e[0], e[1] + 1)
+					thisList.elem.find("td").slice(e[0], e[1] + 1)
 						.css("visibility", "hidden");
 				});
 				maxDelay = Math.max(maxDelay, TIME_SET_VISIBILITY);
@@ -251,5 +253,18 @@ BoxedList.prototype.getElem = function(nodeSpec) {
 		return blist.nodeMap;
 	}));
 	return nodeMap[nodeSpec.node.id];
+};
 
+BoxedList.prototype.getAdjacentBoxedList = function(listSpec) {
+	var circle = this.parent;
+	for(var i = 0; i < listSpec.parentLevel; i++) {
+		circle = circle.parent;
+	}
+
+	for( var i=0; i<listSpec.childIndexes.length; i++) {
+		circle = circle.children[listSpec.childIndexes[i]];
+	}
+
+	var stack = listSpec.list == "start" ? circle.startStack : circle.endStack;
+	return stack[listSpec.stackIndex];
 }

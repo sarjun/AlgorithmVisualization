@@ -98,6 +98,7 @@ function mergeSort(list) {
 	var first = 0, second = 0;
 	var hideResult = getEmptyVisibilityAnimation();
 	hideResult.hideRanges.push([0, list.length]);
+	hideResult.visualizationSpec = getVisualizationSpecification(0, [], "end", 0);
 	tracker.currentFrame.endAnimations.push(hideResult);
 	var highlightStart = getEmptyHighlightAnimation();
 	highlightStart.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
@@ -186,6 +187,7 @@ function mergeSort(list) {
 function getShowDestAnimation(i) {
 	var showResult = getEmptyVisibilityAnimation();
 	showResult.showRanges.push([i, i]);
+	showResult.visualizationSpec = getVisualizationSpecification(0, [], "end", 0);
 	return showResult;
 }
 
@@ -255,12 +257,14 @@ function quickSelect(k, list, selMedian) {
 	// Get the list of medians in buckets of size 5
 	var medians = [];
 	var bucketAnim = getEmptyBucketAnimation();
+	bucketAnim.visualizationSpec = getVisualizationSpecification(0, [], "start", 1);
 	var sortAnim = getEmptyBundleAnimation();
 	var showAnim = getEmptyVisibilityAnimation();
 	var medianSelAnim = getEmptyHighlightAnimation();
 	var medianListAnim = getEmptyBundleAnimation();
 
 	showAnim.showRanges.push([0, list.length - 1]);
+	showAnim.visualizationSpec = getVisualizationSpecification(0, [], "start", 1);
 
 	for(var i=0; i<list.length; i+=5) {
 		var bucket = list.slice(i, i+5);
@@ -277,6 +281,7 @@ function quickSelect(k, list, selMedian) {
 			sortAnim.animations.push(translate);
 		}
 		var hide = getEmptyVisibilityAnimation();
+		hide.visualizationSpec = getVisualizationSpecification(0, [], "start", 1);
 		hide.hideRanges.push([0, list.length - 1]);
 		sortAnim.animations.push(hide);
 
@@ -305,8 +310,6 @@ function quickSelect(k, list, selMedian) {
 	highlightPivot.nodeSpecs.push(getNodeSpecification(pivot, 1, [], "start"));
 	tracker.currentFrame.children[0].endAnimations.push(highlightPivot);
 	animateSwapParentCircle(list[0], list[switchIndex]);
-	// TODO: Make bucket animation work with more than just this list
-	//var highlightSwapArea = getEmptyBucketAnimation();
 	var start = 1;
 	var end = list.length - 1;
 	var completedOne = false;
