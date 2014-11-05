@@ -151,93 +151,68 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				delay = skipDelays ? 0 : TIME_SET_VISIBILITY;
 				break;
 			case "swap":
-				var node1 = animationList[i].nodePair[0] + 1;
-				var node2 = animationList[i].nodePair[1] + 1;
-				if (node1 != node2) {
-					var elem1 = null;
-					var elem2 = null;
-					// TODO: The following code is very similar to existing code. Abstract it.
-					if(animationList[i].nodePairCircle == -1) {
-						elem1 = boxedList.elem.find("td:nth-child(" + node1 + ") span");
-						elem2 = boxedList.elem.find("td:nth-child(" + node2 + ") span");
-					}
-					else if(animationList[i].nodePairCircle < -1) {
-						var findCircle = boxedList.parent;
-						for(var count = animationList[i].nodePairCircle; count < -1; count++) {
-							findCircle = findCircle.parent;
-						}
-						if(animationList[i].nodePairList == "start") {
-							elem1 = findCircle.startStack[animationList[i].nodePairBoxedList].elem.find("td:nth-child(" + node1 + ") span");
-							elem2 = findCircle.startStack[animationList[i].nodePairBoxedList].elem.find("td:nth-child(" + node2 + ") span");
-						}
-						else {
-							elem1 = findCircle.endStack[animationList[i].nodePairBoxedList].elem.find("td:nth-child(" + node1 + ") span");
-							elem2 = findCircle.endStack[animationList[i].nodePairBoxedList].elem.find("td:nth-child(" + node2 + ") span");
-						}
-					}
-					else {
-						// TODO: This isn't done but this whole thing will be refactored anyway.
-					}
-					var pos1 = offsetFrom(elem1, mainDiv);
-					var pos2 = offsetFrom(elem2, mainDiv);
-					var elemLeft = null, elemRight = null;
-					var posLeft = null, posRight = null;
-					if (pos1.left < pos2.left) {
-						elemLeft = elem1;
-						posLeft = pos1;
-						elemRight = elem2;
-						posRight = pos2;
-					} else {
-						elemLeft = elem2;
-						posLeft = pos2;
-						elemRight = elem1;
-						posRight = pos1;
-					}
-					var ghostLeft = $(elemLeft[0].outerHTML);
-					var ghostRight = $(elemRight[0].outerHTML);
-					ghostLeft.addClass("ghost");
-					ghostRight.addClass("ghost");
-					ghostLeft.css({
-						position: "absolute",
-						width: elemLeft.width(),
-						height: elemLeft.height()
-					}).css(posLeft);
-					ghostRight.css({
-						position: "absolute",
-						width: elemRight.width(),
-						height: elemRight.height()
-					}).css(posRight);
-					mainDiv.append(ghostLeft);
-					mainDiv.append(ghostRight);
-					elemLeft.css("visibility", "hidden");
-					elemRight.css("visibility", "hidden");
-					var parentLeft = elemLeft.parent();
-					var parentRight = elemRight.parent();
-					parentLeft.append(elemRight);
-					parentRight.append(elemLeft);
-					ghostLeft.animate(posRight,{
-						duration: TIME_SWAP,
-						complete: function () {
-							elemLeft.css("visibility", "initial");
-							ghostLeft.remove();
-						},
-						step: function (now, fx) {
-							ghostLeft.css("top", Math.sin(Math.PI * (now - fx.end) / (fx.start - fx.end)) * parentLeft.height() + posLeft.top);
-						}
-					});
-					ghostRight.animate(posLeft,{
-						duration: TIME_SWAP,
-						complete: function () {
-							elemRight.css("visibility", "initial");
-							ghostRight.remove();
-						},
-						step: function (now, fx) {
-							ghostRight.css("top", -Math.sin(Math.PI * (now - fx.end) / (fx.start - fx.end)) * parentRight.height() + posRight.top);
-						}
-					});
-					maxDelay = Math.max(maxDelay, TIME_SWAP);
-					delay = skipDelays ? 0 : TIME_SWAP;
+				var elem1 = boxedList.getElem(animationList[i].node1);
+				var elem2 = boxedList.getElem(animationList[i].node2);
+				if(elem1 == elem2) break;
+				var pos1 = offsetFrom(elem1, mainDiv);
+				var pos2 = offsetFrom(elem2, mainDiv);
+				var elemLeft = null, elemRight = null;
+				var posLeft = null, posRight = null;
+				if (pos1.left < pos2.left) {
+					elemLeft = elem1;
+					posLeft = pos1;
+					elemRight = elem2;
+					posRight = pos2;
+				} else {
+					elemLeft = elem2;
+					posLeft = pos2;
+					elemRight = elem1;
+					posRight = pos1;
 				}
+				var ghostLeft = $(elemLeft[0].outerHTML);
+				var ghostRight = $(elemRight[0].outerHTML);
+				ghostLeft.addClass("ghost");
+				ghostRight.addClass("ghost");
+				ghostLeft.css({
+					position: "absolute",
+					width: elemLeft.width(),
+					height: elemLeft.height()
+				}).css(posLeft);
+				ghostRight.css({
+					position: "absolute",
+					width: elemRight.width(),
+					height: elemRight.height()
+				}).css(posRight);
+				mainDiv.append(ghostLeft);
+				mainDiv.append(ghostRight);
+				elemLeft.css("visibility", "hidden");
+				elemRight.css("visibility", "hidden");
+				var parentLeft = elemLeft.parent();
+				var parentRight = elemRight.parent();
+				parentLeft.append(elemRight);
+				parentRight.append(elemLeft);
+				ghostLeft.animate(posRight,{
+					duration: TIME_SWAP,
+					complete: function () {
+						elemLeft.css("visibility", "initial");
+						ghostLeft.remove();
+					},
+					step: function (now, fx) {
+						ghostLeft.css("top", Math.sin(Math.PI * (now - fx.end) / (fx.start - fx.end)) * parentLeft.height() + posLeft.top);
+					}
+				});
+				ghostRight.animate(posLeft,{
+					duration: TIME_SWAP,
+					complete: function () {
+						elemRight.css("visibility", "initial");
+						ghostRight.remove();
+					},
+					step: function (now, fx) {
+						ghostRight.css("top", -Math.sin(Math.PI * (now - fx.end) / (fx.start - fx.end)) * parentRight.height() + posRight.top);
+					}
+				});
+				maxDelay = Math.max(maxDelay, TIME_SWAP);
+				delay = skipDelays ? 0 : TIME_SWAP;
 				break;
 			case "bundle":
 				//console.log(animationList[i]);

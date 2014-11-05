@@ -79,10 +79,8 @@ function getEmptyVisibilityAnimation() {
 function getEmptySwapAnimation() {
 	return {
 		animationType: "swap",
-		nodePair: [],
-		nodePairCircle: -1,
-		nodePairList: null,
-		nodePairBoxedList: null
+		node1: null,
+		node2: null
 	}
 }
 

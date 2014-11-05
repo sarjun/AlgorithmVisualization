@@ -304,7 +304,7 @@ function quickSelect(k, list, selMedian) {
 	var highlightPivot = getEmptyHighlightAnimation();
 	highlightPivot.nodeSpecs.push(getNodeSpecification(pivot, 1, [], "start"));
 	tracker.currentFrame.children[0].endAnimations.push(highlightPivot);
-	animateSwapParentCircle(0, switchIndex);
+	animateSwapParentCircle(list[0], list[switchIndex]);
 	// TODO: Make bucket animation work with more than just this list
 	//var highlightSwapArea = getEmptyBucketAnimation();
 	var start = 1;
@@ -320,7 +320,7 @@ function quickSelect(k, list, selMedian) {
 		var swap = list[end];
 		list[end] = list[start];
 		list[start] = swap;
-		animateSwapParentCircle(start, end);
+		animateSwapParentCircle(list[start], list[end]);
 		if(start == end) break;
 		completedOne = true;
 	}
@@ -363,21 +363,15 @@ function quickSelect(k, list, selMedian) {
 
 function animatePivotSelection(pivot) {
 	var showAnswer = getEmptyTranslateAnimation();
-
-	var sourceSpec = getNodeSpecification(pivot, 0, [], "end");
-	var destSpec = getNodeSpecification(pivot, 1, [], "start");
-	showAnswer.sourceSpec = sourceSpec;
-	showAnswer.destSpec = destSpec;
-
+	showAnswer.sourceSpec = getNodeSpecification(pivot, 0, [], "end");
+	showAnswer.destSpec = getNodeSpecification(pivot, 1, [], "start");
 	tracker.currentFrame.endAnimations.push(showAnswer);
 }
 
-function animateSwapParentCircle(ind1, ind2) {
+function animateSwapParentCircle(node1, node2) {
 	var swapAnim = getEmptySwapAnimation();
-	swapAnim.nodePairCircle = -2;
-	swapAnim.nodePairBoxedList = 1;
-	swapAnim.nodePairList = "start";
-	swapAnim.nodePair = [ind1, ind2];
+	swapAnim.node1 = getNodeSpecification(node1, 1, [], "start");
+	swapAnim.node2 = getNodeSpecification(node2, 1, [], "start");
 	tracker.currentFrame.children[0].endAnimations.push(swapAnim);
 }
 
