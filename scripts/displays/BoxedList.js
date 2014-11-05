@@ -42,7 +42,6 @@ BoxedList.prototype.generateChildElement = function (thisNode) {
 };
 
 BoxedList.prototype.animate = function (animationList, skipDelays) {
-	console.log(animationList);
 	var i = 0;
 	var maxDelay = -1;
 	var childStartLists = [], childEndLists = [];
@@ -66,13 +65,10 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 		var delay = 0;
 		switch (animationList[i].animationType) {
 			case "highlight":
-				//console.log(animationList[i]);
-				var nodes = animationList[i].nodes;
-				var circles = animationList[i].circles;
-				var lists = animationList[i].lists;
+				var nodeSpecs = animationList[i].nodeSpecs;
 				var color = animationList[i].color;
-				for (var j = 0; j < nodes.length; j++) {
-					var elem = boxedList.getElem(childStartLists, childEndLists, nodes[j], circles[j], lists[j]);
+				for (var j = 0; j < nodeSpecs.length; j++) {
+					var elem = boxedList.getElem(nodeSpecs[j]);
 					if (elem != null) {
 						elem.css("border-color", color);
 					}
@@ -81,11 +77,9 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				delay = skipDelays ? 0 : TIME_HIGHLIGHT;
 				break;
 			case "unhighlight":
-				var nodes = animationList[i].nodes;
-				var circles = animationList[i].circles;
-				var lists = animationList[i].lists;
-				for (var j = 0; j < nodes.length; j++) {
-					var elem = boxedList.getElem(childStartLists, childEndLists, nodes[j], circles[j], lists[j]);
+				var nodeSpecs = animationList[i].nodeSpecs;
+				for (var j = 0; j < nodeSpecs.length; j++) {
+					var elem = boxedList.getElem(nodeSpecs[j]);
 					if (elem != null) {
 						elem.css("border-color", "black");
 					}
@@ -94,10 +88,8 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				delay = skipDelays ? 0 : TIME_UNHIGHLIGHT;
 				break;
 			case "translate":
-				var sourceElem = boxedList.getElem(childStartLists, childEndLists, animationList[i].sourceNode,
-					animationList[i].sourceCircle, animationList[i].sourceList);
-				var destElem = boxedList.getElem(childStartLists, childEndLists, animationList[i].destNode,
-					animationList[i].destCircle, animationList[i].destList, animationList[i].destSibling);
+				var sourceElem = boxedList.getElem(animationList[i].sourceSpec);
+				var destElem = boxedList.getElem(animationList[i].destSpec);
 
 				if(sourceElem == null || destElem == null) break;
 				var sourcePosition = offsetFrom(sourceElem, mainDiv);
@@ -268,65 +260,84 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 	return maxDelay;
 };
 
-BoxedList.prototype.getElem = function(childStartLists, childEndLists, node, circle, list, sibling) {
-	var elem = null;
-	if(sibling != null) {
-		if(list == "start") {
-			var nodeMap = $.extend.apply($, this.parent.parent.children[sibling].startStack.map(function(blist) {
-				return blist.nodeMap;
-			}));
-			elem = nodeMap[node.id];
-		}
-		else {
-			var nodeMap = $.extend.apply($, this.parent.parent.children[sibling].endStack.map(function(blist) {
-				return blist.nodeMap;
-			}));
-			elem = nodeMap[node.id];
-		}
-		return elem;
-	}
-	if(circle == -1) {
-		if((list == "start") == this.isStart) {
-			elem = this.nodeMap[node.id];
-		}
-		else {
-			if(this.isStart) {
-				elem = this.parent.endStack.nodeMap[node.id];
-				// TODO: fix
-			}
-			else {
-				elem = this.parent.startStack.nodeMap[node.id];
-			}
-		}
-	}
-	else if (circle < -1) {
-		var findCircle = this.parent;
-		for(var i = circle; i < -1; i++) {
-			findCircle = findCircle.parent;
-		}
-
-		if(list == "start") {
-			//console.log(findCircle);
-			var nodeMap = $.extend.apply($, findCircle.startStack.map(function(blist) {
-				return blist.nodeMap;
-			}));
-			elem = nodeMap[node.id];
-			//console.log(elem);
-		}
-		else {
-			var nodeMap = $.extend.apply($, findCircle.endStack.map(function(blist) {
-				return blist.nodeMap;
-			}));
-			elem = nodeMap[node.id];
-		}
-	}
-	else {
-		var search = list == "start" ? childStartLists : childEndLists;
-		console.log(circle);
-		if (search[circle].hasOwnProperty(node.id)) {
-			elem = search[circle][node.id];
-		}
+BoxedList.prototype.getElem = function(nodeSpec) {
+	var circle = this.parent;
+	for(var i = 0; i < nodeSpec.parentLevel; i++) {
+		circle = circle.parent;
 	}
 
-	return elem;
+	for( var i=0; i<nodeSpec.childIndexes.length; i++) {
+		circle = circle.children[nodeSpec.childIndexes[i]];
+	}
+
+	// TODO: make circles store flattened nodemaps for the two stacks
+	var stack = nodeSpec.list == "start" ? circle.startStack : circle.endStack;
+	var nodeMap = $.extend.apply($, stack.map(function(blist) {
+		return blist.nodeMap;
+	}));
+	return nodeMap[nodeSpec.node.id];
+
 }
+
+//BoxedList.prototype.getElem2 = function(childStartLists, childEndLists, node, circle, list, sibling) {
+//	var elem = null;
+//	if(sibling != null) {
+//		if(list == "start") {
+//			var nodeMap = $.extend.apply($, this.parent.parent.children[sibling].startStack.map(function(blist) {
+//				return blist.nodeMap;
+//			}));
+//			elem = nodeMap[node.id];
+//		}
+//		else {
+//			var nodeMap = $.extend.apply($, this.parent.parent.children[sibling].endStack.map(function(blist) {
+//				return blist.nodeMap;
+//			}));
+//			elem = nodeMap[node.id];
+//		}
+//		return elem;
+//	}
+//	if(circle == -1) {
+//		if((list == "start") == this.isStart) {
+//			elem = this.nodeMap[node.id];
+//		}
+//		else {
+//			if(this.isStart) {
+//				elem = this.parent.endStack.nodeMap[node.id];
+//				// TODO: fix
+//			}
+//			else {
+//				elem = this.parent.startStack.nodeMap[node.id];
+//			}
+//		}
+//	}
+//	else if (circle < -1) {
+//		var findCircle = this.parent;
+//		for(var i = circle; i < -1; i++) {
+//			findCircle = findCircle.parent;
+//		}
+//
+//		if(list == "start") {
+//			//console.log(findCircle);
+//			var nodeMap = $.extend.apply($, findCircle.startStack.map(function(blist) {
+//				return blist.nodeMap;
+//			}));
+//			elem = nodeMap[node.id];
+//			//console.log(elem);
+//		}
+//		else {
+//			var nodeMap = $.extend.apply($, findCircle.endStack.map(function(blist) {
+//				return blist.nodeMap;
+//			}));
+//			elem = nodeMap[node.id];
+//		}
+//	}
+//	else {
+//		var search = list == "start" ? childStartLists : childEndLists;
+//		console.log(circle);
+//		if (search[circle].hasOwnProperty(node.id)) {
+//			elem = search[circle][node.id];
+//		}
+//	}
+//
+//	return elem;
+//}

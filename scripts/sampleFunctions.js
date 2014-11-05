@@ -100,91 +100,102 @@ function mergeSort(list) {
 	hideResult.hideRanges.push([0, list.length]);
 	tracker.currentFrame.endAnimations.push(hideResult);
 	var highlightStart = getEmptyHighlightAnimation();
-	highlightStart.nodes.push(firstHalf[first]);
-	highlightStart.nodes.push(secondHalf[second]);
-	highlightStart.circles.push(0);
-	highlightStart.circles.push(1);
-	highlightStart.lists.push("end");
-	highlightStart.lists.push("end");
+	highlightStart.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
+	highlightStart.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
+	//highlightStart.nodes.push(firstHalf[first]);
+	//highlightStart.nodes.push(secondHalf[second]);
+	//highlightStart.circles.push(0);
+	//highlightStart.circles.push(1);
+	//highlightStart.lists.push("end");
+	//highlightStart.lists.push("end");
 	tracker.currentFrame.endAnimations.push(highlightStart);
 	for (var i = 0; i < list.length; i++) {
 		if (first == firstHalf.length) {
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceNode = secondHalf[second];
-			translate.destNode = secondHalf[second];
-			translate.sourceCircle = 1;
-			translate.sourceList = "end";
-			translate.destCircle = -1;
-			translate.destList = "end";
+			translate.sourceSpec = getNodeSpecification(secondHalf[second], 0, [1], "end");
+			translate.destSpec = getNodeSpecification(secondHalf[second], 0, [], "end");
+			//translate.sourceNode = secondHalf[second];
+			//translate.destNode = secondHalf[second];
+			//translate.sourceCircle = 1;
+			//translate.sourceList = "end";
+			//translate.destCircle = -1;
+			//translate.destList = "end";
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
-			unhighlight.nodes.push(secondHalf[second]);
-			unhighlight.circles.push(1);
-			unhighlight.lists.push("end");
+			unhighlight.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
+			//unhighlight.nodes.push(secondHalf[second]);
+			//unhighlight.circles.push(1);
+			//unhighlight.lists.push("end");
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
-				highlight.nodes.push(secondHalf[second]);
-				highlight.circles.push(1);
-				highlight.lists.push("end");
+				highlight.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
+				//highlight.nodes.push(secondHalf[second]);
+				//highlight.circles.push(1);
+				//highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			continue;
 		}
 		if (second == secondHalf.length) {
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceNode = firstHalf[first];
-			translate.destNode = firstHalf[first];
-			translate.sourceCircle = 0;
-			translate.sourceList = "end";
-			translate.destCircle = -1;
-			translate.destList = "end";
+			translate.sourceSpec = getNodeSpecification(firstHalf[first], 0, [0], "end");
+			translate.destSpec = getNodeSpecification(firstHalf[first], 0, [], "end");
+			//translate.sourceNode = firstHalf[first];
+			//translate.destNode = firstHalf[first];
+			//translate.sourceCircle = 0;
+			//translate.sourceList = "end";
+			//translate.destCircle = -1;
+			//translate.destList = "end";
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
-			unhighlight.circles.push(0);
-			unhighlight.lists.push("end");
-			unhighlight.nodes.push(firstHalf[first]);
+			unhighlight.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
+			//unhighlight.circles.push(0);
+			//unhighlight.lists.push("end");
+			//unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
 			if (first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
-				highlight.nodes.push(firstHalf[first]);
-				highlight.circles.push(0);
-				highlight.lists.push("end");
+				highlight.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
+				//highlight.nodes.push(firstHalf[first]);
+				//highlight.circles.push(0);
+				//highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			continue;
 		}
-		//console.log(first);
-		//console.log(firstHalf);
-		//console.log(firstHalf.length);
 		if (firstHalf[first].value > secondHalf[second].value) {
 			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, secondHalf[second].value));
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceNode = secondHalf[second];
-			translate.destNode = secondHalf[second];
-			translate.sourceCircle = 1;
-			translate.sourceList = "end";
-			translate.destCircle = -1;
-			translate.destList = "end";
+			translate.sourceSpec = getNodeSpecification(secondHalf[second], 0, [1], "end");
+			translate.destSpec = getNodeSpecification(secondHalf[second], 0, [], "end");
+			//translate.sourceNode = secondHalf[second];
+			//translate.destNode = secondHalf[second];
+			//translate.sourceCircle = 1;
+			//translate.sourceList = "end";
+			//translate.destCircle = -1;
+			//translate.destList = "end";
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
-			unhighlight.circles.push(1);
-			unhighlight.lists.push("end");
-			unhighlight.nodes.push(secondHalf[second]);
+			unhighlight.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
+			//unhighlight.circles.push(1);
+			//unhighlight.lists.push("end");
+			//unhighlight.nodes.push(secondHalf[second]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(secondHalf[second++]);
 			if (second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
-				highlight.nodes.push(secondHalf[second]);
-				highlight.circles.push(1);
-				highlight.lists.push("end");
+				highlight.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
+				//highlight.nodes.push(secondHalf[second]);
+				//highlight.circles.push(1);
+				//highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			if (second == secondHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(1));
@@ -193,25 +204,29 @@ function mergeSort(list) {
 			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, firstHalf[first].value));
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceNode = firstHalf[first];
-			translate.destNode = firstHalf[first];
-			translate.sourceCircle = 0;
-			translate.sourceList = "end";
-			translate.destCircle = -1;
-			translate.destList = "end";
+			translate.sourceSpec = getNodeSpecification(firstHalf[first], 0, [0], "end");
+			translate.destSpec = getNodeSpecification(firstHalf[first], 0, [], "end");
+			//translate.sourceNode = firstHalf[first];
+			//translate.destNode = firstHalf[first];
+			//translate.sourceCircle = 0;
+			//translate.sourceList = "end";
+			//translate.destCircle = -1;
+			//translate.destList = "end";
 			tracker.currentFrame.endAnimations.push(translate);
 			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
-			unhighlight.circles.push(0);
-			unhighlight.lists.push("end");
-			unhighlight.nodes.push(firstHalf[first]);
+			unhighlight.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
+			//unhighlight.circles.push(0);
+			//unhighlight.lists.push("end");
+			//unhighlight.nodes.push(firstHalf[first]);
 			tracker.currentFrame.endAnimations.push(unhighlight);
 			sorted.push(firstHalf[first++]);
 			if (first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
-				highlight.nodes.push(firstHalf[first]);
-				highlight.circles.push(0);
-				highlight.lists.push("end");
+				highlight.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
+				//highlight.nodes.push(firstHalf[first]);
+				//highlight.circles.push(0);
+				//highlight.lists.push("end");
 				tracker.currentFrame.endAnimations.push(highlight);
 			}
 			if (first == firstHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(2));
@@ -232,12 +247,14 @@ function getDivideInputAnimation(list, start, end, circle) {
 	var bundle = getEmptyBundleAnimation();
 	for (var i = start; i <= end; i++) {
 		var translate = getEmptyTranslateAnimation();
-		translate.sourceNode = list[i];
-		translate.destNode = list[i];
-		translate.sourceCircle = -1;
-		translate.sourceList = "start";
-		translate.destCircle = circle;
-		translate.destList = "start";
+		translate.sourceSpec = getNodeSpecification(list[i], 0, [], "start");
+		translate.destSpec = getNodeSpecification(list[i], 0, [circle], "start");
+		//translate.sourceNode = list[i];
+		//translate.destNode = list[i];
+		//translate.sourceCircle = -1;
+		//translate.sourceList = "start";
+		//translate.destCircle = circle;
+		//translate.destList = "start";
 		bundle.animations.push(translate);
 	}
 	return bundle;
@@ -314,10 +331,8 @@ function quickSelect(k, list, selMedian) {
 		});
 		for(var j=0; j<bucket.length; j++) {
 			var translate = getEmptyTranslateAnimation();
-			translate.sourceCircle = translate.destCircle = -1;
-			translate.sourceList = translate.destList = "start";
-			translate.sourceNode = bucket[j];
-			translate.destNode = forTranslate[j];
+			translate.sourceSpec = getNodeSpecification(bucket[j], 0, [], "start");
+			translate.destSpec = getNodeSpecification(forTranslate[j], 0, [], "start");
 			translate.moveSource = true;
 			sortAnim.animations.push(translate);
 		}
@@ -326,16 +341,12 @@ function quickSelect(k, list, selMedian) {
 		sortAnim.animations.push(hide);
 
 		medians.push(bucket[Math.floor(bucket.length / 2)]);
-		medianSelAnim.nodes.push(bucket[Math.floor(bucket.length / 2)]);
-		medianSelAnim.circles.push(-1);
-		medianSelAnim.lists.push("start");
+		medianSelAnim.nodeSpecs.push(getNodeSpecification(bucket[Math.floor(bucket.length / 2)], 0, [], "start"));
 	}
-	for(var i=0; i<medianSelAnim.nodes.length; i++) {
+	for(var i=0; i<medianSelAnim.nodeSpecs.length; i++) {
 		var translate = getEmptyTranslateAnimation();
-		translate.sourceCircle = -1;
-		translate.destCircle = 0;
-		translate.sourceList = translate.destList = "start";
-		translate.sourceNode = translate.destNode = medianSelAnim.nodes[i];
+		translate.sourceSpec = getNodeSpecification(medianSelAnim.nodeSpecs[i].node, 0, [], "start");
+		translate.destSpec = getNodeSpecification(medianSelAnim.nodeSpecs[i].node, 0, [0], "start");
 		medianListAnim.animations.push(translate);
 	}
 	tracker.currentFrame.startAnimations.push(bucketAnim);
@@ -351,9 +362,7 @@ function quickSelect(k, list, selMedian) {
 	list[0] = pivot;
 	list[switchIndex] = temp;
 	var highlightPivot = getEmptyHighlightAnimation();
-	highlightPivot.nodes.push(pivot);
-	highlightPivot.circles.push(-2);
-	highlightPivot.lists.push("start");
+	highlightPivot.nodeSpecs.push(getNodeSpecification(pivot, 1, [], "start"));
 	tracker.currentFrame.children[0].endAnimations.push(highlightPivot);
 	animateSwapParentCircle(0, switchIndex);
 	// TODO: Make bucket animation work with more than just this list
@@ -398,8 +407,6 @@ function quickSelect(k, list, selMedian) {
 			}
 			animateRecurseSubList(list.slice(0, stop));
 			tracker.logExit([answer]);
-			//console.log("exit: " + answer.value);
-			//console.log(tracker.currentFrame);
 			return answer;
 		}
 		else {
@@ -409,8 +416,6 @@ function quickSelect(k, list, selMedian) {
 			}
 			animateRecurseSubList(list.slice(stop + 1));
 			tracker.logExit([answer]);
-			//console.log("exit: " + answer.value);
-			//console.log(tracker.currentFrame);
 			return answer;
 		}
 	}
@@ -418,11 +423,12 @@ function quickSelect(k, list, selMedian) {
 
 function animatePivotSelection(pivot) {
 	var showAnswer = getEmptyTranslateAnimation();
-	showAnswer.sourceCircle = -1;
-	showAnswer.destCircle = -2;
-	showAnswer.sourceList = "end";
-	showAnswer.destList = "start";
-	showAnswer.sourceNode = showAnswer.destNode = pivot;
+
+	var sourceSpec = getNodeSpecification(pivot, 0, [], "end");
+	var destSpec = getNodeSpecification(pivot, 1, [], "start");
+	showAnswer.sourceSpec = sourceSpec;
+	showAnswer.destSpec = destSpec;
+
 	tracker.currentFrame.endAnimations.push(showAnswer);
 }
 
@@ -439,10 +445,11 @@ function animateRecurseSubList(subList) {
 	var bundle = getEmptyBundleAnimation();
 	for(var i=0; i<subList.length; i++) {
 		var translate = getEmptyTranslateAnimation();
-		translate.sourceList = translate.destList = "start";
-		translate.sourceNode = translate.destNode = subList[i];
-		translate.sourceCircle = -2;
-		translate.destSibling = 1;
+
+		var sourceSpec = getNodeSpecification(subList[i], 1, [], "start");
+		var destSpec = getNodeSpecification(subList[i], 1, [1], "start");
+		translate.sourceSpec = sourceSpec;
+		translate.destSpec = destSpec;
 		bundle.animations.push(translate);
 	}
 	tracker.currentFrame.children[0].endAnimations.push(bundle);

@@ -19,12 +19,19 @@ function getEmptyExecutionFrame() {
 	};
 }
 
+function getNodeSpecification(node, parentLevel, childIndexes, list) {
+	return {
+		node: node,
+		parentLevel: parentLevel,   // 0 = this circle, 1 = this circle's parent, etc.
+		childIndexes: childIndexes, // the indexes are used after finding the circle using parentLevel
+		list: list
+	}
+}
+
 function getEmptyHighlightAnimation() {
 	return {
 		animationType: "highlight",
-		nodes: [],
-		circles: [],
-		lists: [],
+		nodeSpecs: [],
 		color: "orange"
 	}
 }
@@ -32,13 +39,8 @@ function getEmptyHighlightAnimation() {
 function getEmptyTranslateAnimation() {
 	return {
 		animationType: "translate",
-		sourceNode: null,
-		destNode: null,
-		sourceCircle: null,
-		sourceList: null,
-		destCircle: null,
-		destList: null,
-		destSibling: null,
+		sourceSpec: null,
+		destSpec: null,
 		moveSource: false
 	}
 }
@@ -46,9 +48,7 @@ function getEmptyTranslateAnimation() {
 function getEmptyUnhighlightAnimation() {
 	return {
 		animationType: "unhighlight",
-		nodes: [],
-		circles: [],
-		lists: []
+		nodeSpecs: []
 	}
 }
 
