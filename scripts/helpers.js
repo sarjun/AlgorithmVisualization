@@ -13,3 +13,18 @@ function addConsoleCard(text, background) {
 function clearConsole() {
 	cardConsole.find("div.inner").remove();
 }
+
+function refreshCircleOverflow () {
+	mainDiv.find("div.circle").removeClass("abbrev");
+	if (Circle.centered == root) {
+		for (var i in root.children) {
+			root.children[i].checkOverflow();
+		}
+	} else {
+		for (var i in Circle.centered.parent.children) {
+			for (var j in Circle.centered.parent.children[i].children) {
+				Circle.centered.parent.children[i].children[j].checkOverflow();
+			}
+		}
+	}
+}
