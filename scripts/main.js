@@ -95,6 +95,14 @@ function getEmptySwapAnimation() {
 	}
 }
 
+function getEmptyPhaseAnimation() {
+	return {
+		animationType: "phase",
+		newState: [],
+		vSpec: null
+	}
+}
+
 function getEmptyBundleAnimation() {
 	return {
 		animationType: "bundle",

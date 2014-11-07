@@ -10,6 +10,7 @@ var TIME_BUCKET = 1000;
 var TIME_TEXT_PER_WORD = 300;
 var TIME_SET_VISIBILITY = 0;
 var TIME_SWAP = 1000;
+var TIME_PHASE = 1000;
 
 function BoxedList(parent, parentElem, start, nodeList) {
 	this.nodeList = nodeList;
@@ -142,11 +143,11 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			case "visibility":
 				var thisList = boxedList.getAdjacentBoxedList(animationList[i].visualizationSpec);
 				animationList[i].showRanges.forEach(function (e) {
-					thisList.elem.find("td").slice(e[0], e[1] + 1)
+					thisList.elem.find("span").slice(e[0], e[1] + 1)
 						.css("visibility", "initial");
 				});
 				animationList[i].hideRanges.forEach(function (e) {
-					thisList.elem.find("td").slice(e[0], e[1] + 1)
+					thisList.elem.find("span").slice(e[0], e[1] + 1)
 						.css("visibility", "hidden");
 				});
 				maxDelay = Math.max(maxDelay, TIME_SET_VISIBILITY);
@@ -215,6 +216,33 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				});
 				maxDelay = Math.max(maxDelay, TIME_SWAP);
 				delay = skipDelays ? 0 : TIME_SWAP;
+				break;
+			case "phase":
+				var thisBoxedList = boxedList.getAdjacentBoxedList(animationList[i].vSpec);
+				var thisList = thisBoxedList.elem.parents("table:first");
+				var ghost = $(thisList[0].outerHTML);
+				ghost.addClass("ghost");
+				ghost.css({
+					position: "absolute",
+					width: thisList.width(),
+					height: thisList.height()
+				}).css(offsetFrom(thisList, mainDiv));
+				mainDiv.append(ghost);
+				thisList.css("opacity", "0");
+				var tds = thisList.find("td").removeClass("bucket start end");
+				for (var j in animationList[i].newState){
+					var nodeElem = thisBoxedList.nodeMap[animationList[i].newState[j].id];
+					nodeElem.css("border-color", "black");
+					$(tds[j]).append(nodeElem);
+				}
+				ghost.animate({
+					opacity: 0
+				}, TIME_PHASE, function () {
+					ghost.remove();
+				});
+				thisList.animate({
+					opacity: 1
+				}, TIME_PHASE);
 				break;
 			case "bundle":
 				//console.log(animationList[i]);
