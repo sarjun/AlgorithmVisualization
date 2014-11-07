@@ -76,7 +76,11 @@ function initAlgorithm(funcName) {
 
 function initConsole() {
 	cardConsole = $("div.console");
-	$("a#btnClearConsole").click(clearConsole);
+	$("a#btnClearConsole").click(clearConsole).hover(function () {
+		cardConsole.css("opacity", "0.5");
+	}, function() {
+		cardConsole.css("opacity", "1.0");
+	});
 	addConsoleCard(overviewMapping[funcName]);
 	addConsoleCard(divideMapping[funcName]);
 	addConsoleCard(conquerMapping[funcName]);
