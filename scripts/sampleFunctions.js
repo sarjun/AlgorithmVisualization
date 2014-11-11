@@ -235,7 +235,8 @@ function quickSelect(k, list, selMedian) {
 	//console.log(k + " from " + list.map(function(elem) {
 	//	return elem.value;
 	//}));
-	tracker.logEntry([k, list.slice(0)]);
+	var entryList = list.slice(0);
+	tracker.logEntry([k, entryList]);
 	// Base case
 	if(list.length <= 5) {
 		if(k.value > 4) {
@@ -264,7 +265,7 @@ function quickSelect(k, list, selMedian) {
 	var medianListAnim = getEmptyBundleAnimation();
 	var resetAnim = getEmptyPhaseAnimation();
 
-	resetAnim.newState = list.slice(0);
+	resetAnim.newState = entryList;
 	resetAnim.vSpec = getVisualizationSpecification(0, [], "start", 1);
 
 	showAnim.showRanges.push([0, list.length - 1]);
@@ -338,12 +339,15 @@ function quickSelect(k, list, selMedian) {
 	}
 	list[stop] = pivot;
 
+	resetAnim = getEmptyPhaseAnimation();
+	resetAnim.newState = entryList;
+	resetAnim.vSpec = getVisualizationSpecification(1, [], "start", 1);
 	if(stop == k.value) {
 		quickSelect(new ValueNode(0), [pivot], false);
 		if(selMedian) {
 			animatePivotSelection(pivot);
 		}
-		animateRecurseSubList([pivot]);
+		animateRecurseSubList([pivot], resetAnim);
 		tracker.logExit([pivot]);
 		return pivot;
 	}
@@ -353,7 +357,7 @@ function quickSelect(k, list, selMedian) {
 			if(selMedian) {
 				animatePivotSelection(answer);
 			}
-			animateRecurseSubList(list.slice(0, stop));
+			animateRecurseSubList(list.slice(0, stop), resetAnim);
 			tracker.logExit([answer]);
 			return answer;
 		}
@@ -362,7 +366,7 @@ function quickSelect(k, list, selMedian) {
 			if(selMedian) {
 				animatePivotSelection(answer);
 			}
-			animateRecurseSubList(list.slice(stop + 1));
+			animateRecurseSubList(list.slice(stop + 1), resetAnim);
 			tracker.logExit([answer]);
 			return answer;
 		}
@@ -388,7 +392,7 @@ function animateSwapParentCircle(node1, node2) {
 	tracker.currentFrame.children[0].endAnimations.push(swapAnim);
 }
 
-function animateRecurseSubList(subList) {
+function animateRecurseSubList(subList, resetAnim) {
 	var bundle = getEmptyBundleAnimation();
 	for(var i=0; i<subList.length; i++) {
 		var translate = getEmptyTranslateAnimation();
@@ -400,6 +404,7 @@ function animateRecurseSubList(subList) {
 		bundle.animations.push(translate);
 	}
 	tracker.currentFrame.children[0].endAnimations.push(bundle);
+	tracker.currentFrame.children[0].endAnimations.push(resetAnim);
 }
 
 funcMapping[funcName] = quickSelect;
