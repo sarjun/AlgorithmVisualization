@@ -262,6 +262,10 @@ function quickSelect(k, list, selMedian) {
 	var showAnim = getEmptyVisibilityAnimation();
 	var medianSelAnim = getEmptyHighlightAnimation();
 	var medianListAnim = getEmptyBundleAnimation();
+	var resetAnim = getEmptyPhaseAnimation();
+
+	resetAnim.newState = list.slice(0);
+	resetAnim.vSpec = getVisualizationSpecification(0, [], "start", 1);
 
 	showAnim.showRanges.push([0, list.length - 1]);
 	showAnim.visualizationSpec = getVisualizationSpecification(0, [], "start", 1);
@@ -280,14 +284,14 @@ function quickSelect(k, list, selMedian) {
 			translate.moveSource = true;
 			sortAnim.animations.push(translate);
 		}
-		var hide = getEmptyVisibilityAnimation();
-		hide.visualizationSpec = getVisualizationSpecification(0, [], "start", 1);
-		hide.hideRanges.push([0, list.length - 1]);
-		sortAnim.animations.push(hide);
-
 		medians.push(bucket[Math.floor(bucket.length / 2)]);
+
 		medianSelAnim.nodeSpecs.push(getNodeSpecification(bucket[Math.floor(bucket.length / 2)], 0, [], "start"));
 	}
+	var hide = getEmptyVisibilityAnimation();
+	hide.visualizationSpec = getVisualizationSpecification(0, [], "start", 1);
+	hide.hideRanges.push([0, list.length - 1]);
+	sortAnim.animations.push(hide);
 	for(var i=0; i<medianSelAnim.nodeSpecs.length; i++) {
 		var translate = getEmptyTranslateAnimation();
 		translate.sourceSpec = getNodeSpecification(medianSelAnim.nodeSpecs[i].node, 0, [], "start");
@@ -299,6 +303,7 @@ function quickSelect(k, list, selMedian) {
 	tracker.currentFrame.startAnimations.push(showAnim);
 	tracker.currentFrame.startAnimations.push(medianSelAnim);
 	tracker.currentFrame.startAnimations.push(medianListAnim);
+	tracker.currentFrame.startAnimations.push(resetAnim);
 
 	var pivot = quickSelect(new ValueNode(Math.floor(medians.length / 2)), medians, true);
 	// Check if the pivot is the kth value. If not, recurse on the greater partition or the lesser partition
