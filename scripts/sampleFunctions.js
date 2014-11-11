@@ -248,6 +248,7 @@ function quickSelect(k, list, selMedian) {
 				return a.value - b.value;
 			});
 			if(selMedian) {
+				textAnimateBaseCase();
 				animatePivotSelection(list[k.value]);
 			}
 			tracker.logExit([list[k.value]]);
@@ -303,6 +304,7 @@ function quickSelect(k, list, selMedian) {
 	tracker.currentFrame.startAnimations.push(sortAnim);
 	tracker.currentFrame.startAnimations.push(showAnim);
 	tracker.currentFrame.startAnimations.push(medianSelAnim);
+	textAnimateMedians(medians);
 	tracker.currentFrame.startAnimations.push(medianListAnim);
 	tracker.currentFrame.startAnimations.push(resetAnim);
 
@@ -315,16 +317,34 @@ function quickSelect(k, list, selMedian) {
 	var highlightPivot = getEmptyHighlightAnimation();
 	highlightPivot.nodeSpecs.push(getNodeSpecification(pivot, 1, [], "start"));
 	tracker.currentFrame.children[0].endAnimations.push(highlightPivot);
+	textAnimatePartitionSetup(pivot);
 	animateSwapParentCircle(list[0], list[switchIndex]);
 	var start = 1;
 	var end = list.length - 1;
 	var completedOne = false;
+	var first = true;
 	while(start < end) {
+		if(first) {
+			textAnimatePartitionLeft();
+			highlightInParentStart(list[start]);
+		}
 		while(list[start].value <= pivot.value && start < end) {
+			unhighlightInParentStart(list[start]);
 			start++;
+			highlightInParentStart(list[start]);
+		}
+		if(first) {
+			textAnimatePartitionRight();
+			highlightInParentStart(list[end]);
 		}
 		while(list[end].value > pivot.value && start < end) {
+			unhighlightInParentStart(list[end]);
 			end--;
+			highlightInParentStart(list[end]);
+		}
+		if(first) {
+			textAnimatePartitionSwap();
+			first = false;
 		}
 		var swap = list[end];
 		list[end] = list[start];
@@ -333,6 +353,7 @@ function quickSelect(k, list, selMedian) {
 		if(start == end) break;
 		completedOne = true;
 	}
+	textAnimatePartitionDone();
 	var stop = completedOne ? end - 1 : end;
 	for(var i = 0; i < stop; i++) {
 		list[i] = list[i+1];
@@ -347,6 +368,7 @@ function quickSelect(k, list, selMedian) {
 		if(selMedian) {
 			animatePivotSelection(pivot);
 		}
+		textAnimateRecurseKth();
 		animateRecurseSubList([pivot], resetAnim);
 		tracker.logExit([pivot]);
 		return pivot;
@@ -373,9 +395,67 @@ function quickSelect(k, list, selMedian) {
 	}
 }
 
-function textAnimateMedianOfMediansOverview() {
+function textAnimateMedians(medians) {
 	var explainMedOfMed = getEmptyTextAnimation();
-	explainMedOfMed.text = "First, select the element to use to partition the list."
+	explainMedOfMed.text = "The medians of the buckets in the input list are: " + medians[0].value;
+	for(var i=1; i<medians.length - 1; i++) {
+		explainMedOfMed.text += ", " + medians[i].value;
+	}
+	explainMedOfMed.text += ", and " + medians[medians.length - 1].value;
+	var index =  Math.floor(medians.length / 2) + "";
+	var suffix = "th";
+	if(index.charAt(index.length - 1) == '1') suffix = 'st';
+	if(index.charAt(index.length - 1) == '2') suffix = 'nd';
+	if(index.charAt(index.length - 1) == '3') suffix = 'rd';
+	explainMedOfMed.text += ". The " + index + suffix + " lowest value in these medians (the median of medians) will be " +
+	"found recursively to partition the input list.";
+
+	tracker.currentFrame.startAnimations.push(explainMedOfMed);
+}
+
+function textAnimateBaseCase() {
+	var explainBase = getEmptyTextAnimation();
+	explainBase.text = "Since the input list is smaller than the size of one bucket (5), this is a base case. Return the desired element.";
+	tracker.currentFrame.endAnimations.push(explainBase);
+}
+
+function textAnimatePartitionSetup(elem) {
+	var explainPartition = getEmptyTextAnimation();
+	explainPartition.text = "The partitioning around " + elem.value + " will be done in place. First we move it to " +
+	"the beginning of the list.";
+	tracker.currentFrame.children[0].endAnimations.push(explainPartition);
+}
+
+function textAnimatePartitionRight() {
+	var explainPartition = getEmptyTextAnimation();
+	explainPartition.text = "Find the first element from the right of the list whose value is less than the partition...";
+	tracker.currentFrame.children[0].endAnimations.push(explainPartition);
+}
+
+function textAnimatePartitionLeft() {
+	var explainPartition = getEmptyTextAnimation();
+	explainPartition.text = "Find the first element from the left of the list whose value is greater than the partition...";
+	tracker.currentFrame.children[0].endAnimations.push(explainPartition);
+}
+
+function textAnimatePartitionSwap() {
+	var explainPartition = getEmptyTextAnimation();
+	explainPartition.text = "Now swap them. Repeat this until the two pointers reach the same index in the list.";
+	tracker.currentFrame.children[0].endAnimations.push(explainPartition);
+}
+
+function textAnimateRecurseKth() {
+	var explainDone = getEmptyTextAnimation();
+	explainDone.text = "The partition is the kth element, so we are done! We will recurse on just the kth element only for " +
+	"symmetry in the visualization.";
+	tracker.currentFrame.children[0].endAnimations.push(explainDone);
+}
+
+function textAnimatePartitionDone() {
+	var explainDone = getEmptyTextAnimation();
+	explainDone.text = "Now we know the index of the partition in the input list (because the list is partitioned). " +
+	"This tells us if the partition is the kth value, and if not, which half to recurse on.";
+	tracker.currentFrame.children[0].endAnimations.push(explainDone);
 }
 
 function animatePivotSelection(pivot) {
@@ -383,6 +463,18 @@ function animatePivotSelection(pivot) {
 	showAnswer.sourceSpec = getNodeSpecification(pivot, 0, [], "end");
 	showAnswer.destSpec = getNodeSpecification(pivot, 1, [], "start");
 	tracker.currentFrame.endAnimations.push(showAnswer);
+}
+
+function highlightInParentStart(node) {
+	var elemToConsider = getEmptyHighlightAnimation();
+	elemToConsider.nodeSpecs.push(getNodeSpecification(node, 1, [], "start"));
+	tracker.currentFrame.children[0].endAnimations.push(elemToConsider);
+}
+
+function unhighlightInParentStart(node) {
+	var elemDoneConsider = getEmptyUnhighlightAnimation();
+	elemDoneConsider.nodeSpecs.push(getNodeSpecification(node, 1, [], "start"));
+	tracker.currentFrame.children[0].endAnimations.push(elemDoneConsider);
 }
 
 function animateSwapParentCircle(node1, node2) {
