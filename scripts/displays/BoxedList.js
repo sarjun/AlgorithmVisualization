@@ -135,10 +135,25 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				delay = skipDelays ? 0 : TIME_BUCKET;
 				break;
 			case "text":
-				addConsoleCard(animationList[i].text, animationList[i].cardColor);
+				var newCard = addConsoleCard(animationList[i].text, animationList[i].cardColor).find("paper-shadow");
 				delay = TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length;
 				maxDelay = Math.max(maxDelay, delay);
 				delay = skipDelays ? 0 : delay;
+				if (delay > 0) {
+					var progress = $("<div class='progress'></div>");
+					newCard.prepend(progress);
+					progress.animate({
+						width: "100%"
+					}, delay, "linear", function () {$(this).remove();});
+					var progressDone = function (data) {
+						data[0].unbind("click").css("cursor", "auto");
+						if (BoxedList.animating != null) clearTimeout(BoxedList.animating);
+						data[1].finish();
+						doAnim(boxedList);
+					};
+					var timeout = setTimeout(progressDone, delay, [newCard, progress]);
+					newCard.bind("click",[newCard, progress], function (e) {clearTimeout(timeout); progressDone(e.data);}).css("cursor", "pointer");
+				}
 				break;
 			case "visibility":
 				var thisList = boxedList.getAdjacentBoxedList(animationList[i].visualizationSpec);

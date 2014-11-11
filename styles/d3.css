@@ -32,6 +32,16 @@ div.console div.inner > paper-shadow {
     border-radius: 2px;
     margin: 10px 8px;
 }
+div.console div.progress {
+    position: absolute;
+    height: 100%;
+    width: 0%;
+    top: 0;
+    left: 0;
+    background: green;
+    opacity: .2;
+    pointer-events: none;
+}
 a.button {
     padding: 8px 10px;
     border-radius: 3px;
