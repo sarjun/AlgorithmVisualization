@@ -5,7 +5,9 @@ body {
     background: #eee;
     font-family: sans-serif;
 }
-
+#algoTitle {
+    font-weight: bold;
+}
 div.content {
     width: 75%;
     position: absolute;
@@ -189,7 +191,10 @@ core-menu.select {
 paper-input {
     width: auto;
 }
-
+paper-input.selected {
+    /*border: 1px solid orange;*/
+    background-color: rgba(255, 255, 0, 0.57);
+}
 paper-button[raised].colored {
     background: #526E9C;
     color: #fff;

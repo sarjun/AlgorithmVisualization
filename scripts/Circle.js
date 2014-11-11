@@ -49,11 +49,16 @@ function Circle(parentCircle, parentElem, node, size) {
 		}
 		this.startStack.push(boxedList);
 		boxedList.generateChildren();
-		boxedList.elem.bind("click", [this, boxedList], startClicked).hover(
-			function () {
+		boxedList.elem.bind("click", [this, boxedList], startClicked)
+			.mouseenter(i,
+			function (e) {
+				if (Circle.centered == boxedList.parent) {
+					$($("section#params paper-input")[e.data * 1]).addClass("selected");
+				}
 				if (BoxedList.animating != null) return;
 				boxedList.parent.elem.find("> div.node-stack-container.start .text-node").wrap("<paper-shadow z='1'></paper-shadow>");
-			}, function () {
+			}).mouseleave(i, function (e) {
+				$($("section#params paper-input")[e.data * 1]).removeClass("selected");
 				boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
 			}
 		);
@@ -67,7 +72,8 @@ function Circle(parentCircle, parentElem, node, size) {
 		}
 		this.endStack.push(boxedList);
 		boxedList.generateChildren();
-		boxedList.elem.bind("click", [this, boxedList], endClicked).hover(
+		boxedList.elem.bind("click", [this, boxedList], endClicked)
+			.hover(
 			function () {
 				if (BoxedList.animating != null) return;
 				boxedList.parent.elem.find("> div.node-stack-container.result .text-node").wrap("<paper-shadow z='1'></paper-shadow>");

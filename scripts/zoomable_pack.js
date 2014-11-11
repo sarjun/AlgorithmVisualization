@@ -67,6 +67,7 @@ function initAlgoSelect() {
 	};
 }
 function initAlgorithm(funcName) {
+	$("span#algoTitle").text(funcName);
 	var params = parameterMapping[funcName];
 	$("section#params").empty();
 	for (var i in params) {
