@@ -319,6 +319,10 @@ function quickSelect(k, list, selMedian) {
 	tracker.currentFrame.children[0].endAnimations.push(highlightPivot);
 	textAnimatePartitionSetup(pivot);
 	animateSwapParentCircle(list[0], list[switchIndex]);
+	var bucketRemaining = getEmptyBucketAnimation();
+	bucketRemaining.visualizationSpec = getVisualizationSpecification(1, [], "start", 1);
+	bucketRemaining.addBuckets.push([1, list.length - 1]);
+	tracker.currentFrame.children[0].endAnimations.push(bucketRemaining);
 	var start = 1;
 	var end = list.length - 1;
 	var completedOne = false;
