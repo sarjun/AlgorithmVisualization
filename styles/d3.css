@@ -57,7 +57,7 @@ div.main {
 
 div.circle {
     background: rgba(31, 119, 180, 0.1);
-    border: 1px dashed steelblue;
+    border: 1px solid steelblue;
     border-radius: 50%;
     display: inline-block;
     vertical-align: middle;
@@ -81,7 +81,6 @@ div.circle:hover {
     border-color: #ff7f0e;
 }
 div.circle.centered {
-    border-style: solid;
     cursor: auto;
 }
 div.circle.centered div.circle{
