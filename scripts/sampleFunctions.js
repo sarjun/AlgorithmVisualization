@@ -364,6 +364,11 @@ function quickSelect(k, list, selMedian) {
 	}
 }
 
+function textAnimateMedianOfMediansOverview() {
+	var explainMedOfMed = getEmptyTextAnimation();
+	explainMedOfMed.text = "First, select the element to use to partition the list."
+}
+
 function animatePivotSelection(pivot) {
 	var showAnswer = getEmptyTranslateAnimation();
 	showAnswer.sourceSpec = getNodeSpecification(pivot, 0, [], "end");
@@ -393,10 +398,13 @@ function animateRecurseSubList(subList) {
 }
 
 funcMapping[funcName] = quickSelect;
-overviewMapping[funcName] = "This function selects the kth smallest element from the input list.";
-divideMapping[funcName] = "The input list is divided into the medians of buckets of size 5. " +
-"The median of these medians is then used as a pivot to partition the input list.";
-conquerMapping[funcName] = "The return value is simply the value returned by the second recursive call.";
+overviewMapping[funcName] = "This function selects the kth smallest (where k is zero-indexed) element from the input list. " +
+"This is done by repeatedly partitioning the list and looking in the appropriate half until the selected partition is the desired element.";
+divideMapping[funcName] = "The input list is divided into buckets of size 5. We then find the median of each bucket and " +
+"recursively find the median of these medians.";
+conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
+"The algorithm terminates if the median of medians is at" +
+" index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
 parameterMapping[funcName] = ["K", "Input List"];
 
 // Set Starting Function
