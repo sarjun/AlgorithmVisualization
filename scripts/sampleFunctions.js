@@ -225,7 +225,7 @@ overviewMapping[funcName] = "This function sorts a list of elements by recursive
 divideMapping[funcName] = "The input list is divided into two halves by splitting in the middle.";
 conquerMapping[funcName] = "The two sorted halves are merged by iteratively selecting elements from the two sorted halves " +
 "in overall sorted order.";
-parameterMapping[funcName] = ["Input List"];
+parameterMapping[funcName] = ["Input List : int list"];
 
 // ******************
 // Quick Select
@@ -511,7 +511,7 @@ divideMapping[funcName] = "The input list is divided into buckets of size 5. We 
 conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
 "The algorithm terminates if the median of medians is at" +
 " index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
-parameterMapping[funcName] = ["K", "Input List"];
+parameterMapping[funcName] = ["K : uint", "Input List : int list"];
 
 // Set Starting Function
 funcName = "Quick Select";

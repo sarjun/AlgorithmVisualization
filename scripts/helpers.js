@@ -8,6 +8,7 @@ function addConsoleCard(text, background) {
 	if (background != undefined) card.find("div").css("background", background);
 	cardConsole.append(card);
 	cardConsole.scrollTop(cardConsole[0].scrollHeight);
+	return card;
 }
 
 function clearConsole() {
