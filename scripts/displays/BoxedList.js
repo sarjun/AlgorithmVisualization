@@ -37,7 +37,7 @@ BoxedList.prototype.generateChildren = function () {
 
 BoxedList.prototype.generateChildElement = function (thisNode) {
 	var childElem = $("<td><span class='text-node'></span></td>");
-	this.nodeMap[thisNode.id] = childElem.find("span");
+	this.nodeMap[thisNode.id] = childElem.find(".text-node");
 	this.nodeMap[thisNode.id].text(thisNode.value);
 	this.elem.append(childElem);
 };
@@ -60,7 +60,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 	}
 	var doAnim = function (boxedList) {
 		if (i >= animationList.length) {
-			boxedList.animating = null;
+			BoxedList.animating = null;
 			return;
 		}
 		var delay = 0;
@@ -143,11 +143,11 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			case "visibility":
 				var thisList = boxedList.getAdjacentBoxedList(animationList[i].visualizationSpec);
 				animationList[i].showRanges.forEach(function (e) {
-					thisList.elem.find("span").slice(e[0], e[1] + 1)
+					thisList.elem.find(".text-node").slice(e[0], e[1] + 1)
 						.css("visibility", "initial");
 				});
 				animationList[i].hideRanges.forEach(function (e) {
-					thisList.elem.find("span").slice(e[0], e[1] + 1)
+					thisList.elem.find(".text-node").slice(e[0], e[1] + 1)
 						.css("visibility", "hidden");
 				});
 				maxDelay = Math.max(maxDelay, TIME_SET_VISIBILITY);
@@ -256,7 +256,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 		}
 		i++;
 		if (delay > 0) {
-			boxedList.animating = setTimeout(doAnim, delay, boxedList);
+			BoxedList.animating = setTimeout(doAnim, delay, boxedList);
 		} else {
 			doAnim(boxedList);
 		}

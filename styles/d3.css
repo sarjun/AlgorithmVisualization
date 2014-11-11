@@ -57,27 +57,46 @@ div.main {
 
 div.circle {
     background: rgba(31, 119, 180, 0.1);
-    border: 1px solid steelblue;
+    border: 1px dashed steelblue;
     border-radius: 50%;
     display: inline-block;
     vertical-align: middle;
     position: relative;
     margin: 0 -1px;
+    cursor: -webkit-zoom-out;
+    cursor: -moz-zoom-out;
 }
 
-div.circle-leaf {
+div.circle.circle-leaf {
     background: rgba(255, 0, 0, 0.1);
 }
-
+div.circle.abbrev {
+    background-image: url(../images/ellipsis.png);
+    background-size: cover;
+}
+div.circle.abbrev > div {
+    visibility: hidden;
+}
+div.circle:hover {
+    border-color: #ff7f0e;
+}
+div.circle.centered {
+    border-style: solid;
+    cursor: auto;
+}
+div.circle.centered div.circle{
+    cursor: -webkit-zoom-in;
+    cursor: -moz-zoom-in;
+}
+div.circle.centered > div.circle.circle-leaf {
+    cursor: auto;
+}
 div.circle-align-helper {
     display: inline-block;
     vertical-align: middle;
     height: 100%;
 }
 
-div.circle:hover {
-    border-color: #ff7f0e;
-}
 div.node-stack-container {
     position: absolute;
     height: 100%;
@@ -104,13 +123,6 @@ div.node-list-container {
     width: 100%;
     text-align: center;
 }
-div.circle.abbrev {
-    background-image: url(../images/ellipsis.png);
-    background-size: cover;
-}
-div.circle.abbrev > div {
-    visibility: hidden;
- }
 
 *.node-list {
     display: inline-block;
@@ -132,15 +144,17 @@ div.circle.abbrev > div {
 *.node-list td.end {
     border-right-color: #44b300;
 }
-span.text-node {
+*.text-node {
     padding: 0 3px;
     border: 1px solid black;
     border-radius: 2px;
+    cursor: pointer;
     /*margin: 0 1px;*/
 }
 
-span.text-node.ghost {
+*.text-node.ghost {
     margin: 0;
+    cursor: auto;
 }
 
 core-header-panel {
