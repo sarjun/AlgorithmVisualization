@@ -247,8 +247,12 @@ function quickSelect(k, list, selMedian) {
 			list.sort(function(a, b) {
 				return a.value - b.value;
 			});
+			textAnimateBaseCase();
+			var foundKth = getEmptyTranslateAnimation();
+			foundKth.sourceSpec = getNodeSpecification(list[k.value], 0, [], "start");
+			foundKth.destSpec = getNodeSpecification(list[k.value], 0, [], "end");
+			tracker.currentFrame.startAnimations.push(foundKth);
 			if(selMedian) {
-				textAnimateBaseCase();
 				animatePivotSelection(list[k.value]);
 			}
 			tracker.logExit([list[k.value]]);
@@ -420,7 +424,7 @@ function textAnimateMedians(medians) {
 function textAnimateBaseCase() {
 	var explainBase = getEmptyTextAnimation();
 	explainBase.text = "Since the input list is smaller than the size of one bucket (5), this is a base case. Return the desired element.";
-	tracker.currentFrame.endAnimations.push(explainBase);
+	tracker.currentFrame.startAnimations.push(explainBase);
 }
 
 function textAnimatePartitionSetup(elem) {
