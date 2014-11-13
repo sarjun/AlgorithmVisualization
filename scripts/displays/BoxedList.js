@@ -129,6 +129,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					bucket[1] *= 1;
 					thisList.elem.find("td").slice(bucket[0], bucket[1] + 1).addClass("bucket");
 					thisList.elem.find("td:nth-child(" + (1 + bucket[0]) + ")").addClass("start");
+					if(bucket[0] != 0) thisList.elem.find("td:nth-child(" + (1 + bucket[0] - 1) + ")").addClass("end");
 					thisList.elem.find("td:nth-child(" + (1 + bucket[1]) + ")").addClass("end");
 				});
 				maxDelay = Math.max(maxDelay, TIME_BUCKET);
