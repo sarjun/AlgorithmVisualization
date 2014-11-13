@@ -6,7 +6,6 @@ var rootSize;
 var centerOfScreen;
 var mainDiv;
 var btnSetRoot;
-var cardConsole;
 
 function init() {
 	if (data == null) return;
@@ -76,11 +75,32 @@ function initAlgorithm(funcName) {
 }
 
 function initConsole() {
-	cardConsole = $("div.console");
 	$("a#btnClearConsole").click(clearConsole).hover(function () {
-		cardConsole.css("opacity", "0.5");
+		$("div.console").css("opacity", "0.5");
 	}, function() {
-		cardConsole.css("opacity", "1.0");
+		$("div.console").css("opacity", "1.0");
+	});
+	$("a#btnPrevConsole").click(function () {
+		if (BoxedList.animating != null) return;
+		var currentConsole = $("div.console.fresh");
+		var previousConsole = currentConsole.prev();
+		if (previousConsole.hasClass("console")) {
+			currentConsole.hide("slide", {direction: "right"});
+			previousConsole.show("slide", {direction: "left"});
+			currentConsole.removeClass("fresh");
+			previousConsole.addClass("fresh");
+		}
+	});
+	$("a#btnNextConsole").click(function () {
+		if (BoxedList.animating != null) return;
+		var currentConsole = $("div.console.fresh");
+		var nextConsole = currentConsole.next();
+		if (nextConsole.hasClass("console")) {
+			currentConsole.hide("slide", {direction: "left"});
+			nextConsole.show("slide", {direction: "right"});
+			currentConsole.removeClass("fresh");
+			nextConsole.addClass("fresh");
+		}
 	});
 	addConsoleCard(overviewMapping[funcName]);
 	addConsoleCard(divideMapping[funcName]);

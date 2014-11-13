@@ -24,6 +24,7 @@ function Circle(parentCircle, parentElem, node, size) {
 		if (BoxedList.animating == null) {
 			e.data[0].center(true);
 			boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
+			$("div.console.fresh").removeClass("fresh");
 			e.data[1].animate(node.startAnimations);
 		}
 		e.stopPropagation();
@@ -32,6 +33,7 @@ function Circle(parentCircle, parentElem, node, size) {
 		if (BoxedList.animating == null) {
 			if (e.data[0].parent != null) e.data[0].parent.center(true);
 			boxedList.parent.elem.find("> div.node-stack-container.result paper-shadow > *").unwrap();
+			$("div.console.fresh").removeClass("fresh");
 			e.data[1].animate(node.endAnimations);
 		}
 		e.stopPropagation();
@@ -88,6 +90,8 @@ function Circle(parentCircle, parentElem, node, size) {
 
 
 Circle.prototype.center = function (animated) {
+	if (BoxedList.animating != null) return;
+	if (this.elem.hasClass("circle-leaf")) return;
 	Circle.centered = this;
 	mainDiv.find("div.circle").removeClass("centered");
 	this.elem.addClass("centered");
