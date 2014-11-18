@@ -11,13 +11,13 @@ function Circle(parentCircle, parentElem, node, size) {
 	this.elem.append("<div class='circle-align-helper'></div>");
 	if (node.children.length > 0) {
 		this.elem.addClass("circle-node");
-		this.elem.bind("click", [this], function(e) {
-			e.data[0].center(true);
-			e.stopPropagation();
-		});
 	} else {
 		this.elem.addClass("circle-leaf");
 	}
+	this.elem.bind("click", [this], function(e) {
+		e.data[0].center(true);
+		e.stopPropagation();
+	});
 	this.startStack = [];
 	this.endStack = [];
 	var startClicked = function (e) {
@@ -89,9 +89,10 @@ function Circle(parentCircle, parentElem, node, size) {
 }
 
 
-Circle.prototype.center = function (animated) {
+Circle.prototype.center = function (animated, onComplete) {
 	if (BoxedList.animating != null) return;
-	if (this.elem.hasClass("circle-leaf")) return;
+	if (Circle.centered == this) return;
+	//if (this.elem.hasClass("circle-leaf")) return;
 	Circle.centered = this;
 	mainDiv.find("div.circle").removeClass("centered");
 	this.elem.addClass("centered");
@@ -111,7 +112,7 @@ Circle.prototype.center = function (animated) {
 			height: zoomSize,
 			top: centerOfScreen[1] - circleCenter[1],
 			left: centerOfScreen[0] - circleCenter[0]
-		}, 750, "easeInOutQuad", refreshCircleOverflow);
+		}, 750, "easeInOutQuad", refreshCircleOverflow, onComplete);
 	} else {
 		root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
 		refreshCircleOverflow();

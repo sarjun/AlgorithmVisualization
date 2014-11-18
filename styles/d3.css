@@ -99,9 +99,6 @@ div.circle.centered div.circle{
     cursor: -webkit-zoom-in;
     cursor: -moz-zoom-in;
 }
-div.circle.centered > div.circle.circle-leaf {
-    cursor: auto;
-}
 div.circle-align-helper {
     display: inline-block;
     vertical-align: middle;
