@@ -51,6 +51,8 @@ function init() {
 	});
 
 	initConsole();
+	$("div.spotlight").hide();
+	//startTutorial();
 }
 function initAlgoSelect() {
 	var algoTemplate = document.querySelector('template#algoTemplate');

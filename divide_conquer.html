@@ -33,16 +33,33 @@
 	<script type="text/javascript" src="scripts/main.js"></script>
 	<script type="text/javascript" src="scripts/displays/BoxedList.js"></script>
 	<script type="text/javascript" src="scripts/helpers.js"></script>
+	<script type="text/javascript" src="scripts/tutorial.js"></script>
 	<script type="text/javascript" src="scripts/zoomable_pack.js"></script>
 
 </head>
 <body unresolved fullbleed>
-
+<div class="spotlight">
+    <div class="top"></div>
+    <div class="row">
+        <div class="left">
+            <div class="vpadding"></div>
+            <span></span>
+            <div class="vpadding"></div>
+        </div>
+        <div class="cell"></div>
+        <div class="padding">
+            <div class="vpadding"></div>
+            <span></span>
+            <div class="vpadding"></div>
+        </div>
+    </div>
+    <div class="padding"></div>
+</div>
 <core-drawer-panel id="drawerPanel">
 
 	<core-header-panel drawer>
 		<core-toolbar id="navheader'">
-			<span>Ménu</span>
+			<span>Settings</span>
 		</core-toolbar>
 		<core-menu>
             <template id="algoTemplate" is="auto-binding" >
@@ -60,13 +77,13 @@
             <section id="params">
 
             </section>
-            <paper-button raised class="colored" id="btnSetRoot">Set Root</paper-button>
+            <paper-button raised class="colored" id="btnSetRoot">Set Input</paper-button>
 		</core-menu>
 	</core-header-panel>
 
 	<core-header-panel main>
 		<core-toolbar id="mainheader">
-			<paper-icon-button id="navicon" icon="menu"></paper-icon-button>
+			<!--<paper-icon-button id="navicon" icon="menu"></paper-icon-button>-->
 			<span flex>Divide and Conquer Algorithm Visualization:&nbsp;<span id="algoTitle"></span></span>
             <a class="button" id="btnPrevConsole">&lt;</a>
             <a class="button" id="btnNextConsole">&gt;</a>
