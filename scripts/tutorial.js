@@ -78,12 +78,27 @@ function clearSpotlightText() {
 	return spans;
 }
 
-var tutorialQueue = [];
+var tutorialQueue = null;
 
 function startTutorial(){
+	if(tutorialQueue == null) {
+		$("div.cell").click(function() {
+			if(tutorialQueue.length > 0) {
+				tutorialQueue.shift().call();
+			}
+			else {
+				doneTutorial();
+			}
+		});
+	}
+	tutorialQueue = [tutorialStep2, tutorialStep3, tutorialStep4, tutorialStep5, tutorialConsole,
+		tutorialConsoleButtons];
+	tutorialStep1();
+}
+
+function tutorialStep1() {
 	var algoSelect = $("#algoSelect");
 	positionSpotlightOnElem(algoSelect);
-	$("div.cell").click(tutorialStep2);
 	setSpotlightText("This is a dropdown that allows you to select the algorithm that is currently being visualized.");
 }
 
@@ -91,14 +106,12 @@ function tutorialStep2() {
 	var parameters = $("#params");
 	positionSpotlightOnElem(parameters);
 	setSpotlightText("These are text inputs for the input parameters to the algorithm.");
-	$("div.cell").click(tutorialStep3);
 }
 
 function tutorialStep3() {
 	var button = $("#btnSetRoot");
 	positionSpotlightOnElem(button);
 	setSpotlightText("This button generates the visualization based on the selected algorithm and specified input parameters.");
-	$("div.cell").click(tutorialStep4);
 }
 
 function tutorialStep4() {
@@ -106,7 +119,6 @@ function tutorialStep4() {
 	setSpotlightText("This is the visualization of the selected algorithm on the specified inputs. Each circle is a method call " +
 	"where circles inside other circles are recursive calls. The values at the top of the circle are input parameters to that call" +
 	" in same order as in the menu. The values at the end of the circle are the return values.");
-	$("div.cell").click(tutorialStep5);
 }
 
 function tutorialStep5() {
@@ -118,32 +130,25 @@ function tutorialStep5() {
 			return !a.elem.hasClass("abbrev");
 		});
 	if(validChildren.length > 0) {
-		$("div.cell").click(function() {
-			console.log(validChildren[0]);
+		tutorialQueue.unshift(function() {
 			tutorialChildCircle(validChildren[0].elem);
 		});
-	}
-	else {
-		$("div.cell").click(tutorialConsole);
 	}
 }
 
 function tutorialChildCircle(elem) {
 	positionSpotlightOnElem(elem);
 	setSpotlightText("This is a recursive call. Click on this circle to zoom in to it.");
-	$("div.cell").click(tutorialConsole);
 }
 
 function tutorialConsole() {
 	positionSpotlightOnElem($("div.console.fresh"));
 	setSpotlightText("This is the text console used to show explanations of things during the animations.");
-	$("div.cell").click(tutorialConsoleButtons);
 }
 
 function tutorialConsoleButtons() {
 	positionSpotlightOnElem($("#consoleBtns"));
 	setSpotlightText("These buttons are used to manipulate the console.");
-	$("div.cell").click(doneTutorial);
 }
 
 function doneTutorial() {
@@ -151,5 +156,4 @@ function doneTutorial() {
 	var spotlight = $("div.cell");
 	spotlight.hide();
 	$("div.spotlight").hide("fade");
-	spotlight.unbind("click");
 }
