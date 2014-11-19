@@ -62,12 +62,18 @@ function positionSpotlightOnElem(elem, parent) {
 }
 
 function setSpotlightText(msg) {
-	var spans = $("div.spotlight span").html("");
+	var spans = clearSpotlightText();
 	if (spans.first().width() > spans.last().width()) {
 		spans.first().html(msg);
+		spans.first().parent().css("flex-shrink", 1);
 	} else {
 		spans.last().html(msg);
+		spans.last().parent().css("flex-shrink", 1);
 	}
+}
+
+function clearSpotlightText() {
+	return $("div.spotlight span").html("").css("flex-shrink", 0);
 }
 
 function startTutorial(){
@@ -81,8 +87,40 @@ function startTutorial(){
 }
 
 function tutorialStep2() {
-	//var algoSelect = $("#algoSelect");
-	//positionSpotlightOnElem(algoSelect.find("paper-dropdown"), algoSelect);
-	positionSpotlightOnElem($("div.console"));
-	setSpotlightText("Choose one of them");
+	var algoSelect = $("#algoSelect");
+	positionSpotlightOnElem(algoSelect.find("paper-dropdown"), algoSelect);
+	//positionSpotlightOnElem($("div.console"));
+	setSpotlightText("Choose an algorithm from the click");
+	algoSelect.click(function() {
+		algoSelect.unbind("click");
+		tutorialStep3();
+	});
+}
+
+function tutorialStep3() {
+	var parameters = $("#params");
+	positionSpotlightOnElem(parameters);
+	setSpotlightText("These are text inputs for parameters to the algorithm. Click to automatically enter sample values.");
+	parameters.click(function() {
+		document.querySelector("#param0").value = "4";
+		document.querySelector("#param1").value = "4,2,5,7,8,1,3,8,0";
+		parameters.unbind("click");
+		tutorialStep4();
+	});
+}
+
+function tutorialStep4() {
+	var button = $("#btnSetRoot");
+	positionSpotlightOnElem(button);
+	setSpotlightText("Click the button to set the algorithm to visualize and the input parameters set above.");
+	button.click(function() {
+		button.unbind("click");
+		tutorialStep5();
+	});
+}
+
+function tutorialStep5() {
+	var rootList = root.elem.find("> .start .node-list-container");
+	//clearSpotlightText();
+	positionSpotlightOnElem(rootList);
 }

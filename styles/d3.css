@@ -192,6 +192,7 @@ div.spotlight div.padding, div.spotlight div.top, div.spotlight div.left {
     background-image: url(../images/black80.png);
     background-size: cover;
     pointer-events: auto;
+    flex-shrink: 0;
 }
 div.spotlight div.padding, div.spotlight div.vpadding {
     flex-grow: 1;
