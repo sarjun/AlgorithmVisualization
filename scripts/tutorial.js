@@ -1,7 +1,7 @@
 function positionSpotlight(top, left, width, height) {
-	console.log([top, left]);
 	var spotlight = $("div.spotlight");
 	spotlight.show();
+	$("div.cell").show();
 	if (top < 0) {
 		spotlight.find("div.top").css({
 			'flex-basis': 0,
@@ -73,54 +73,83 @@ function setSpotlightText(msg) {
 }
 
 function clearSpotlightText() {
-	return $("div.spotlight span").html("").css("flex-shrink", 0);
+	var spans = $("div.spotlight span").html("");
+	spans.parent().css("flex-shrink", 0);
+	return spans;
 }
+
+var tutorialQueue = [];
 
 function startTutorial(){
 	var algoSelect = $("#algoSelect");
 	positionSpotlightOnElem(algoSelect);
-	algoSelect.click(function () {
-		algoSelect.unbind("click");
-		tutorialStep2();
-	});
-	setSpotlightText("Click to select a divide and conquer algorithm");
+	$("div.cell").click(tutorialStep2);
+	setSpotlightText("This is a dropdown that allows you to select the algorithm that is currently being visualized.");
 }
 
 function tutorialStep2() {
-	var algoSelect = $("#algoSelect");
-	positionSpotlightOnElem(algoSelect.find("paper-dropdown"), algoSelect);
-	//positionSpotlightOnElem($("div.console"));
-	setSpotlightText("Choose an algorithm from the click");
-	algoSelect.click(function() {
-		algoSelect.unbind("click");
-		tutorialStep3();
-	});
+	var parameters = $("#params");
+	positionSpotlightOnElem(parameters);
+	setSpotlightText("These are text inputs for the input parameters to the algorithm.");
+	$("div.cell").click(tutorialStep3);
 }
 
 function tutorialStep3() {
-	var parameters = $("#params");
-	positionSpotlightOnElem(parameters);
-	setSpotlightText("These are text inputs for parameters to the algorithm. Click to automatically enter sample values.");
-	parameters.click(function() {
-		document.querySelector("#param0").value = "4";
-		document.querySelector("#param1").value = "4,2,5,7,8,1,3,8,0";
-		parameters.unbind("click");
-		tutorialStep4();
-	});
+	var button = $("#btnSetRoot");
+	positionSpotlightOnElem(button);
+	setSpotlightText("This button generates the visualization based on the selected algorithm and specified input parameters.");
+	$("div.cell").click(tutorialStep4);
 }
 
 function tutorialStep4() {
-	var button = $("#btnSetRoot");
-	positionSpotlightOnElem(button);
-	setSpotlightText("Click the button to set the algorithm to visualize and the input parameters set above.");
-	button.click(function() {
-		button.unbind("click");
-		tutorialStep5();
-	});
+	positionSpotlightOnElem(root.elem);
+	setSpotlightText("This is the visualization of the selected algorithm on the specified inputs. Each circle is a method call " +
+	"where circles inside other circles are recursive calls. The values at the top of the circle are input parameters to that call" +
+	" in same order as in the menu. The values at the end of the circle are the return values.");
+	$("div.cell").click(tutorialStep5);
 }
 
 function tutorialStep5() {
 	var rootList = root.elem.find("> .start .node-list-container");
-	//clearSpotlightText();
 	positionSpotlightOnElem(rootList);
+	setSpotlightText("You can click on the values to trigger an animation that explains something about how the algorithm works. " +
+	"Try clicking on values that the animation flows into to trigger more animations.");
+	var validChildren = root.children.filter(function(a) {
+			return !a.elem.hasClass("abbrev");
+		});
+	if(validChildren.length > 0) {
+		$("div.cell").click(function() {
+			console.log(validChildren[0]);
+			tutorialChildCircle(validChildren[0].elem);
+		});
+	}
+	else {
+		$("div.cell").click(tutorialConsole);
+	}
+}
+
+function tutorialChildCircle(elem) {
+	positionSpotlightOnElem(elem);
+	setSpotlightText("This is a recursive call. Click on this circle to zoom in to it.");
+	$("div.cell").click(tutorialConsole);
+}
+
+function tutorialConsole() {
+	positionSpotlightOnElem($("div.console.fresh"));
+	setSpotlightText("This is the text console used to show explanations of things during the animations.");
+	$("div.cell").click(tutorialConsoleButtons);
+}
+
+function tutorialConsoleButtons() {
+	positionSpotlightOnElem($("#consoleBtns"));
+	setSpotlightText("These buttons are used to manipulate the console.");
+	$("div.cell").click(doneTutorial);
+}
+
+function doneTutorial() {
+	clearSpotlightText();
+	var spotlight = $("div.cell");
+	spotlight.hide();
+	$("div.spotlight").hide("fade");
+	spotlight.unbind("click");
 }
