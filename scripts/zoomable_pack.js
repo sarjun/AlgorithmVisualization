@@ -71,9 +71,16 @@ function initAlgoSelect() {
 function initAlgorithm(funcName) {
 	$("span#algoTitle").text(funcName);
 	var params = parameterMapping[funcName];
-	$("section#params").empty();
+	var paramBox = $("section#params");
+	paramBox.empty();
 	for (var i in params) {
-		$("section#params").append('<paper-input floatingLabel id="param' + i + '" label="' + params[i] + '"></paper-input>');
+		var input = $('<paper-input floatingLabel id="param' + i + '" label="' + params[i] + '"></paper-input>');
+		paramBox.append(input);
+		input.keyup(function(event){
+			if(event.keyCode == 13){
+				$("#btnSetRoot").click();
+			}
+		});
 	}
 }
 
