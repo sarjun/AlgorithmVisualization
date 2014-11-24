@@ -230,7 +230,7 @@ parameterMapping[funcName] = ["Input List : int list"];
 // ******************
 // Quick Select
 // ******************
-funcName = "Quick Select";
+funcName = "Median of Medians";
 function quickSelect(k, list, selMedian) {
 	//console.log(k + " from " + list.map(function(elem) {
 	//	return elem.value;
@@ -518,4 +518,4 @@ conquerMapping[funcName] = "The input list is partitioned on the median of media
 parameterMapping[funcName] = ["K : uint", "Input List : int list"];
 
 // Set Starting Function
-funcName = "Quick Select";
+funcName = "Median of Medians";

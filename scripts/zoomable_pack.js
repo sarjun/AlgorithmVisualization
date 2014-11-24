@@ -57,10 +57,15 @@ function init() {
 }
 function initAlgoSelect() {
 	var algoTemplate = document.querySelector('template#algoTemplate');
-	algoTemplate.algorithms = [
-		{name: 'Merge Sort', value: 'Merge Sort'},
-		{name: 'Quick Select', value: 'Quick Select'}
-	];
+	algoTemplate.algorithms = Object.keys(overviewMapping).map(
+		function(key) {
+			return {
+				name: key,
+				value: key
+			};
+		}
+	);
+	algoTemplate.algorithms.shift(); // TODO: remove this hack...
 	algoTemplate.algoSelect = function (e, details) {
 		if (details.isSelected) {
 			funcName = details.item.templateInstance.model.value;
