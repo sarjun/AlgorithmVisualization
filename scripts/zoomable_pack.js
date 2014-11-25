@@ -26,8 +26,9 @@ function init() {
 	$(btnSetRoot).click(function () {
 		var params = [];
 		$("section#params").children().each(function (i, e) {
-			var list = e.value.split(",");
-			if (list.length > 1) {
+			e.value = e.value.trim();
+			if (e.value.charAt(0) == '[' && e.value.charAt(e.value.length - 1) == ']') {
+				var list = e.value.substring(1, e.value.length - 1).split(",");
 				for (var i in list) {
 					if (list[i].trim().length > 0) {
 						list[i] = new ValueNode(list[i] * 1);
@@ -37,7 +38,7 @@ function init() {
 				}
 				params.push(list);
 			} else {
-				params.push(new ValueNode(list[0] * 1));
+				params.push(new ValueNode(e.value * 1));
 			}
 		});
 		dAndC = funcMapping[funcName];

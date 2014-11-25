@@ -247,3 +247,6 @@ paper-button[raised].colored #focusBg,
 paper-button[raised].colored::shadow #focusBg {
     background: #56BA89;
 }
+paper-dropdown .core-selected {
+    background: greenyellow;
+}
