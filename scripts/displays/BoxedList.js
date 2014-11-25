@@ -160,7 +160,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var thisList = boxedList.getAdjacentBoxedList(animationList[i].visualizationSpec);
 				animationList[i].showRanges.forEach(function (e) {
 					thisList.elem.find(".text-node").slice(e[0], e[1] + 1)
-						.css("visibility", "initial");
+						.css("visibility", "");
 				});
 				animationList[i].hideRanges.forEach(function (e) {
 					thisList.elem.find(".text-node").slice(e[0], e[1] + 1)
