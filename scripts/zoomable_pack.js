@@ -53,9 +53,39 @@ function init() {
 	$("#btnStartTutorial").click(startTutorial);
 
 	initConsole();
+	initMenuValues();
 	$("div.spotlight").hide();
 	//startTutorial();
 }
+
+function initMenuValues() {
+	var initDropdown = function() {
+		try {
+			var algoSel = document.querySelector("#algoSelect");
+			algoSel.selectedItemLabel = funcName;
+		}
+		catch(err) {
+			setTimeout(initDropdown, 100);
+		}
+	};
+	setTimeout(initDropdown, 100);
+
+	var initParams = function() {
+		try {
+			var inputs = document.querySelector("#params").children;
+			inputs[0].value = "2";
+			inputs[1].value = "[15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]";
+		}
+		catch(err) {
+			setTimeout(initParams, 100);
+		}
+	};
+	setTimeout(initParams, 100);
+	//for(var i in inputs) {
+	//
+	//}
+}
+
 function initAlgoSelect() {
 	var algoTemplate = document.querySelector('template#algoTemplate');
 	algoTemplate.algorithms = Object.keys(overviewMapping).map(

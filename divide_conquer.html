@@ -63,8 +63,8 @@
 		</core-toolbar>
 		<core-menu>
             <template id="algoTemplate" is="auto-binding" >
-                <paper-dropdown-menu id="algoSelect" label="Select an Algorithm" selected="Quick Select" on-core-select="{{algoSelect}}">
-                    <paper-dropdown class="dropdown colored">
+                <paper-dropdown-menu id="algoSelect" label="Select an Algorithm" on-core-select="{{algoSelect}}">
+                    <paper-dropdown class="dropdown"  selected=1>
                         <core-menu class="select">
                             <template repeat="{{algorithms}}">
                                 <paper-item label="{{name}}" value="{{value}}"></paper-item>

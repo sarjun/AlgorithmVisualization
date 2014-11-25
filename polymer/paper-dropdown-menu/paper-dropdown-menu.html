@@ -165,6 +165,7 @@ contains the selection state.
     },
 
     selectAction: function(e) {
+        console.log(e);
       var detail = e.detail;
       if (detail.isSelected) {
         this.selectedItemLabel = detail.item.label || detail.item.textContent;
