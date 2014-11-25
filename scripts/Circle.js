@@ -22,19 +22,26 @@ function Circle(parentCircle, parentElem, node, size) {
 	this.endStack = [];
 	var startClicked = function (e) {
 		if (BoxedList.animating == null) {
-			e.data[0].center(true);
-			boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
-			$("div.console.fresh").removeClass("fresh");
-			e.data[1].animate(node.startAnimations);
+			e.data[0].center(true, function () {
+				boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
+				$("div.console.fresh").removeClass("fresh");
+				e.data[1].animate(node.startAnimations);
+			});
 		}
 		e.stopPropagation();
 	};
 	var endClicked = function (e) {
 		if (BoxedList.animating == null) {
-			if (e.data[0].parent != null) e.data[0].parent.center(true);
-			boxedList.parent.elem.find("> div.node-stack-container.result paper-shadow > *").unwrap();
-			$("div.console.fresh").removeClass("fresh");
-			e.data[1].animate(node.endAnimations);
+			var onComplete = function () {
+				boxedList.parent.elem.find("> div.node-stack-container.result paper-shadow > *").unwrap();
+				$("div.console.fresh").removeClass("fresh");
+				e.data[1].animate(node.endAnimations);
+			};
+			if (e.data[0].parent != null) {
+				e.data[0].parent.center(true, onComplete);
+			} else {
+				onComplete();
+			}
 		}
 		e.stopPropagation();
 	};
@@ -91,7 +98,10 @@ function Circle(parentCircle, parentElem, node, size) {
 
 Circle.prototype.center = function (animated, onComplete) {
 	if (BoxedList.animating != null) return;
-	if (Circle.centered == this) return;
+	if (Circle.centered == this) {
+		if (onComplete) onComplete();
+		return;
+	}
 	//if (this.elem.hasClass("circle-leaf")) return;
 	Circle.centered = this;
 	mainDiv.find("div.circle").removeClass("centered");
@@ -112,10 +122,14 @@ Circle.prototype.center = function (animated, onComplete) {
 			height: zoomSize,
 			top: centerOfScreen[1] - circleCenter[1],
 			left: centerOfScreen[0] - circleCenter[0]
-		}, 750, "easeInOutQuad", refreshCircleOverflow, onComplete);
+		}, 750, "easeInOutQuad", function () {
+			refreshCircleOverflow();
+			if (onComplete) onComplete();
+		});
 	} else {
 		root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
 		refreshCircleOverflow();
+		if (onComplete) onComplete();
 	}
 };
 
