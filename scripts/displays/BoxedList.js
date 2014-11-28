@@ -247,6 +247,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				mainDiv.append(ghost);
 				thisList.css("opacity", "0");
 				var tds = thisList.find("td").removeClass("bucket start end");
+				boxedList.buckets = new Set();
 				for (var j in animationList[i].newState){
 					var nodeElem = thisBoxedList.nodeMap[animationList[i].newState[j].id];
 					nodeElem.css("border-color", "black");

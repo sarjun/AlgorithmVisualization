@@ -5,26 +5,26 @@
 	<title>Algorithm Visualization</title>
 
 	<script src="polymer/webcomponentsjs/webcomponents.js"></script>
-    <link href="polymer/polymer/polymer.html" rel="import">
-    <link href="polymer/core-icons/core-icons.html" rel="import">
-    <link rel="import" href="polymer/core-toolbar/core-toolbar.html">
-    <link rel="import" href="polymer/core-collapse/core-collapse.html">
-    <link rel="import" href="polymer/core-menu/core-menu.html">
-    <link rel="import" href="polymer/core-item/core-item.html">
-    <link rel="import" href="polymer/core-header-panel/core-header-panel.html">
-    <link rel="import" href="polymer/core-drawer-panel/core-drawer-panel.html">
-    <link href="polymer/font-roboto/roboto.html" rel="import">
-    <link href="polymer/paper-toast/paper-toast.html" rel="import">
-    <link href="polymer/paper-input/paper-input.html" rel="import">
-    <link href="polymer/paper-checkbox/paper-checkbox.html" rel="import">
-    <link href="polymer/paper-ripple/paper-ripple.html" rel="import">
-    <link href="polymer/paper-shadow/paper-shadow.html" rel="import">
-    <link href="polymer/paper-icon-button/paper-icon-button.html" rel="import">
-    <link href="polymer/paper-button/paper-button.html" rel="import">
-    <link href="polymer/paper-item/paper-item.html" rel="import">
-    <link href="polymer/paper-dropdown/paper-dropdown.html" rel="import">
-    <link href="polymer/paper-dropdown-menu/paper-dropdown-menu.html" rel="import">
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<link href="polymer/polymer/polymer.html" rel="import">
+	<link href="polymer/core-icons/core-icons.html" rel="import">
+	<link rel="import" href="polymer/core-toolbar/core-toolbar.html">
+	<link rel="import" href="polymer/core-collapse/core-collapse.html">
+	<link rel="import" href="polymer/core-menu/core-menu.html">
+	<link rel="import" href="polymer/core-item/core-item.html">
+	<link rel="import" href="polymer/core-header-panel/core-header-panel.html">
+	<link rel="import" href="polymer/core-drawer-panel/core-drawer-panel.html">
+	<link href="polymer/font-roboto/roboto.html" rel="import">
+	<link href="polymer/paper-toast/paper-toast.html" rel="import">
+	<link href="polymer/paper-input/paper-input.html" rel="import">
+	<link href="polymer/paper-checkbox/paper-checkbox.html" rel="import">
+	<link href="polymer/paper-ripple/paper-ripple.html" rel="import">
+	<link href="polymer/paper-shadow/paper-shadow.html" rel="import">
+	<link href="polymer/paper-icon-button/paper-icon-button.html" rel="import">
+	<link href="polymer/paper-button/paper-button.html" rel="import">
+	<link href="polymer/paper-item/paper-item.html" rel="import">
+	<link href="polymer/paper-dropdown/paper-dropdown.html" rel="import">
+	<link href="polymer/paper-dropdown-menu/paper-dropdown-menu.html" rel="import">
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
 	<link type="text/css" rel="stylesheet" href="styles/d3.css"/>
 	<script type="text/javascript" src="scripts/ValueNode.js"></script>
@@ -39,21 +39,23 @@
 </head>
 <body unresolved fullbleed>
 <div class="spotlight">
-    <div class="top"></div>
-    <div class="row">
-        <div class="left">
-            <div class="vpadding"></div>
-            <span></span>
-            <div class="vpadding"></div>
-        </div>
-        <div class="cell"></div>
-        <div class="padding">
-            <div class="vpadding"></div>
-            <span></span>
-            <div class="vpadding"></div>
-        </div>
-    </div>
-    <div class="padding"></div>
+	<div class="top"></div>
+	<div class="row">
+		<div class="left">
+			<div class="vpadding"></div>
+			<span></span>
+
+			<div class="vpadding"></div>
+		</div>
+		<div class="cell"></div>
+		<div class="padding">
+			<div class="vpadding"></div>
+			<span></span>
+
+			<div class="vpadding"></div>
+		</div>
+	</div>
+	<div class="padding"></div>
 </div>
 <core-drawer-panel id="drawerPanel">
 
@@ -62,9 +64,9 @@
 			<span>Settings</span>
 		</core-toolbar>
 		<core-menu>
-            <template id="algoTemplate" is="auto-binding" >
-                <paper-dropdown-menu id="algoSelect" label="Select an Algorithm" selected="Quick Select" on-core-select="{{algoSelect}}">
-                    <paper-dropdown class="dropdown colored">
+            <template id="algoTemplate" is="auto-binding">
+                <paper-dropdown-menu id="algoSelect" label="Select an Algorithm" on-core-select="{{algoSelect}}">
+                    <paper-dropdown class="dropdown" selected=1>
                         <core-menu class="select">
                             <template repeat="{{algorithms}}">
                                 <paper-item label="{{name}}" value="{{value}}"></paper-item>
@@ -78,7 +80,8 @@
 
             </section>
             <paper-button raised class="colored" id="btnSetRoot">Set Input</paper-button>
-			<paper-button raised class="colored" id="btnStartTutorial">Start Tutorial</paper-button>
+            <br><br>
+            <paper-button raised class="colored" id="btnStartTutorial">Start Tutorial</paper-button>
 		</core-menu>
 	</core-header-panel>
 
@@ -86,6 +89,7 @@
 		<core-toolbar id="mainheader">
 			<!--<paper-icon-button id="navicon" icon="menu"></paper-icon-button>-->
 			<span flex>Divide and Conquer Algorithm Visualization:&nbsp;<span id="algoTitle"></span></span>
+
 			<div id="consoleBtns">
 				<a class="button" id="btnPrevConsole">&lt;</a>
 				<a class="button" id="btnNextConsole">&gt;</a>
