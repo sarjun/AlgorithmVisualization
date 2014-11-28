@@ -205,8 +205,8 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				}).css(posRight);
 				mainDiv.append(ghostLeft);
 				mainDiv.append(ghostRight);
-				elemLeft.css("visibility", "hidden");
-				elemRight.css("visibility", "hidden");
+				elemLeft.css("visibility", "");
+				elemRight.css("visibility", "");
 				var parentLeft = elemLeft.parent();
 				var parentRight = elemRight.parent();
 				parentLeft.append(elemRight);
