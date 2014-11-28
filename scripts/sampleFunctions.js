@@ -361,12 +361,12 @@ function quickSelect(k, list, selMedian) {
 		if(start == end) break;
 		completedOne = true;
 	}
-	textAnimatePartitionDone();
 	var stop = completedOne ? end - 1 : end;
 	for(var i = 0; i < stop; i++) {
 		list[i] = list[i+1];
 	}
 	list[stop] = pivot;
+	textAnimatePartitionDone(stop, list[stop].value, k.value);
 
 	resetAnim = getEmptyPhaseAnimation();
 	resetAnim.newState = entryList;
@@ -411,14 +411,21 @@ function textAnimateMedians(medians) {
 	}
 	explainMedOfMed.text += ", and " + medians[medians.length - 1].value;
 	var index =  Math.floor(medians.length / 2) + "";
-	var suffix = "th";
-	if(index.charAt(index.length - 1) == '1') suffix = 'st';
-	if(index.charAt(index.length - 1) == '2') suffix = 'nd';
-	if(index.charAt(index.length - 1) == '3') suffix = 'rd';
+	var suffix = getSuffix(index * 1);
 	explainMedOfMed.text += ". The " + index + suffix + " lowest value in these medians (the median of medians) will be " +
 	"found recursively to partition the input list.";
 
 	tracker.currentFrame.startAnimations.push(explainMedOfMed);
+}
+
+function getSuffix(num) {
+	var suffix = "th";
+	var index = num + "";
+	if(num == 11 || num == 12 || num == 13) return suffix; // TODO: 111, 112, 1111
+	if(index.charAt(index.length - 1) == '1') suffix = 'st';
+	if(index.charAt(index.length - 1) == '2') suffix = 'nd';
+	if(index.charAt(index.length - 1) == '3') suffix = 'rd';
+	return suffix;
 }
 
 function textAnimateBaseCase() {
@@ -459,10 +466,18 @@ function textAnimateRecurseKth() {
 	tracker.currentFrame.children[0].endAnimations.push(explainDone);
 }
 
-function textAnimatePartitionDone() {
+function textAnimatePartitionDone(pivotIndex, pivot, search) {
 	var explainDone = getEmptyTextAnimation();
-	explainDone.text = "Now we know the index of the partition in the input list (because the list is partitioned). " +
-	"This tells us if the partition is the kth value, and if not, which half to recurse on.";
+	var compare = pivot > search;
+	explainDone.text = "Now we know that the pivot is the " + pivotIndex + getSuffix(pivotIndex) + " value in the list.";
+	if(pivot != search) {
+		explainDone.text += " Since the index we are looking for, " + search + ", is " + (compare ? "smaller" : "greater") +
+		" than the pivot index, we will recurse on the " + (compare ? "left" : "right") + " half of the list.";
+	}
+	else {
+		explainDone.text += " Since the index we are looking for, " + search + ", is equal to the pivot index, " +
+		"we are done!";
+	}
 	tracker.currentFrame.children[0].endAnimations.push(explainDone);
 }
 

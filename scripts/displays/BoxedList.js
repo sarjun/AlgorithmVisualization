@@ -7,7 +7,8 @@ var TIME_HIGHLIGHT = 1000;
 var TIME_TRANSLATE = 1000;
 var TIME_UNHIGHLIGHT = 100;
 var TIME_BUCKET = 1000;
-var TIME_TEXT_PER_WORD = 300;
+var TIME_TEXT_PER_WORD = 450;
+var TIME_LOOK_CONSOLE = 200;
 var TIME_SET_VISIBILITY = 0;
 var TIME_SWAP = 1000;
 var TIME_PHASE = 1000;
@@ -137,7 +138,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				break;
 			case "text":
 				var newCard = addConsoleCard(animationList[i].text, animationList[i].cardColor).find("paper-shadow");
-				delay = TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length;
+				delay = TIME_TEXT_PER_WORD * animationList[i].text.split(" ").length + TIME_LOOK_CONSOLE;
 				maxDelay = Math.max(maxDelay, delay);
 				delay = skipDelays ? 0 : delay;
 				if (delay > 0) {
