@@ -232,11 +232,25 @@ parameterMapping[funcName] = ["Input List : [int list]"];
 // ******************
 funcName = "Median of Medians";
 function quickSelect(k, list, selMedian) {
-	//console.log(k + " from " + list.map(function(elem) {
-	//	return elem.value;
-	//}));
 	var entryList = list.slice(0);
 	tracker.logEntry([k, entryList]);
+	// Check error conditions
+	if(k.value > list.length - 1) {
+		var errorMsg = new ValueNode("The value of k is too high to be found in the list.");
+		tracker.logExit([errorMsg]);
+		return;
+	}
+	if(k.value < 0) {
+		var errorMsg = new ValueNode("The value of k cannot be negative.");
+		tracker.logExit([errorMsg]);
+		return;
+	}
+	if(k.value % 1 != 0) {
+		var errorMsg = new ValueNode("The value of k must be an integer.");
+		tracker.logExit([errorMsg]);
+		return;
+	}
+
 	// Base case
 	if(list.length <= 5) {
 		if(k.value > 4) {
