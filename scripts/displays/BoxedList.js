@@ -205,8 +205,8 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				}).css(posRight);
 				mainDiv.append(ghostLeft);
 				mainDiv.append(ghostRight);
-				elemLeft.css("visibility", "");
-				elemRight.css("visibility", "");
+				elemLeft.css("visibility", "hidden");
+				elemRight.css("visibility", "hidden");
 				var parentLeft = elemLeft.parent();
 				var parentRight = elemRight.parent();
 				parentLeft.append(elemRight);
@@ -214,7 +214,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				ghostLeft.animate(posRight,{
 					duration: TIME_SWAP,
 					complete: function () {
-						elemLeft.css("visibility", "initial");
+						elemLeft.css("visibility", "");
 						ghostLeft.remove();
 					},
 					step: function (now, fx) {
@@ -224,7 +224,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				ghostRight.animate(posLeft,{
 					duration: TIME_SWAP,
 					complete: function () {
-						elemRight.css("visibility", "initial");
+						elemRight.css("visibility", "");
 						ghostRight.remove();
 					},
 					step: function (now, fx) {
