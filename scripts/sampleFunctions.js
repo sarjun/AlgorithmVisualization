@@ -246,7 +246,7 @@ function quickSelect(k, list, selMedian) {
 		return;
 	}
 	if(k.value % 1 != 0) {
-		var errorMsg = new ValueNode("The value of k must be an integer.");
+		var errorMsg = new ValueNode("The value of k must be a positive integer.");
 		tracker.logExit([errorMsg]);
 		return;
 	}
