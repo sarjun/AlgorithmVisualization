@@ -373,9 +373,8 @@ function quickSelect(k, list, selMedian) {
 		list[start] = swap;
 		animateSwapParentCircle(list[start], list[end]);
 		if(start == end) break;
-		completedOne = true;
 	}
-	var stop = completedOne ? end - 1 : end;
+	var stop = list[end].value < pivot.value ? end : end - 1;
 	for(var i = 0; i < stop; i++) {
 		list[i] = list[i+1];
 	}
@@ -406,7 +405,7 @@ function quickSelect(k, list, selMedian) {
 			return answer;
 		}
 		else {
-			var answer = quickSelect(new ValueNode(k.value - stop), list.slice(stop + 1), false);
+			var answer = quickSelect(new ValueNode(k.value - stop - 1), list.slice(stop + 1), false);
 			if(selMedian) {
 				animatePivotSelection(answer);
 			}
