@@ -3,25 +3,37 @@
 document.addEventListener('polymer-ready', init);
 var root;
 var rootSize;
-var centerOfScreen;
-var mainDiv;
+var centerOfScreen, parentHeight, parentWidth;
+var mainDiv, mainPanel, contentDiv;
 var btnSetRoot;
+
+function setContentSize() {
+	parentHeight = mainPanel.height() - $("core-header-panel[main] core-toolbar#mainheader").height();
+	parentWidth = contentDiv.width();
+	centerOfScreen = [parentWidth / 2, parentHeight / 2];
+	rootSize = Math.floor(Math.min(parentHeight, parentWidth) * 0.9);
+	if (root != null) {
+		root.elem.width(rootSize).height(rootSize);
+		var currentCenter = Circle.centered;
+		Circle.centered = null;
+		currentCenter.center(false);
+	}
+}
 
 function init() {
 	if (data == null) return;
 	initAlgorithm(funcName);
 	initAlgoSelect();
-	var mainPanel = $("core-header-panel[main]");
+	mainPanel = $("core-header-panel[main]");
 	btnSetRoot = document.querySelector("#btnSetRoot");
 	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden";
 	mainDiv = $("<div class='main'></div>");
-	var contentDiv = $("div.content");
+	contentDiv = $("div.content");
 	contentDiv.append(mainDiv);
-	var parentHeight = mainPanel.height() - $("core-header-panel[main] core-toolbar#mainheader").height();
-	var parentWidth = contentDiv.width();
-	centerOfScreen = [parentWidth / 2, parentHeight / 2];
+	setContentSize();
+	$(window).resize(setContentSize);
 	//mainDiv.width(parentWidth).height(parentHeight);
-	makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
+	makeCircle(null, data, mainDiv, rootSize);
 	root.center(false);
 	$(btnSetRoot).click(function () {
 		var params = [];
