@@ -144,6 +144,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				if (delay > 0) {
 					var progress = $("<div class='progress'></div>");
 					newCard.prepend(progress);
+					newCard.prevObject[0].title = "Click to skip";
 					progress.animate({
 						width: "100%"
 					}, delay, "linear", function () {$(this).remove();});
@@ -151,6 +152,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 						data[0].unbind("click").css("cursor", "auto");
 						if (BoxedList.animating != null) clearTimeout(BoxedList.animating);
 						data[1].finish();
+						data[0].prevObject[0].removeAttribute("title");
 						doAnim(boxedList);
 					};
 					var timeout = setTimeout(progressDone, delay, [newCard, progress]);
