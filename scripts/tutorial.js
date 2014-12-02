@@ -121,11 +121,11 @@ function tutorialStep4() {
 }
 
 function tutorialStep5() {
-	var rootList = root.elem.find("> .start .node-list-container");
-	positionSpotlightOnElem(rootList);
+	var startList = Circle.centered.elem.find("> .start .node-list-container");
+	positionSpotlightOnElem(startList);
 	setSpotlightText("You can click on the values to trigger an animation that explains something about how the algorithm works. " +
 	"Try clicking on values that the animation flows into to trigger more animations.");
-	var validChildren = root.children.filter(function(a) {
+	var validChildren = Circle.centered.children.filter(function(a) {
 			return !a.elem.hasClass("abbrev");
 		});
 	if(validChildren.length > 0) {
