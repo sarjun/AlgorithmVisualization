@@ -85,8 +85,13 @@ function initMenuValues() {
 	var initParams = function() {
 		try {
 			var inputs = document.querySelector("#params").children;
-			inputs[0].value = "2";
-			inputs[1].value = "[15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]";
+			inputs[0].value = kValue.value;
+			var show = "[";
+			for(var index = 0; index < toSort.length; index++) {
+				show += toSort[index].value + ",";
+			}
+			show = show.substr(0, show.length - 1) + "]";
+			inputs[1].value = show;
 		}
 		catch(err) {
 			setTimeout(initParams, 100);

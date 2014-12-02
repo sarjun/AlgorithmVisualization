@@ -178,10 +178,12 @@ Tracker.prototype.logExit = function (list) {
 dAndC = funcMapping[funcName];
 var tracker = new Tracker();
 var toSort = [];
+var kValue = new ValueNode(2);
 for (var i = 15; i > 0; i--) {
 	var newNode = new ValueNode(i);
 	toSort.push(newNode);
 }
-dAndC(new ValueNode(2), toSort);
+shuffle(toSort);
+dAndC(kValue, toSort.slice(0));
 //test.tracker.traceExecution();
 var data = tracker.execution.children[0];
