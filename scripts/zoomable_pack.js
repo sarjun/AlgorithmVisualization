@@ -85,7 +85,7 @@ function initMenuValues() {
 	var initParams = function() {
 		try {
 			var inputs = document.querySelector("#params").children;
-			inputs[0].value = kValue.value;
+			inputs[0].value = kValue.value + "";
 			var show = "[";
 			for(var index = 0; index < toSort.length; index++) {
 				show += toSort[index].value + ",";
