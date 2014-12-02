@@ -142,12 +142,16 @@ function tutorialChildCircle(elem) {
 
 function tutorialConsole() {
 	positionSpotlightOnElem($("div.console.fresh"));
-	setSpotlightText("This is the text console used to show explanations of things during the animations.");
+	setSpotlightText("This is the text console used to show explanations during the animations. During an explanation " +
+	"in an animation, you may click on the text card with the progress bar (shown only during animations) to " +
+	"immediately terminate the time allotted for reading.");
 }
 
 function tutorialConsoleButtons() {
 	positionSpotlightOnElem($("#consoleBtns"));
-	setSpotlightText("These buttons are used to manipulate the console.");
+	setSpotlightText("These buttons are used to manipulate the console. The < button shifts the console panel in focus to " +
+	"the panel for the previously executed animation. Similarly, the > button shifts to the panel for the animation " +
+	"after the current one. The clear button clear all panels related to specific animations.");
 }
 
 function doneTutorial() {
