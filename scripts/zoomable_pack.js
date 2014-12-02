@@ -62,7 +62,10 @@ function init() {
 		makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 		root.center(false);
 	});
-	$("#btnStartTutorial").click(startTutorial);
+	$("#btnStartTutorial").click(function() {
+		root.center(true);
+		startTutorial();
+	});
 
 	initConsole();
 	initMenuValues();
