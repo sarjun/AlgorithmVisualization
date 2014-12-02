@@ -15,7 +15,6 @@ function positionSpotlight(top, left, width, height) {
 	}
 	if (top + height > $(window).height()) {
 		var find = spotlight.find("> div.padding");
-		console.log(find);
 		find.css({
 			'margin-bottom': $(window).height() - top - height
 		});
