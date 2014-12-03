@@ -2,16 +2,24 @@
  * Created by Arjun on 10/20/2014.
  */
 
+$.ischrome = (typeof window.chrome === "object");
+
 function addConsoleCard(text, background) {
 	var divText = "<div class='inner'><paper-shadow z='2'>" + text + "</paper-shadow></div>";
 	var card = $(divText);
 	if (background != undefined) card.find("div").css("background", background);
 	var cardConsole = $("div.console.fresh");
 	if (cardConsole.length == 0) {
-		$("div.console").filter(function () {return $(this).css('display') != 'none';}).hide("slide", {direction: "left"});
-		cardConsole = $("<div class='console fresh' style='display: none'></div>");
-		cardConsole.insertBefore("div.content");
-		cardConsole.show("slide", {direction: "right"});
+		if ($.ischrome) {
+			$("div.console").filter(function () {return $(this).css('display') != 'none';}).hide("slide", {direction: "left"});
+			cardConsole = $("<div class='console fresh' style='display: none'></div>");
+			cardConsole.insertBefore("div.content");
+			cardConsole.show("slide", {direction: "right"});
+		} else {
+			$("div.console").filter(function () {return $(this).css('display') != 'none';}).hide();
+			cardConsole = $("<div class='console fresh'></div>");
+			cardConsole.insertBefore("div.content");
+		}
 	}
 	cardConsole.append(card);
 	cardConsole.scrollTop(cardConsole[0].scrollHeight);

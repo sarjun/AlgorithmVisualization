@@ -67,10 +67,12 @@ function Circle(parentCircle, parentElem, node, size) {
 					$($("section#params paper-input")[e.data * 1]).addClass("selected");
 				}
 				if (BoxedList.animating != null) return;
-				boxedList.parent.elem.find("> div.node-stack-container.start .text-node").wrap("<paper-shadow z='1'></paper-shadow>");
+				if ($.ischrome)
+					boxedList.parent.elem.find("> div.node-stack-container.start .text-node").wrap("<paper-shadow z='1'></paper-shadow>");
 			}).mouseleave(i, function (e) {
 				$($("section#params paper-input")[e.data * 1]).removeClass("selected");
-				boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
+				if ($.ischrome)
+					boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
 			}
 		);
 	}
@@ -87,9 +89,11 @@ function Circle(parentCircle, parentElem, node, size) {
 			.hover(
 			function () {
 				if (BoxedList.animating != null) return;
-				boxedList.parent.elem.find("> div.node-stack-container.result .text-node").wrap("<paper-shadow z='1'></paper-shadow>");
+				if ($.ischrome)
+					boxedList.parent.elem.find("> div.node-stack-container.result .text-node").wrap("<paper-shadow z='1'></paper-shadow>");
 			}, function () {
-				boxedList.parent.elem.find("> div.node-stack-container.result paper-shadow > *").unwrap();
+				if ($.ischrome)
+					boxedList.parent.elem.find("> div.node-stack-container.result paper-shadow > .text-node").unwrap();
 			}
 		);
 	}
