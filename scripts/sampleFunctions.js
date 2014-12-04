@@ -432,13 +432,24 @@ function textAnimateMedians(medians) {
 }
 
 function getSuffix(num) {
-	var suffix = "th";
-	var index = num + "";
-	if(num == 11 || num == 12 || num == 13) return suffix; // TODO: 111, 112, 1111
-	if(index.charAt(index.length - 1) == '1') suffix = 'st';
-	if(index.charAt(index.length - 1) == '2') suffix = 'nd';
-	if(index.charAt(index.length - 1) == '3') suffix = 'rd';
-	return suffix;
+	switch (num % 100) {
+		case 11:
+		case 12:
+		case 13:
+			return 'th';
+		default :
+			break;
+	}
+	switch (num % 10) {
+		case 1:
+			return 'st';
+		case 2:
+			return 'nd';
+		case 3:
+			return 'rd';
+		default :
+			return 'th';
+	}
 }
 
 function textAnimateBaseCase() {
