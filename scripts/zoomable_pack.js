@@ -36,6 +36,11 @@ function init() {
 	makeCircle(null, data, mainDiv, rootSize);
 	root.center(false);
 	$(btnSetRoot).click(function () {
+		if (BoxedList.animating != null) {
+			clearTimeout(BoxedList.animating);
+			BoxedList.animating = null;
+			clearConsole();
+		}
 		var params = [];
 		$("section#params").children().each(function (i, e) {
 			e.value = e.value.trim();

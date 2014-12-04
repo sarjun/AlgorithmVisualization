@@ -60,6 +60,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 		if (maps.length > 0) childStartLists.push($.extend.apply($, maps));
 	}
 	var doAnim = function (boxedList) {
+		if (BoxedList.animating == null) return;
 		if (i >= animationList.length) {
 			BoxedList.animating = null;
 			return;
@@ -281,6 +282,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			doAnim(boxedList);
 		}
 	};
+	BoxedList.animating = 42;
 	doAnim(this);
 	return maxDelay;
 };
