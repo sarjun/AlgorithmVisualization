@@ -425,7 +425,7 @@ function textAnimateMedians(medians) {
 	explainMedOfMed.text += ", and " + medians[medians.length - 1].value;
 	var index =  Math.floor(medians.length / 2) + "";
 	var suffix = getSuffix(index * 1);
-	explainMedOfMed.text += ". The " + index + suffix + " lowest value in these medians (the median of medians) will be " +
+	explainMedOfMed.text += ". The " + index + suffix + " lowest value (zero-indexed) in these medians (the median of medians) will be " +
 	"found recursively to partition the input list.";
 
 	tracker.currentFrame.startAnimations.push(explainMedOfMed);
@@ -456,13 +456,13 @@ function textAnimatePartitionSetup(elem) {
 
 function textAnimatePartitionRight() {
 	var explainPartition = getEmptyTextAnimation();
-	explainPartition.text = "Find the first element from the right of the list whose value is less than the partition...";
+	explainPartition.text = "Find the first element from the right of the list whose value is less than the pivot element...";
 	tracker.currentFrame.children[0].endAnimations.push(explainPartition);
 }
 
 function textAnimatePartitionLeft() {
 	var explainPartition = getEmptyTextAnimation();
-	explainPartition.text = "Find the first element from the left of the list whose value is greater than the partition...";
+	explainPartition.text = "Find the first element from the left of the list whose value is greater than the pivot element...";
 	tracker.currentFrame.children[0].endAnimations.push(explainPartition);
 }
 
@@ -482,7 +482,7 @@ function textAnimateRecurseKth() {
 function textAnimatePartitionDone(pivotIndex, pivot, search) {
 	var explainDone = getEmptyTextAnimation();
 	var compare = pivot > search;
-	explainDone.text = "Now we know that the pivot is the " + pivotIndex + getSuffix(pivotIndex) + " value in the list.";
+	explainDone.text = "Now we know that the pivot is the " + pivotIndex + getSuffix(pivotIndex) + " value in the list (zero-indexed).";
 	if(pivot != search) {
 		explainDone.text += " Since the index we are looking for, " + search + ", is " + (compare ? "smaller" : "greater") +
 		" than the pivot index, we will recurse on the " + (compare ? "left" : "right") + " half of the list.";
