@@ -161,6 +161,13 @@ Circle.prototype.checkOverflow = function () {
 				return true;
 			}
 		}
+		for (var c in this.children) {
+			var childOffset = offsetFrom(this.children[c].elem, mainDiv);
+			if (tableOffset.top + table.height() >= childOffset.top && tableOffset.top <= childOffset.top + this.children[c].elem.height()) {
+				this.elem.addClass("abbrev");
+				return true;
+			}
+		}
 
 	}
 	for (var i in this.children) {
