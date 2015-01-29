@@ -9,12 +9,10 @@ body {
     font-weight: bold;
 }
 div.content {
-    width: 75%;
-    position: absolute;
-    display: inline-block;
-    height: 100%;
     background: white;
     overflow: hidden;
+    flex-basis: 50%;
+    flex-grow: 1;
 
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -22,14 +20,27 @@ div.content {
     user-select: none;
 }
 
-div.console {
-    display: inline-block;
+div.content-holder {
+    display: flex;
     position: absolute;
-    overflow-y: auto;
-    width: 25%;
     height: 100%;
-    right: 0;
 }
+
+div.console {
+    flex-basis: 25%;
+    flex-shrink: 0;
+    overflow-y: auto;
+}
+
+div.memo {
+    flex-shrink: 1;
+    overflow: auto;
+}
+
+div.memo {
+    max-width: 20%;
+}
+
 div.console div.inner {
     position: relative;
 }

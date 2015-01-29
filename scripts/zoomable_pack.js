@@ -9,7 +9,9 @@ var btnSetRoot;
 
 function setContentSize() {
 	parentHeight = mainPanel.height() - $("core-header-panel[main] core-toolbar#mainheader").height();
+	console.log(parentHeight);
 	parentWidth = contentDiv.width();
+	console.log(parentWidth);
 	centerOfScreen = [parentWidth / 2, parentHeight / 2];
 	rootSize = Math.floor(Math.min(parentHeight, parentWidth) * 0.9);
 	if (root != null) {
@@ -75,6 +77,7 @@ function init() {
 	initConsole();
 	initMenuValues();
 	$("div.spotlight").hide();
+	setContentSize();
 	//startTutorial();
 }
 
