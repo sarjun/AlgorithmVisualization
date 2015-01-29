@@ -19,6 +19,19 @@ function getEmptyExecutionFrame() {
 	};
 }
 
+function getEmptyDPExecutionFrame() {
+	var ret = getEmptyExecutionFrame();
+	ret["methodId"] = null;
+	return ret;
+}
+
+function getEmptyDPTableEntry() {
+	return {
+		methodId:null,
+		value:null
+	};
+}
+
 function getNodeSpecification(node, parentLevel, childIndexes, list) {
 	return {
 		node: node,
@@ -140,6 +153,17 @@ function Tracker() {
 	this.type = "rearrange";
 }
 
+function DPTracker() {
+	this.table = {};
+	this.maxId = 0;
+}
+
+DPTracker.prototype = new Tracker();
+DPTracker.prototype.logExit = function(list) {
+	this.currentFrame.methodId = this.maxId++;
+	return Tracker.prototype.logExit.call(this, list);
+};
+
 Tracker.prototype.traceExecution = function () {
 	printFrame(this.execution, 0);
 };
@@ -171,10 +195,12 @@ Tracker.prototype.logExit = function (list) {
 		this.currentFrame["originalToResult"] = origToResult;
 	}
 
+	var oldCurrent = this.currentFrame;
 	this.currentFrame = this.currentFrame["parentFrame"];
+	return oldCurrent;
 };
 
-
+funcName = "Median of Medians";
 dAndC = funcMapping[funcName];
 var tracker = new Tracker();
 var toSort = [];
