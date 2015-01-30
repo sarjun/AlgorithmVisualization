@@ -9,13 +9,13 @@ function fibonacci(n) {
 	tracker.logEntry([n]);
 	var ans = tracker.table[n.value];
 	if(ans != null) {
-		tracker.logExit(ans.value);
+		tracker.logExit([ans.value]);
 		return ans.value;
 	}
 	if(n.value < 2){
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = n;
-		tEntry.n = n;
+		tEntry.params.n = n;
 		var frame = tracker.logExit([n]);
 		tEntry.methodId = frame.methodId;
 		tracker.table[n.value] = tEntry;
@@ -25,7 +25,7 @@ function fibonacci(n) {
 	var tEntry = getEmptyDPTableEntry();
 	var value = new ValueNode(ans);
 	tEntry.value = value;
-	tEntry.n = n;
+	tEntry.params.n = n;
 	var frame = tracker.logExit([value]);
 	tEntry.methodId = frame.methodId;
 	tracker.table[n.value] = tEntry;
@@ -40,4 +40,5 @@ divideMapping[funcName] = "The input list is divided into buckets of size 5. We 
 conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
 "The algorithm terminates if the median of medians is at" +
 " index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
-parameterMapping[funcName] = ["K : uint", "Input List : [int list]"];
+parameterMapping[funcName] = ["n : uint"];
+trackerMapping[funcName] = DPTracker;

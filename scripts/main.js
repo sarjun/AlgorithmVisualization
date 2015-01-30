@@ -5,6 +5,16 @@ function print(msg) {
 }
 
 // Begin real code
+var funcNames = [];
+var funcMapping = {};
+var overviewMapping = {};
+var divideMapping = {};
+var conquerMapping = {};
+var parameterMapping = {};
+var trackerMapping = {};
+
+var funcName = "";
+
 
 function getEmptyExecutionFrame() {
 	return {
@@ -28,6 +38,7 @@ function getEmptyDPExecutionFrame() {
 function getEmptyDPTableEntry() {
 	return {
 		methodId:null,
+		params:{},
 		value:null
 	};
 }
@@ -200,16 +211,5 @@ Tracker.prototype.logExit = function (list) {
 	return oldCurrent;
 };
 
-funcName = "Median of Medians";
-dAndC = funcMapping[funcName];
 var tracker = new Tracker();
-var toSort = [];
-var kValue = new ValueNode(2);
-for (var i = 15; i > 0; i--) {
-	var newNode = new ValueNode(i);
-	toSort.push(newNode);
-}
-shuffle(toSort);
-dAndC(kValue, toSort.slice(0));
-//test.tracker.traceExecution();
-var data = tracker.execution.children[0];
+

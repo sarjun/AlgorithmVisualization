@@ -9,9 +9,7 @@ var btnSetRoot;
 
 function setContentSize() {
 	parentHeight = mainPanel.height() - $("core-header-panel[main] core-toolbar#mainheader").height();
-	console.log(parentHeight);
 	parentWidth = contentDiv.width();
-	console.log(parentWidth);
 	centerOfScreen = [parentWidth / 2, parentHeight / 2];
 	rootSize = Math.floor(Math.min(parentHeight, parentWidth) * 0.9);
 	if (root != null) {
@@ -23,7 +21,18 @@ function setContentSize() {
 }
 
 function init() {
-	if (data == null) return;
+	funcName = "Median of Medians";
+	var dAndC = funcMapping[funcName];
+	var toSort = [];
+	var kValue = new ValueNode(2);
+	for (var i = 15; i > 0; i--) {
+		var newNode = new ValueNode(i);
+		toSort.push(newNode);
+	}
+	shuffle(toSort);
+	dAndC(kValue, toSort.slice(0));
+	var data = tracker.execution.children[0];
+
 	initAlgorithm(funcName);
 	initAlgoSelect();
 	mainPanel = $("core-header-panel[main]");
@@ -60,14 +69,36 @@ function init() {
 				params.push(new ValueNode(e.value * 1));
 			}
 		});
-		dAndC = funcMapping[funcName];
-		tracker = new Tracker();
+		var dAndC = funcMapping[funcName];
+		tracker = new trackerMapping[funcName]();
 		dAndC.apply(this, params);
 		data = tracker.execution.children[0];
 		mainDiv.empty();
 		root = null;
 		makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
+		if(tracker.table != null) {
+			var tableElem = $("<table></table>");
+			var first = true;
+			for(entryKey in tracker.table) {
+				var rowElem = $("<tr></tr>");
+				var entry = tracker.table[entryKey];
+				if(first) {
+					var headerElem = $("<tr></tr>");
+					for(key in entry.params) headerElem.append("<td>" + key + "</td>");
+					headerElem.append("<td>Value</td>");
+					first = false;
+					tableElem.append(headerElem);
+				}
+				for(key in entry.params) {
+					rowElem.append("<td>" + entry.params[key].value + "</td>");
+				}
+				rowElem.append("<td>" + entry.value.value + "</td>");
+				tableElem.append(rowElem);
+			}
+			$("div.memo").empty().append(tableElem);
+		}
 		root.center(false);
+		setContentSize();
 	});
 	$("#btnStartTutorial").click(function() {
 		root.center(true);

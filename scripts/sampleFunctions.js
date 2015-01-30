@@ -1,12 +1,3 @@
-var funcNames = [];
-var funcMapping = {};
-var overviewMapping = {};
-var divideMapping = {};
-var conquerMapping = {};
-var parameterMapping = {};
-
-var funcName = "";
-
 // ******************
 // Skyline Function
 // ******************
@@ -64,6 +55,7 @@ overviewMapping[funcName] = "This function computes the left and right skyline v
 divideMapping[funcName] = "Find the right and left skyline values of two halves of the skyline recursively. " +
 "This is done by dividing the skyline in half.";
 conquerMapping[funcName] = "Modification of Mergesort. Whenever an item is added to the result list, update the skyline counters.";
+trackerMapping[funcName] = Tracker;
 
 
 // ******************
@@ -226,6 +218,7 @@ divideMapping[funcName] = "The input list is divided into two halves by splittin
 conquerMapping[funcName] = "The two sorted halves are merged by iteratively selecting elements from the two sorted halves " +
 "in overall sorted order.";
 parameterMapping[funcName] = ["Input List : [int list]"];
+trackerMapping[funcName] = Tracker;
 
 // ******************
 // Quick Select
@@ -555,6 +548,7 @@ conquerMapping[funcName] = "The input list is partitioned on the median of media
 "The algorithm terminates if the median of medians is at" +
 " index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
 parameterMapping[funcName] = ["K : uint", "Input List : [int list]"];
+trackerMapping[funcName] = Tracker;
 
 // Set Starting Function
 funcName = "Median of Medians";
