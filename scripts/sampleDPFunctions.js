@@ -1,9 +1,6 @@
 /**
  * Created by Arjun on 1/28/2015.
  */
-var temp = funcName;
-
-fiboId = 0;
 funcName = "Fibonacci";
 function fibonacci(n) {
 	tracker.logEntry([n]);
@@ -42,3 +39,9 @@ conquerMapping[funcName] = "The input list is partitioned on the median of media
 " index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
 parameterMapping[funcName] = ["n : uint"];
 trackerMapping[funcName] = DPTracker;
+
+
+funcName = "Longest Common Subsequence";
+function lcs(x, y) {
+
+}
