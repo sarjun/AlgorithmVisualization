@@ -4,7 +4,7 @@ document.addEventListener('polymer-ready', init);
 var root;
 var rootSize;
 var centerOfScreen, parentHeight, parentWidth;
-var mainDiv, mainPanel, contentDiv;
+var mainDiv, mainPanel, contentDiv, memoDiv;
 var btnSetRoot;
 
 function setContentSize() {
@@ -39,6 +39,7 @@ function init() {
 	btnSetRoot = document.querySelector("#btnSetRoot");
 	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden";
 	mainDiv = $("<div class='main'></div>");
+	memoDiv = $("div.memo");
 	contentDiv = $("div.content");
 	contentDiv.append(mainDiv);
 	setContentSize();
@@ -75,6 +76,7 @@ function init() {
 		data = tracker.execution.children[0];
 		mainDiv.empty();
 		root = null;
+		memoDiv.empty();
 		makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 		if(tracker.table != null) {
 			var tableElem = $("<table></table>");
@@ -95,7 +97,7 @@ function init() {
 				rowElem.append("<td>" + entry.value.value + "</td>");
 				tableElem.append(rowElem);
 			}
-			$("div.memo").empty().append(tableElem);
+			memoDiv.append(tableElem);
 		}
 		root.center(false);
 		setContentSize();
