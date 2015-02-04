@@ -43,5 +43,46 @@ trackerMapping[funcName] = DPTracker;
 
 funcName = "Longest Common Subsequence";
 function lcs(x, y) {
-
+	tracker.logEntry([x, y]);
+	var key = x.value.length + "," + y.value.length;
+	var ans = tracker.table[key];
+	if(ans != null) {
+		tracker.logExit([ans.value]);
+		return ans.value;
+	}
+	if(x.value.length == 0 || y.value.length == 0) {
+		var ret = new ValueNode(0);
+		var tEntry = getEmptyDPTableEntry();
+		tEntry.value = ret;
+		tEntry.params.x = x;
+		tEntry.params.y = y;
+		var frame = tracker.logExit([ret]);
+		tEntry.methodId = frame.methodId;
+		tracker.table[key] = tEntry;
+		return ret;
+	}
+	if(x.value.charAt(0)== y.value.charAt(0)) {
+		var ret = new ValueNode(1 + lcs(new ValueNode(x.value.substr(1)), new ValueNode(y.value.substr(1))).value);
+		var tEntry = getEmptyDPTableEntry();
+		tEntry.value = ret;
+		tEntry.params.x = x;
+		tEntry.params.y = y;
+		var frame = tracker.logExit([ret]);
+		tEntry.methodId = frame.methodId;
+		tracker.table[key] = tEntry;
+		return ret;
+	}
+	else {
+		var ignoreX = lcs(new ValueNode(x.value.substr(1)), y);
+		var ignoreY = lcs(x, new ValueNode(y.value.substr(1)));
+		var ret = ignoreX.value > ignoreY.value ? ignoreX : ignoreY;
+		var tEntry = getEmptyDPTableEntry();
+		tEntry.value = ret;
+		tEntry.params.x = x;
+		tEntry.params.y = y;
+		var frame = tracker.logExit([ret]);
+		tEntry.methodId = frame.methodId;
+		tracker.table[key] = tEntry;
+		return ret;
+	}
 }
