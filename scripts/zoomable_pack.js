@@ -100,6 +100,7 @@ function init() {
 			memoDiv.append(tableElem);
 		}
 		root.center(false);
+		reinitConsole();
 		setContentSize();
 	});
 	$("#btnStartTutorial").click(function() {
@@ -209,13 +210,15 @@ function initConsole() {
 			nextConsole.addClass("fresh");
 		}
 	});
-	addConsoleCard(overviewMapping[funcName]);
-	addConsoleCard(divideMapping[funcName]);
-	addConsoleCard(conquerMapping[funcName]);
+	reinitConsole();
 }
 
 function reinitConsole() {
 	clearConsole();
+	$("div.console.summary").empty();
+	addConsoleCard(overviewMapping[funcName]);
+	addConsoleCard(divideMapping[funcName]);
+	addConsoleCard(conquerMapping[funcName]);
 
 }
 
