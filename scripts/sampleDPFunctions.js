@@ -30,8 +30,7 @@ function fibonacci(n) {
 }
 
 funcMapping[funcName] = fibonacci;
-overviewMapping[funcName] = "This function selects the kth smallest (where k is zero-indexed) element from the input list. " +
-"This is done by repeatedly partitioning the list and looking in the appropriate half until the selected partition is the desired element.";
+overviewMapping[funcName] = "This is a function that finds the nth number in the Fibonacci sequence. T = t+1";
 divideMapping[funcName] = "The input list is divided into buckets of size 5. We then find the median of each bucket and " +
 "recursively find the median of these medians.";
 conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
@@ -86,3 +85,14 @@ function lcs(x, y) {
 		return ret;
 	}
 }
+
+funcMapping[funcName] = lcs;
+overviewMapping[funcName] = "This function selects the kth smallest (where k is zero-indexed) element from the input list. " +
+"This is done by repeatedly partitioning the list and looking in the appropriate half until the selected partition is the desired element.";
+divideMapping[funcName] = "The input list is divided into buckets of size 5. We then find the median of each bucket and " +
+"recursively find the median of these medians.";
+conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
+"The algorithm terminates if the median of medians is at" +
+" index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
+parameterMapping[funcName] = ["n : uint"];
+trackerMapping[funcName] = DPTracker;

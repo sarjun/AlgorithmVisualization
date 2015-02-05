@@ -24,11 +24,17 @@ div.content-holder {
     display: flex;
     position: absolute;
     height: 100%;
+    width: 100%;
+}
+
+div.console-holder {
+    height: 100%;
+    flex-basis: 25%;
+    flex-shrink: 0;
 }
 
 div.console {
-    flex-basis: 25%;
-    flex-shrink: 0;
+    height: 100%;
     overflow-y: auto;
 }
 

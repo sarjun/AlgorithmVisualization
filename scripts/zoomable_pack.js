@@ -214,6 +214,11 @@ function initConsole() {
 	addConsoleCard(conquerMapping[funcName]);
 }
 
+function reinitConsole() {
+	clearConsole();
+
+}
+
 function makeCircle(parentCircle, node, parentElem, size) {
 	var newCircle = new Circle(parentCircle, parentElem, node, size);
 	if (root == null) {

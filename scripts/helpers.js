@@ -9,17 +9,12 @@ function addConsoleCard(text, background) {
 	var card = $(divText);
 	if (background != undefined) card.find("div").css("background", background);
 	var cardConsole = $("div.console.fresh");
+	var consoleHolder = $("div.console-holder");
 	if (cardConsole.length == 0) {
-		if ($.ischrome) {
-			$("div.console").filter(function () {return $(this).css('display') != 'none';}).hide("slide", {direction: "left"});
-			cardConsole = $("<div class='console fresh' style='display: none'></div>");
-			cardConsole.insertBefore("div.content");
-			cardConsole.show("slide", {direction: "right"});
-		} else {
-			$("div.console").filter(function () {return $(this).css('display') != 'none';}).hide();
-			cardConsole = $("<div class='console fresh'></div>");
-			cardConsole.insertBefore("div.content");
-		}
+		$("div.console").filter(function () {return $(this).css('display') != 'none';}).hide("slide", {direction: "left"});
+		cardConsole = $("<div class='console fresh' style='display: none'></div>");
+		consoleHolder.append(cardConsole);
+		cardConsole.show("slide", {direction: "right"});
 	}
 	cardConsole.append(card);
 	cardConsole.scrollTop(cardConsole[0].scrollHeight);
