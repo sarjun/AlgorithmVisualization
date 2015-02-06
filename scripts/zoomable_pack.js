@@ -47,6 +47,9 @@ function init() {
 	//mainDiv.width(parentWidth).height(parentHeight);
 	makeCircle(null, data, mainDiv, rootSize);
 	root.center(false);
+	document.querySelector("#navicon").addEventListener('click', function() {
+		document.querySelector("core-drawer-panel").togglePanel();
+	});
 	$(btnSetRoot).click(function () {
 		if (BoxedList.animating != null) {
 			clearTimeout(BoxedList.animating);
