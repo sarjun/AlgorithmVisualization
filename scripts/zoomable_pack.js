@@ -59,18 +59,20 @@ function init() {
 		var params = [];
 		$("section#params").children().each(function (i, e) {
 			e.value = e.value.trim();
-			if (e.value.charAt(0) == '[' && e.value.charAt(e.value.length - 1) == ']') {
+			var type = parameterMapping[funcName][i].split(":")[1].trim();
+			if (type.charAt(0) == '[' && type.charAt(type.length - 1) == ']') {
 				var list = e.value.substring(1, e.value.length - 1).split(",");
+				var listType = type.substring(1, type.length - 1);
 				for (var i in list) {
 					if (list[i].trim().length > 0) {
-						list[i] = new ValueNode(list[i] * 1);
+						list[i] = new ValueNode(list[i], listType);
 					} else {
 						list.splice(i, 1);
 					}
 				}
 				params.push(list);
 			} else {
-				params.push(new ValueNode(e.value * 1));
+				params.push(new ValueNode(e.value, type));
 			}
 		});
 		var dAndC = funcMapping[funcName];
@@ -123,6 +125,7 @@ function initMenuValues() {
 		try {
 			var algoSel = document.querySelector("#algoSelect");
 			algoSel.selectedItemLabel = funcName;
+			updateDrawerWidth();
 		}
 		catch(err) {
 			setTimeout(initDropdown, 100);
@@ -140,6 +143,7 @@ function initMenuValues() {
 			}
 			show = show.substr(0, show.length - 1) + "]";
 			inputs[1].value = show;
+			updateDrawerWidth();
 		}
 		catch(err) {
 			setTimeout(initParams, 100);
@@ -168,7 +172,18 @@ function initAlgoSelect() {
 			initAlgorithm(funcName);
 		}
 	};
+	updateDrawerWidth();
 }
+
+function updateDrawerWidth(){
+	console.log("update");
+	$("core-menu.select").parent().show();
+	var maxWidth = $("core-menu.select").width();
+	if (maxWidth < 100) maxWidth = 100;
+	$("core-menu.select").parent().hide();
+	document.querySelector("core-drawer-panel").drawerWidth = (maxWidth + 24) + "px";
+}
+
 function initAlgorithm(funcName) {
 	$("span#algoTitle").text(funcName);
 	var params = parameterMapping[funcName];

@@ -94,5 +94,5 @@ divideMapping[funcName] = "The input list is divided into buckets of size 5. We 
 conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
 "The algorithm terminates if the median of medians is at" +
 " index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
-parameterMapping[funcName] = ["n : uint"];
+parameterMapping[funcName] = ["s1 : string", "s2 : string"];
 trackerMapping[funcName] = DPTracker;

@@ -3,7 +3,17 @@
  */
 ValueNode.ID = 0;
 
-function ValueNode(val){
+function ValueNode(val, type){
+	if (type != null) {
+		switch (type) {
+			case "string":
+				val += "";
+				break;
+			default:
+				val *= 1;
+				break;
+		}
+	}
     this.value = val;
 	this.id = ValueNode.ID++ + "";
 	//this.parentElem = parent;
