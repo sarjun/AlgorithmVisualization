@@ -100,6 +100,7 @@ div.circle {
     margin: 0 -1px;
     cursor: -webkit-zoom-out;
     cursor: -moz-zoom-out;
+    text-align: center;
 }
 
 div.circle.circle-leaf {
