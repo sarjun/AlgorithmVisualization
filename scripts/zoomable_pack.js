@@ -85,21 +85,45 @@ function init() {
 		makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
 		if(tracker.table != null) {
 			var tableElem = $("<table></table>");
-			var first = true;
+			var keys = [new Set()];
+			if((Object.keys(tracker.table)[0]+"").indexOf(",") != -1) {
+				keys.push(new Set());
+			}
 			for(entryKey in tracker.table) {
+				var dims = entryKey.split(",");
+				for(var z=0; z<dims.length; z++) {
+					keys[z].add(dims[z]);
+				}
+			}
+
+			// Order keys
+			for(var z=0; z<keys.length; z++) {
+				var sorted = [];
+				for (key1 of keys[z]) {
+					sorted.push(key1);
+				}
+				sorted.sort();
+				keys[z] = sorted;
+			}
+
+			var rowElem = $("<tr><td></td></tr>");
+			for(key2 in keys[1]) {
+				rowElem.append("<td>" + key2 + "</td>");
+			}
+			tableElem.append(rowElem);
+			for(key1 in keys[0]) {
 				var rowElem = $("<tr></tr>");
-				var entry = tracker.table[entryKey];
-				if(first) {
-					var headerElem = $("<tr></tr>");
-					for(key in entry.params) headerElem.append("<td>" + key + "</td>");
-					headerElem.append("<td>Value</td>");
-					first = false;
-					tableElem.append(headerElem);
+				rowElem.append("<td>" + key1 + "</td>");
+				if(keys.length == 1) {
+					var val = tracker.table[key1+""];
+					rowElem.append("<td>" + val.value.value + "</td>");
 				}
-				for(key in entry.params) {
-					rowElem.append("<td>" + entry.params[key].value + "</td>");
+				else {
+					for (key2 in keys[1]) {
+						var val = tracker.table[key1 + "," + key2];
+						if (val != undefined) rowElem.append("<td>" + val.value.value + "</td>");
+					}
 				}
-				rowElem.append("<td>" + entry.value.value + "</td>");
 				tableElem.append(rowElem);
 			}
 			memoDiv.append(tableElem);
