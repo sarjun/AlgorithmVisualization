@@ -176,7 +176,6 @@ function initAlgoSelect() {
 }
 
 function updateDrawerWidth(){
-	console.log("update");
 	$("core-menu.select").parent().show();
 	var maxWidth = $("core-menu.select").width();
 	if (maxWidth < 100) maxWidth = 100;

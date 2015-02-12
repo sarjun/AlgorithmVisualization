@@ -24,8 +24,7 @@ function getEmptyExecutionFrame() {
 		result: null,
 		originalToResult: null,
 		startAnimations: [],
-		endAnimations: [],
-		animType: "text"
+		endAnimations: []
 	};
 }
 
@@ -164,12 +163,14 @@ function Tracker() {
 	this.type = "rearrange";
 }
 
+DPTracker.prototype = new Tracker();
 function DPTracker() {
+	Tracker.call(this);
 	this.table = {};
 	this.maxId = 0;
 }
+DPTracker.prototype.constructor = DPTracker;
 
-DPTracker.prototype = new Tracker();
 DPTracker.prototype.logExit = function(list) {
 	this.currentFrame.methodId = this.maxId++;
 	return Tracker.prototype.logExit.call(this, list);
