@@ -4,10 +4,11 @@
 
 function Table() {
 	this.memoDiv = $("div.memo");
+	this.tableElem = null;
 }
 
 Table.prototype.createTable = function(table) {
-	var tableElem = $("<table></table>");
+	this.tableElem = $("<table></table>");
 	var keys = [new Set()];
 	if((Object.keys(table)[0]+"").indexOf(",") != -1) {
 		keys.push(new Set());
@@ -33,25 +34,33 @@ Table.prototype.createTable = function(table) {
 	for(key2 in keys[1]) {
 		rowElem.append("<td>" + key2 + "</td>");
 	}
-	tableElem.append(rowElem);
+	this.tableElem.append(rowElem);
 	for(key1 in keys[0]) {
 		var rowElem = $("<tr></tr>");
 		rowElem.append("<td>" + key1 + "</td>");
 		if(keys.length == 1) {
 			var val = table[key1+""];
-			rowElem.append("<td>" + val.value.value + "</td>");
+			rowElem.append("<td methodID='" + val.methodId + "'>" + val.value.value + "</td>");
 		}
 		else {
 			for (key2 in keys[1]) {
 				var val = table[key1 + "," + key2];
-				if (val != undefined) rowElem.append("<td>" + val.value.value + "</td>");
+				if (val != undefined) rowElem.append("<td methodID='" + val.methodId + "'>" + val.value.value + "</td>");
 			}
 		}
-		tableElem.append(rowElem);
+		this.tableElem.append(rowElem);
 	}
-	this.memoDiv.append(tableElem);
+	this.memoDiv.append(this.tableElem);
 };
 
 Table.prototype.renderTable = function(maxMethodID) {
-
+	this.tableElem.find("td").each(function(i, e) {
+		var elem = $(e);
+		if(elem.attr("methodID") <= maxMethodID) {
+			elem.show();
+		}
+		else {
+			elem.hide();
+		}
+	});
 };
