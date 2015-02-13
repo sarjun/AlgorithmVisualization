@@ -32,20 +32,20 @@ TableManager.prototype.createTable = function(table) {
 
 	var rowElem = $("<tr><td></td></tr>");
 	for(key2 in keys[1]) {
-		rowElem.append("<td><span class='text-node'>" + key2 + "</span></td>");
+		rowElem.append("<td>" + key2 + "</td>");
 	}
 	this.tableElem.append(rowElem);
 	for(key1 in keys[0]) {
 		var rowElem = $("<tr></tr>");
-		rowElem.append("<td><span class='text-node'>" + key1 + "</span></td>");
+		rowElem.append("<td>" + key1 + "</td>");
 		if(keys.length == 1) {
 			var val = table[key1+""];
-			rowElem.append("<td methodID='" + val.methodId + "'><span class='text-node'>" + val.value.value + "</span></td>");
+			rowElem.append("<td class='text-node'><span methodID='" + val.methodId + "'>" + val.value.value + "</span></td>");
 		}
 		else {
 			for (key2 in keys[1]) {
 				var val = table[key1 + "," + key2];
-				if (val != undefined) rowElem.append("<td methodID='" + val.methodId + "'><span class='text-node'" +
+				if (val != undefined) rowElem.append("<td class='text-node'><span methodID='" + val.methodId + "'>" +
 				val.value.value + "</span></td>");
 			}
 		}
@@ -55,8 +55,7 @@ TableManager.prototype.createTable = function(table) {
 };
 
 TableManager.prototype.renderTable = function(maxMethodID) {
-	console.log(maxMethodID);
-	this.tableElem.find("td").each(function(i, e) {
+	this.tableElem.find("td span").each(function(i, e) {
 		var elem = $(e);
 		if(elem.attr("methodID") <= maxMethodID) {
 			elem.css("visibility", "visible");
