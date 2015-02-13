@@ -58,7 +58,7 @@ function lcs(x, y) {
 	tracker.logEntry([x, y]);
 	var resetTable = getEmptySetTableAnimation();
 	resetTable.maxShowID = tracker.maxId - 1;
-	tracker.startAnimations.push(resetTable);
+	tracker.currentFrame.startAnimations.push(resetTable);
 
 	var key = x.value.length + "," + y.value.length;
 	var ans = tracker.table[key];

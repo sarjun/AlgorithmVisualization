@@ -22,7 +22,7 @@ function setContentSize() {
 }
 
 function init() {
-	tableManager = new Table();
+	tableManager = new TableManager();
 	funcName = "Median of Medians";
 	var dAndC = funcMapping[funcName];
 	var toSort = [];

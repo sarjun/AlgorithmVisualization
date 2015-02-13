@@ -140,6 +140,13 @@ function getEmptySetTableAnimation() {
 	}
 }
 
+function getEmptyAddToTableAnimation() {
+	return {
+		animationType: "addEntry",
+		nodeId: null
+	}
+}
+
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");
