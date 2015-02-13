@@ -9,14 +9,15 @@ function TableManager() {
 
 TableManager.prototype.createTable = function(table) {
 	this.tableElem = $("<table></table>");
-	var keys = [new Set()];
-	if((Object.keys(table)[0]+"").indexOf(",") != -1) {
+	var keys = [];
+	var sampleEntry = table[Object.keys(table)[0]];
+	for(var i = 0; i<Object.keys(sampleEntry.params).length; i++) {
 		keys.push(new Set());
 	}
 	for(entryKey in table) {
-		var dims = entryKey.split(",");
-		for(var z=0; z<dims.length; z++) {
-			keys[z].add(dims[z]);
+		var index = 0;
+		for(param in table[entryKey].params) {
+			keys[index++].add(table[entryKey].params[param].value);
 		}
 	}
 
