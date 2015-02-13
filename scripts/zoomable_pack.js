@@ -4,7 +4,7 @@ document.addEventListener('polymer-ready', init);
 var root;
 var rootSize;
 var centerOfScreen, parentHeight, parentWidth;
-var mainDiv, mainPanel, contentDiv, memoDiv;
+var mainDiv, mainPanel, contentDiv, memoDiv, contentHolderDiv;
 var btnSetRoot;
 var tableManager;
 
@@ -42,6 +42,7 @@ function init() {
 	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden";
 	mainDiv = $("<div class='main'></div>");
 	memoDiv = $("div.memo");
+	contentHolderDiv = $("div.content-holder");
 	contentDiv = $("div.content");
 	contentDiv.append(mainDiv);
 	setContentSize();

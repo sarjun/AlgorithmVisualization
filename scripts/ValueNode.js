@@ -30,9 +30,9 @@ ValueNode.translate = function(sourceElem, destElem, moveSource) {
 		width: sourceElem.width(),
 		height: sourceElem.height()
 	}).css(sourcePosition);
-	mainDiv.append(ghost);
+	contentHolderDiv.append(ghost);
 	var parentCell = destElem.parent();
-	ghost.animate(offsetFrom(destElem, mainDiv), TIME_TRANSLATE, function () {
+	ghost.animate(offsetFrom(destElem, contentHolderDiv), TIME_TRANSLATE, function () {
 		ghost.remove();
 		if (moveSource) {
 			parentCell.append(sourceElem);
