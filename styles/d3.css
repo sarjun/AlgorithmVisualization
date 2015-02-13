@@ -275,3 +275,7 @@ paper-button[raised].colored::shadow #focusBg {
 paper-dropdown .core-selected {
     background: greenyellow;
 }
+
+td.memo-label {
+    text-align: center;
+}

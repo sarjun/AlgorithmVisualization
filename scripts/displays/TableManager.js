@@ -32,12 +32,13 @@ TableManager.prototype.createTable = function(table) {
 
 	var rowElem = $("<tr><td></td></tr>");
 	for(key2 in keys[1]) {
-		rowElem.append("<td>" + key2 + "</td>");
+		rowElem.append("<td class='memo-label'>" + key2 + "</td>");
 	}
 	this.tableElem.append(rowElem);
 	for(key1 in keys[0]) {
 		var rowElem = $("<tr></tr>");
-		rowElem.append("<td>" + key1 + "</td>");
+		rowElem.append("<td memo-label>" + key1 + "</td>");
+		var val = undefined;
 		if(keys.length == 1) {
 			var val = table[key1+""];
 			rowElem.append(this.createCell(val));
@@ -45,9 +46,7 @@ TableManager.prototype.createTable = function(table) {
 		else {
 			for (key2 in keys[1]) {
 				var val = table[key1 + "," + key2];
-				if (val != undefined) {
-					rowElem.append(this.createCell(val));
-				}
+				rowElem.append(this.createCell(val));
 			}
 		}
 		this.tableElem.append(rowElem);
@@ -56,6 +55,7 @@ TableManager.prototype.createTable = function(table) {
 };
 
 TableManager.prototype.createCell = function(tableEntry) {
+	if(tableEntry == undefined) return $("<td class='text-node'></td>");
 	var elem = $("<td class='text-node'><span methodID='" + tableEntry.methodId + "'>" + tableEntry.value.value + "</span></td>");
 	elem.bind("click", tableEntry.methodId, function(e) {
 		Circle.methodIdMap[e.data].center(true);
