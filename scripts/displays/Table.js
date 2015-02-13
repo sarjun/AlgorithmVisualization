@@ -54,13 +54,14 @@ Table.prototype.createTable = function(table) {
 };
 
 Table.prototype.renderTable = function(maxMethodID) {
+	console.log(maxMethodID);
 	this.tableElem.find("td").each(function(i, e) {
 		var elem = $(e);
 		if(elem.attr("methodID") <= maxMethodID) {
-			elem.show();
+			elem.css("visibility", "visible");
 		}
-		else {
-			elem.hide();
+		else if(elem.attr("methodID") > maxMethodID) {
+			elem.css("visibility", "hidden");
 		}
 	});
 };

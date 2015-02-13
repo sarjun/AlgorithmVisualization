@@ -4,21 +4,27 @@
 funcName = "Fibonacci";
 function fibonacci(n) {
 	tracker.logEntry([n]);
-	//var resetTable = getEmptySetTableAnimation();
-	//resetTable.maxShowID = tracker.maxId - 1;
-	//tracker.startAnimations.push(resetTable);
+	var resetTable = getEmptySetTableAnimation();
+	resetTable.maxShowID = tracker.maxId - 1;
+	tracker.currentFrame.startAnimations.push(resetTable);
 
 	var ans = tracker.table[n.value];
 	if(ans != null) {
-		tracker.logExit([ans.value]);
+		resetTable = getEmptySetTableAnimation();
+		tracker.currentFrame.endAnimations.push(resetTable);
+		var frame = tracker.logExit([ans.value]);
+		resetTable.maxShowID = frame.methodId - 1;
 		return ans.value;
 	}
 	if(n.value < 2){
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = n;
 		tEntry.params.n = n;
+		resetTable = getEmptySetTableAnimation();
+		tracker.currentFrame.endAnimations.push(resetTable);
 		var frame = tracker.logExit([n]);
 		tEntry.methodId = frame.methodId;
+		resetTable.maxShowID = frame.methodId - 1;
 		tracker.table[n.value] = tEntry;
 		return n;
 	}
@@ -27,11 +33,11 @@ function fibonacci(n) {
 	var value = new ValueNode(ans);
 	tEntry.value = value;
 	tEntry.params.n = n;
+	resetTable = getEmptySetTableAnimation();
+	tracker.currentFrame.endAnimations.push(resetTable);
 	var frame = tracker.logExit([value]);
 	tEntry.methodId = frame.methodId;
-	//resetTable = getEmptySetTableAnimation();
-	//resetTable.maxShowID = frame.methodId - 1;
-	//tracker.endAnimations.push(resetTable);
+	resetTable.maxShowID = frame.methodId - 1;
 	tracker.table[n.value] = tEntry;
 	return value;
 }

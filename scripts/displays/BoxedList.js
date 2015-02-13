@@ -12,6 +12,7 @@ var TIME_LOOK_CONSOLE = 200;
 var TIME_SET_VISIBILITY = 0;
 var TIME_SWAP = 1000;
 var TIME_PHASE = 1000;
+var TIME_TABLE = 0;
 
 function BoxedList(parent, parentElem, start, nodeList) {
 	this.nodeList = nodeList;
@@ -67,6 +68,11 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 		}
 		var delay = 0;
 		switch (animationList[i].animationType) {
+			case "table":
+				tableManager.renderTable(animationList[i].maxShowID);
+				maxDelay = Math.max(maxDelay, TIME_TABLE);
+				delay = skipDelays ? 0 : TIME_TABLE;
+				break;
 			case "highlight":
 				var nodeSpecs = animationList[i].nodeSpecs;
 				var color = animationList[i].color;

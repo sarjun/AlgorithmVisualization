@@ -26,8 +26,7 @@ function Circle(parentCircle, parentElem, node, size) {
 				boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
 				$("div.console.fresh").removeClass("fresh");
 				e.data[1].animate(node.startAnimations);
-			});
-			if(node.startAnimations.length > 0) BoxedList.animating = 42;//anything not null works
+			}, true);
 		}
 		e.stopPropagation();
 	};
@@ -39,8 +38,7 @@ function Circle(parentCircle, parentElem, node, size) {
 				e.data[1].animate(node.endAnimations);
 			};
 			if (e.data[0].parent != null) {
-				e.data[0].parent.center(true, onComplete);
-				if(node.endAnimations.length > 0) BoxedList.animating = 42;//anything not null works
+				e.data[0].parent.center(true, onComplete, true);
 			} else {
 				onComplete();
 			}
@@ -102,8 +100,9 @@ function Circle(parentCircle, parentElem, node, size) {
 }
 
 
-Circle.prototype.center = function (animated, onComplete) {
+Circle.prototype.center = function (animated, onComplete, shouldLock) {
 	if (BoxedList.animating != null) return;
+	if(shouldLock) BoxedList.animating = 42;//anything not null works
 	if (Circle.centered == this) {
 		if (onComplete) onComplete();
 		return;
