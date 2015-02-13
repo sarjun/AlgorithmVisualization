@@ -40,18 +40,27 @@ TableManager.prototype.createTable = function(table) {
 		rowElem.append("<td>" + key1 + "</td>");
 		if(keys.length == 1) {
 			var val = table[key1+""];
-			rowElem.append("<td class='text-node'><span methodID='" + val.methodId + "'>" + val.value.value + "</span></td>");
+			rowElem.append(this.createCell(val));
 		}
 		else {
 			for (key2 in keys[1]) {
 				var val = table[key1 + "," + key2];
-				if (val != undefined) rowElem.append("<td class='text-node'><span methodID='" + val.methodId + "'>" +
-				val.value.value + "</span></td>");
+				if (val != undefined) {
+					rowElem.append(this.createCell(val));
+				}
 			}
 		}
 		this.tableElem.append(rowElem);
 	}
 	this.memoDiv.append(this.tableElem);
+};
+
+TableManager.prototype.createCell = function(tableEntry) {
+	var elem = $("<td class='text-node'><span methodID='" + tableEntry.methodId + "'>" + tableEntry.value.value + "</span></td>");
+	elem.bind("click", tableEntry.methodId, function(e) {
+		Circle.methodIdMap[e.data].center(true);
+	});
+	return elem;
 };
 
 TableManager.prototype.renderTable = function(maxMethodID) {

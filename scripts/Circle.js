@@ -9,6 +9,7 @@ function Circle(parentCircle, parentElem, node, size) {
 	this.parent = parentCircle;
 	this.elem.width(size).height(size);
 	this.elem.append("<div class='circle-align-helper'></div>");
+	Circle.methodIdMap[node.methodId] = this;
 	if (node.children.length > 0) {
 		this.elem.addClass("circle-node");
 	} else {
@@ -99,6 +100,7 @@ function Circle(parentCircle, parentElem, node, size) {
 	parentElem.append(this.elem);
 }
 
+Circle.methodIdMap = {};
 
 Circle.prototype.center = function (animated, onComplete, shouldLock) {
 	if (BoxedList.animating != null) return;
