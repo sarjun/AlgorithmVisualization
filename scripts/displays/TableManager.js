@@ -57,7 +57,8 @@ TableManager.prototype.createTable = function(table) {
 
 TableManager.prototype.createCell = function(tableEntry) {
 	if(tableEntry == undefined) return $("<td class='text-node'></td>");
-	var elem = $("<td class='text-node'><span methodID='" + tableEntry.methodId + "'>" + tableEntry.value.value + "</span></td>");
+	var elem = $("<td class='text-node'><span nodeId='" + tableEntry.value.id + "' methodID='" + tableEntry.methodId +
+		"'>" + tableEntry.value.value + "</span></td>");
 	elem.bind("click", tableEntry.methodId, function(e) {
 		Circle.methodIdMap[e.data].center(true);
 	});

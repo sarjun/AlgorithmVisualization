@@ -20,4 +20,22 @@ function ValueNode(val, type){
 	//this.animationStyle = anim;
 	//this.elem = this.animationStyle.generateElement(this);
 }
-var DisplayType = {"TEXT" : 0, "BAR" : 1, "CUSTOM" : -1};
+
+ValueNode.translate = function(sourceElem, destElem, moveSource) {
+	var sourcePosition = offsetFrom(sourceElem, mainDiv);
+	var ghost = $(sourceElem[0].outerHTML);
+	ghost.addClass("ghost");
+	ghost.css({
+		position: "absolute",
+		width: sourceElem.width(),
+		height: sourceElem.height()
+	}).css(sourcePosition);
+	mainDiv.append(ghost);
+	var parentCell = destElem.parent();
+	ghost.animate(offsetFrom(destElem, mainDiv), TIME_TRANSLATE, function () {
+		ghost.remove();
+		if (moveSource) {
+			parentCell.append(sourceElem);
+		}
+	});
+}

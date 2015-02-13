@@ -31,13 +31,19 @@ function fibonacci(n) {
 	ans = fibonacci(new ValueNode(n.value - 1)).value + fibonacci(new ValueNode(n.value - 2)).value;
 	var tEntry = getEmptyDPTableEntry();
 	var value = new ValueNode(ans);
-	tEntry.value = value;
-	tEntry.params.n = n;
+	var addEntry = getEmptyAddToTableAnimation();
+	addEntry.ansSpec = getNodeSpecification(value, 0, [], "end");
 	resetTable = getEmptySetTableAnimation();
 	tracker.currentFrame.endAnimations.push(resetTable);
+	tracker.currentFrame.endAnimations.push(addEntry);
+	tEntry.value = value;
+	tEntry.params.n = n;
 	var frame = tracker.logExit([value]);
 	tEntry.methodId = frame.methodId;
 	resetTable.maxShowID = frame.methodId - 1;
+	resetTable = getEmptySetTableAnimation();
+	frame.endAnimations.push(resetTable);
+	resetTable.maxShowID = frame.methodId + 1;
 	tracker.table[n.value] = tEntry;
 	return value;
 }

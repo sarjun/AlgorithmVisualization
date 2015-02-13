@@ -136,14 +136,14 @@ function getEmptyBundleAnimation() {
 function getEmptySetTableAnimation() {
 	return {
 		animationType: "table",
-		maxShowID: null
+		ansSpec: null
 	}
 }
 
 function getEmptyAddToTableAnimation() {
 	return {
 		animationType: "addEntry",
-		nodeId: null
+		ansSpec: null
 	}
 }
 

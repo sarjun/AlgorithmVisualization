@@ -13,6 +13,8 @@ var TIME_SET_VISIBILITY = 0;
 var TIME_SWAP = 1000;
 var TIME_PHASE = 1000;
 var TIME_TABLE = 0;
+var TIME_ADD_ENTRY = 1000;
+var TIME_GET_ENTRY = 1000;
 
 function BoxedList(parent, parentElem, start, nodeList) {
 	this.nodeList = nodeList;
@@ -73,6 +75,16 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				maxDelay = Math.max(maxDelay, TIME_TABLE);
 				delay = skipDelays ? 0 : TIME_TABLE;
 				break;
+			case "addEntry":
+				var sourceElem = boxedList.getElem(animationList[i].ansSpec);
+				var destElem = memoDiv.find("td span[nodeId=" + animationList[i].ansSpec.node.id + "]");
+
+				if(sourceElem == null || destElem == null) break;
+				ValueNode.translate(sourceElem, destElem, false);
+
+				maxDelay = Math.max(maxDelay, TIME_ADD_ENTRY);
+				delay = skipDelays ? 0 : TIME_ADD_ENTRY;
+				break;
 			case "highlight":
 				var nodeSpecs = animationList[i].nodeSpecs;
 				var color = animationList[i].color;
@@ -101,23 +113,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var destElem = boxedList.getElem(animationList[i].destSpec);
 
 				if(sourceElem == null || destElem == null) break;
-				var sourcePosition = offsetFrom(sourceElem, mainDiv);
-				var ghost = $(sourceElem[0].outerHTML);
-				ghost.addClass("ghost");
-				ghost.css({
-					position: "absolute",
-					width: sourceElem.width(),
-					height: sourceElem.height()
-				}).css(sourcePosition);
-				mainDiv.append(ghost);
-				var moveSource = animationList[i].moveSource;
-				var parentCell = destElem.parent();
-				ghost.animate(offsetFrom(destElem, mainDiv), TIME_TRANSLATE, function () {
-					ghost.remove();
-					if (moveSource) {
-						parentCell.append(sourceElem);
-					}
-				});
+				ValueNode.translate(sourceElem, destElem, animationList[i].moveSource);
 
 				maxDelay = Math.max(maxDelay, TIME_TRANSLATE);
 				delay = skipDelays ? 0 : TIME_TRANSLATE;
