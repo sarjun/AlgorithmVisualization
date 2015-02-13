@@ -4,6 +4,10 @@
 funcName = "Fibonacci";
 function fibonacci(n) {
 	tracker.logEntry([n]);
+	//var resetTable = getEmptySetTableAnimation();
+	//resetTable.maxShowID = tracker.maxId - 1;
+	//tracker.startAnimations.push(resetTable);
+
 	var ans = tracker.table[n.value];
 	if(ans != null) {
 		tracker.logExit([ans.value]);
@@ -25,6 +29,9 @@ function fibonacci(n) {
 	tEntry.params.n = n;
 	var frame = tracker.logExit([value]);
 	tEntry.methodId = frame.methodId;
+	//resetTable = getEmptySetTableAnimation();
+	//resetTable.maxShowID = frame.methodId - 1;
+	//tracker.endAnimations.push(resetTable);
 	tracker.table[n.value] = tEntry;
 	return value;
 }
@@ -43,6 +50,10 @@ trackerMapping[funcName] = DPTracker;
 funcName = "Longest Common Subsequence";
 function lcs(x, y) {
 	tracker.logEntry([x, y]);
+	var resetTable = getEmptySetTableAnimation();
+	resetTable.maxShowID = tracker.maxId - 1;
+	tracker.startAnimations.push(resetTable);
+
 	var key = x.value.length + "," + y.value.length;
 	var ans = tracker.table[key];
 	if(ans != null) {

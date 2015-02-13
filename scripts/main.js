@@ -133,6 +133,13 @@ function getEmptyBundleAnimation() {
 	}
 }
 
+function getEmptySetTableAnimation() {
+	return {
+		animationType: "table",
+		maxShowID: null
+	}
+}
+
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");

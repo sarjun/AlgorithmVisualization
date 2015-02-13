@@ -27,7 +27,7 @@ function Circle(parentCircle, parentElem, node, size) {
 				$("div.console.fresh").removeClass("fresh");
 				e.data[1].animate(node.startAnimations);
 			});
-			BoxedList.animating = 42;//anything not null works
+			if(node.startAnimations.length > 0) BoxedList.animating = 42;//anything not null works
 		}
 		e.stopPropagation();
 	};
@@ -40,7 +40,7 @@ function Circle(parentCircle, parentElem, node, size) {
 			};
 			if (e.data[0].parent != null) {
 				e.data[0].parent.center(true, onComplete);
-				BoxedList.animating = 42;//anything not null works
+				if(node.endAnimations.length > 0) BoxedList.animating = 42;//anything not null works
 			} else {
 				onComplete();
 			}
