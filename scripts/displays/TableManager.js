@@ -76,3 +76,7 @@ TableManager.prototype.renderTable = function(maxMethodID) {
 		}
 	});
 };
+
+TableManager.prototype.getElemByNodeId = function(nodeId) {
+	return this.tableElem.find("td span[nodeId=" + nodeId + "]").parent();
+};

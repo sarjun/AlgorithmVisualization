@@ -77,7 +77,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				break;
 			case "addEntry":
 				var sourceElem = boxedList.getElem(animationList[i].ansSpec);
-				var destElem = memoDiv.find("td span[nodeId=" + animationList[i].ansSpec.node.id + "]");
+				var destElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
 
 				if(sourceElem == null || destElem == null) break;
 				ValueNode.translate(sourceElem, destElem, false);
@@ -86,7 +86,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				delay = skipDelays ? 0 : TIME_ADD_ENTRY;
 				break;
 			case "getEntry":
-				var sourceElem = memoDiv.find("td span[nodeId=" + animationList[i].ansSpec.node.id + "]").parent();
+				var sourceElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
 				var destElem = boxedList.getElem(animationList[i].ansSpec);
 
 				if(sourceElem == null || destElem == null) break;
