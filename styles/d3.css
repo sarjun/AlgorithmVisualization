@@ -150,7 +150,7 @@ div.stack-align-helper.result {
 div.node-list-container {
     display: inline-block;
     vertical-align: middle;
-    /*position: absolute;*/
+    position: relative;
     pointer-events: none;
     width: 100%;
     text-align: center;
@@ -188,6 +188,20 @@ div.node-list-container {
 *.text-node.ghost {
     margin: 0;
     cursor: auto;
+}
+
+div.intermediateContainer {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+div.intermediateContainer.above {
+    bottom: 100%;
+}
+
+div.intermediateContainer.below {
+    top: 100%;
 }
 
 core-header-panel {

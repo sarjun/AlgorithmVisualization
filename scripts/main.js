@@ -153,6 +153,16 @@ function getEmptyGetFromTableAnimation() {
 		ansSpec: null
 	}
 }
+
+function getEmptyCreateIntermediateStepAnimation() {
+	return {
+		animationType: "createIntermediateStep",
+		newID: "",
+		entities: [],
+		above: false,
+		list: null
+	}
+}
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");
