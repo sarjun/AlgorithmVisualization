@@ -10,6 +10,9 @@ function fibonacci(n) {
 
 	var ans = tracker.table[n.value];
 	if(ans != null) {
+		var getEntry = getEmptyGetFromTableAnimation();
+		getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
+		tracker.currentFrame.startAnimations.push(getEntry);
 		resetTable = getEmptySetTableAnimation();
 		tracker.currentFrame.endAnimations.push(resetTable);
 		var frame = tracker.logExit([ans.value]);

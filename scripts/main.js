@@ -147,6 +147,12 @@ function getEmptyAddToTableAnimation() {
 	}
 }
 
+function getEmptyGetFromTableAnimation() {
+	return {
+		animationType: "getEntry",
+		ansSpec: null
+	}
+}
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");

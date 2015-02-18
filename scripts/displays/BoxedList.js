@@ -85,6 +85,16 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				maxDelay = Math.max(maxDelay, TIME_ADD_ENTRY);
 				delay = skipDelays ? 0 : TIME_ADD_ENTRY;
 				break;
+			case "getEntry":
+				var sourceElem = memoDiv.find("td span[nodeId=" + animationList[i].ansSpec.node.id + "]").parent();
+				var destElem = boxedList.getElem(animationList[i].ansSpec);
+
+				if(sourceElem == null || destElem == null) break;
+				ValueNode.translate(sourceElem, destElem, false);
+
+				maxDelay = Math.max(maxDelay, TIME_GET_ENTRY);
+				delay = skipDelays ? 0 : TIME_GET_ENTRY;
+				break;
 			case "highlight":
 				var nodeSpecs = animationList[i].nodeSpecs;
 				var color = animationList[i].color;
