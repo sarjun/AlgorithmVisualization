@@ -159,7 +159,7 @@ function getEmptyCreateIntermediateStepAnimation() {
 		animationType: "createIntermediateStep",
 		newID: "",
 		entities: [],
-		above: false,
+		position: null,
 		list: null
 	}
 }

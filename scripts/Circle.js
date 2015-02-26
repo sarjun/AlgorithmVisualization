@@ -98,6 +98,7 @@ function Circle(parentCircle, parentElem, node, size) {
 	}
 
 	startContainer.add(endContainer).append("<div class='intermediateContainer above'></div><div class='intermediateContainer below'></div>");
+	this.intermediateNodeMap = {};
 
 	parentElem.append(this.elem);
 }

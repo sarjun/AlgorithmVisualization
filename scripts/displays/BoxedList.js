@@ -249,6 +249,24 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				maxDelay = Math.max(maxDelay, TIME_SWAP);
 				delay = skipDelays ? 0 : TIME_SWAP;
 				break;
+			case "createIntermediateStep":
+				var intermediateContainer = boxedList.parent.elem.find("> div.node-stack-container." + (animationList[i].list == "start" ? "start" : "result") +
+					" div.node-list-container div.intermediateContainer." + (animationList[i].position));
+				for (var j in animationList[i].entities) {
+					var entity = animationList[i].entities[j];
+					switch (typeof entity) {
+						case "string":
+						case "number":
+							break;
+						case "object":
+							if (entity instanceof ValueNode) {
+
+							}
+							break;
+					}
+				}
+				boxedList.parent.intermediateNodeMap
+				break;
 			case "phase":
 				var thisBoxedList = boxedList.getAdjacentBoxedList(animationList[i].vSpec);
 				var thisList = thisBoxedList.elem.parents("table:first");
