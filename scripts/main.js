@@ -157,7 +157,7 @@ function getEmptyGetFromTableAnimation() {
 function getEmptyCreateIntermediateStepAnimation() {
 	return {
 		animationType: "createIntermediateStep",
-		newID: "",
+		intermediateId: "",
 		entities: [],
 		position: null,
 		list: null

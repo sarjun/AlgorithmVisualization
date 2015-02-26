@@ -2,6 +2,7 @@
  * Created by Arjun on 1/28/2015.
  */
 funcName = "Fibonacci";
+var intermId = 0;
 function fibonacci(n) {
 	tracker.logEntry([n]);
 	var resetTable = getEmptySetTableAnimation();
@@ -31,6 +32,12 @@ function fibonacci(n) {
 		tracker.table[n.value] = tEntry;
 		return n;
 	}
+	var recurrence = getEmptyCreateIntermediateStepAnimation();
+	recurrence.intermediateId = intermId++;
+	recurrence.list = "start";
+	recurrence.position = "below";
+	recurrence.entities = ["\\(t(n) = t(n-1) + t(n-2)\\)"];
+	tracker.currentFrame.startAnimations.push(recurrence);
 	ans = fibonacci(new ValueNode(n.value - 1)).value + fibonacci(new ValueNode(n.value - 2)).value;
 	var tEntry = getEmptyDPTableEntry();
 	var value = new ValueNode(ans);
@@ -52,7 +59,7 @@ function fibonacci(n) {
 }
 
 funcMapping[funcName] = fibonacci;
-overviewMapping[funcName] = "This is a function that finds the nth number in the Fibonacci sequence. T = t+1";
+overviewMapping[funcName] = "This is a function that finds the nth number in the Fibonacci sequence. $$t = t+1$$";
 divideMapping[funcName] = "The input list is divided into buckets of size 5. We then find the median of each bucket and " +
 "recursively find the median of these medians.";
 conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +

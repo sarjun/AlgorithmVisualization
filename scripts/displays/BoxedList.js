@@ -252,20 +252,22 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			case "createIntermediateStep":
 				var intermediateContainer = boxedList.parent.elem.find("> div.node-stack-container." + (animationList[i].list == "start" ? "start" : "result") +
 					" div.node-list-container div.intermediateContainer." + (animationList[i].position));
+				var toAppend = $("<div intermediateId='" + animationList[i].intermediateId + "'></div>");
 				for (var j in animationList[i].entities) {
 					var entity = animationList[i].entities[j];
 					switch (typeof entity) {
 						case "string":
 						case "number":
+							toAppend.append("<span>" + entity + "</span>");
 							break;
 						case "object":
 							if (entity instanceof ValueNode) {
-
+								toAppend.append("<span valueNodeId='" + entity.id + "'>" + entity.value + "</span>");
 							}
 							break;
 					}
 				}
-				boxedList.parent.intermediateNodeMap
+				intermediateContainer.append(toAppend);
 				break;
 			case "phase":
 				var thisBoxedList = boxedList.getAdjacentBoxedList(animationList[i].vSpec);
