@@ -268,6 +268,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					}
 				}
 				intermediateContainer.append(toAppend);
+				MathJax.Hub.Queue(["Typeset",MathJax.Hub, toAppend[0]]);
 				break;
 			case "phase":
 				var thisBoxedList = boxedList.getAdjacentBoxedList(animationList[i].vSpec);

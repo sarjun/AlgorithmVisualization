@@ -18,6 +18,7 @@ function addConsoleCard(text, background) {
 	}
 	cardConsole.append(card);
 	cardConsole.scrollTop(cardConsole[0].scrollHeight);
+	MathJax.Hub.Queue(["Typeset",MathJax.Hub, card[0]]);
 	return card;
 }
 

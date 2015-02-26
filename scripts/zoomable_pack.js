@@ -92,6 +92,7 @@ function init() {
 		root.center(false);
 		reinitConsole();
 		setContentSize();
+		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 	});
 	$("#btnStartTutorial").click(function() {
 		root.center(true);

@@ -59,7 +59,7 @@ function fibonacci(n) {
 }
 
 funcMapping[funcName] = fibonacci;
-overviewMapping[funcName] = "This is a function that finds the nth number in the Fibonacci sequence. $$t = t+1$$";
+overviewMapping[funcName] = "This is a function that finds the nth number in the Fibonacci sequence.";
 divideMapping[funcName] = "The input list is divided into buckets of size 5. We then find the median of each bucket and " +
 "recursively find the median of these medians.";
 conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
