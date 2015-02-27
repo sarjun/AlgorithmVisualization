@@ -155,7 +155,9 @@ div.node-list-container {
     width: 100%;
     text-align: center;
 }
-
+div.node-list-holder {
+    text-align: center;
+}
 *.node-list {
     display: inline-block;
     border-collapse: collapse;

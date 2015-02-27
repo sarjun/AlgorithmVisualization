@@ -24,7 +24,8 @@ function BoxedList(parent, parentElem, start, nodeList) {
 	this.isStart = start;
 
 	var container = $("<table class='node-list'></table>");
-	parentElem.append(container).append("<br>");
+	container.wrap("<div class='node-list-holder'></div>");
+	parentElem.append(container.parent());//.append("<br>");
 	this.elem = $("<tr></tr>");
 	container.append(this.elem);
 }
@@ -262,7 +263,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 							break;
 						case "object":
 							if (entity instanceof ValueNode) {
-								toAppend.append("<span valueNodeId='" + entity.id + "'>" + entity.value + "</span>");
+								toAppend.append("<span class='text-node' valueNodeId='" + entity.id + "'>" + entity.value + "</span>");
 							}
 							break;
 					}
@@ -331,7 +332,8 @@ BoxedList.prototype.getElem = function(nodeSpec) {
 	}
 
 	var stack = nodeSpec.list == "start" ? circle.startStack : circle.endStack;
-	if(!nodeSpec.boxedListNum) {
+	var boxedListNum = nodeSpec.boxedListNum;
+	if(!boxedListNum) {
 		// TODO: make circles store flattened nodemaps for the two stacks
 		var nodeMap = $.extend.apply($, stack.map(function (blist) {
 			return blist.nodeMap;
@@ -339,7 +341,21 @@ BoxedList.prototype.getElem = function(nodeSpec) {
 		return nodeMap[nodeSpec.node.id];
 	}
 	else {
-		var search = circle.elem.find("div.intermediate." + nodeSpec.position);
+		if (boxedListNum < 0 || boxedListNum >= stack.length) {
+			var intermediateContainer = circle.elem.find("> div.node-stack-container." + (nodeSpec.list == "start" ? "start" : "result") +
+				" div.node-list-container div.intermediateContainer." + (boxedListNum < 0 ? "above" : "below"));
+			var intermediate = null;
+			if (boxedListNum > 0) {
+				boxedListNum -= stack.length - 1;
+				intermediate = intermediateContainer.children(":nth-child(" + boxedListNum + ")");
+			} else if (boxedListNum < 0) {
+				boxedListNum *= -1;
+				intermediate = intermediateContainer.find("> div:nth-last-child(" + boxedListNum + ")");
+			}
+			return intermediate.find("[valuenodeid=" + nodeSpec.node.id + "]");
+		} else {
+			// TODO: do this later
+		}
 
 	}
 };
