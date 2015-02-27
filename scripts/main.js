@@ -61,6 +61,16 @@ function getVisualizationSpecification(parentLevel, childIndexes, list, stackInd
 	}
 }
 
+function getIntermediateSpecification(parentLevel, childIndexes, list, position, intermIndex) {
+	return {
+		parentLevel: parentLevel,   // 0 = this circle, 1 = this circle's parent, etc.
+		childIndexes: childIndexes, // the indexes are used after finding the circle using parentLevel
+		list: list,
+		position: position,
+		intermIndex: intermIndex
+	}
+}
+
 function getEmptyHighlightAnimation() {
 	return {
 		animationType: "highlight",
@@ -172,6 +182,25 @@ function getEmptyChangeValueNodeAnimation() {
 		newValue: null
 	}
 }
+
+function getEmptyIntermediateRemoveEntityAnimation() {
+	return {
+		animationType: "intermediateRemoveEntity",
+		intermSpec: null,
+		entityIndex: 0,
+		effectParams: null
+	}
+}
+
+function getEmptyRemoveIntermediateStepAnimation() {
+	return {
+		animationType: "removeIntermediateStep",
+		intermediateId: "",
+		position: null,
+		list: null
+	}
+}
+
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");

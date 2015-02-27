@@ -53,7 +53,44 @@ function fibonacci(n) {
 	}
 	tracker.currentFrame.startAnimations.push(nSpreadBundle);
 	tracker.currentFrame.startAnimations.push(nChangeBundle);
-	ans = fibonacci(new ValueNode(n.value - 1)).value + fibonacci(new ValueNode(n.value - 2)).value;
+	var mathRemoveBundle = getEmptyBundleAnimation();
+	var removeIndices = [8, 5];
+	for (var i in removeIndices) {
+		var mathRemove = getEmptyIntermediateRemoveEntityAnimation();
+		mathRemove.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		mathRemove.entityIndex = removeIndices[i];
+		mathRemove.effectParams = ["highlight"];
+		mathRemoveBundle.animations.push(mathRemove);
+	}
+	tracker.currentFrame.startAnimations.push(mathRemoveBundle);
+	var child1 = new ValueNode(n.value - 1);
+	var child2 = new ValueNode(n.value - 2);
+	var doMathBundle = getEmptyBundleAnimation();
+	var doMath1 = getEmptyChangeValueNodeAnimation();
+	doMath1.nodeSpec = getNodeSpecification(nNodes[1], 0, [], "start", 1);
+	doMath1.newValue = child1.value;
+	doMathBundle.animations.push(doMath1);
+	var doMath2 = getEmptyChangeValueNodeAnimation();
+	doMath2.nodeSpec = getNodeSpecification(nNodes[2], 0, [], "start", 1);
+	doMath2.newValue = child2.value;
+	doMathBundle.animations.push(doMath2);
+	tracker.currentFrame.startAnimations.push(doMathBundle);
+	var subproblemBundle = getEmptyBundleAnimation();
+	var showProb = getEmptyTranslateAnimation();
+	showProb.sourceSpec = doMath1.nodeSpec;
+	showProb.destSpec = getNodeSpecification(child1, 0, [0], "start", 0);
+	subproblemBundle.animations.push(showProb);
+	showProb = getEmptyTranslateAnimation();
+	showProb.sourceSpec = doMath2.nodeSpec;
+	showProb.destSpec = getNodeSpecification(child2, 0, [1], "start", 0);
+	subproblemBundle.animations.push(showProb);
+	tracker.currentFrame.startAnimations.push(subproblemBundle);
+	var removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
+	removeIntermediate.intermediateId = recurrence.intermediateId;
+	removeIntermediate.list = "start";
+	removeIntermediate.position = "below";
+	tracker.currentFrame.startAnimations.push(removeIntermediate);
+	ans = fibonacci(child1).value + fibonacci(child2).value;
 	var tEntry = getEmptyDPTableEntry();
 	var value = new ValueNode(ans);
 	var addEntry = getEmptyAddToTableAnimation();

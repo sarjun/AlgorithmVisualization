@@ -15,6 +15,7 @@ var TIME_PHASE = 1000;
 var TIME_TABLE = 0;
 var TIME_ADD_ENTRY = 1000;
 var TIME_GET_ENTRY = 1000;
+var TIME_REMOVE_ENTITY = 1000;
 
 function BoxedList(parent, parentElem, start, nodeList) {
 	this.nodeList = nodeList;
@@ -49,7 +50,7 @@ BoxedList.prototype.generateChildElement = function (thisNode) {
 
 BoxedList.prototype.animate = function (animationList, skipDelays) {
 	var i = 0;
-	var maxDelay = -1;
+	var maxDelay = 0;
 	var childStartLists = [], childEndLists = [];
 	for (var j = 0; j < this.parent.children.length; j++) {
 		var maps = [];
@@ -66,7 +67,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 	var doAnim = function (boxedList) {
 		if (BoxedList.animating == null) return;
 		if (i >= animationList.length) {
-			BoxedList.animating = null;
+			if (!skipDelays) BoxedList.animating = null;
 			return;
 		}
 		var delay = 0;
@@ -270,11 +271,31 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				}
 				intermediateContainer.append(toAppend);
 				MathJax.Hub.Queue(["Typeset",MathJax.Hub, toAppend[0]]);
+				maxDelay = Math.max(maxDelay, 0);
+				delay = skipDelays ? 0 : 0;
+				break;
+			case "removeIntermediateStep":
+				var intermediateContainer = boxedList.parent.elem.find("> div.node-stack-container." + (animationList[i].list == "start" ? "start" : "result") +
+					" div.node-list-container div.intermediateContainer." + (animationList[i].position));
+				intermediateContainer.find("div[intermediateId=" + animationList[i].intermediateId + "]").remove();
+				maxDelay = Math.max(maxDelay, 0);
+				delay = skipDelays ? 0 : 0;
 				break;
 			case "changeValueNode":
 				var elem = boxedList.getElem(animationList[i].nodeSpec);
 				elem.html(animationList[i].newValue);
 				MathJax.Hub.Queue(["Typeset",MathJax.Hub, elem[0]]);
+				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);
+				delay = skipDelays ? 0 : TIME_REMOVE_ENTITY;
+				break;
+			case "intermediateRemoveEntity":
+				var intermediate = boxedList.getAdjacentIntermediate(animationList[i].intermSpec);
+				var entity = intermediate.children(":nth-child(" + animationList[i].entityIndex + ")");
+				animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
+				entity.hide.apply(entity, animationList[i].effectParams);
+				//entity.remove();
+				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);
+				delay = skipDelays ? 0 : TIME_REMOVE_ENTITY;
 				break;
 			case "phase":
 				var thisBoxedList = boxedList.getAdjacentBoxedList(animationList[i].vSpec);
@@ -312,6 +333,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				delay = skipDelays ? 0 : delay;
 				break;
 			default:
+				console.log(animationList[i].animationType);
 				break;
 		}
 		i++;
@@ -377,4 +399,17 @@ BoxedList.prototype.getAdjacentBoxedList = function(listSpec) {
 
 	var stack = listSpec.list == "start" ? circle.startStack : circle.endStack;
 	return stack[listSpec.stackIndex];
-}
+};
+
+BoxedList.prototype.getAdjacentIntermediate = function(intermSpec) {
+	var circle = this.parent;
+	for(var i = 0; i < intermSpec.parentLevel; i++) {
+		circle = circle.parent;
+	}
+
+	for( var i=0; i<intermSpec.childIndexes.length; i++) {
+		circle = circle.children[intermSpec.childIndexes[i]];
+	}
+	return circle.elem.find("> div.node-stack-container." + (intermSpec.list == "start" ? "start" : "result") +
+		" div.node-list-container div.intermediateContainer." + intermSpec.position).children(":nth-child(" + intermSpec.intermIndex + ")");
+};
