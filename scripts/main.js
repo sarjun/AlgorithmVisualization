@@ -164,6 +164,14 @@ function getEmptyCreateIntermediateStepAnimation() {
 		list: null
 	}
 }
+
+function getEmptyChangeValueNodeAnimation() {
+	return {
+		animationType: "changeValueNode",
+		nodeSpec: null,
+		newValue: null
+	}
+}
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");

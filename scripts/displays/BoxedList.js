@@ -271,6 +271,11 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				intermediateContainer.append(toAppend);
 				MathJax.Hub.Queue(["Typeset",MathJax.Hub, toAppend[0]]);
 				break;
+			case "changeValueNode":
+				var elem = boxedList.getElem(animationList[i].nodeSpec);
+				elem.html(animationList[i].newValue);
+				MathJax.Hub.Queue(["Typeset",MathJax.Hub, elem[0]]);
+				break;
 			case "phase":
 				var thisBoxedList = boxedList.getAdjacentBoxedList(animationList[i].vSpec);
 				var thisList = thisBoxedList.elem.parents("table:first");

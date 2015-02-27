@@ -32,26 +32,27 @@ function fibonacci(n) {
 		tracker.table[n.value] = tEntry;
 		return n;
 	}
+	var nNodes = [new ValueNode("\\(n\\)"), new ValueNode("\\(n\\)"), new ValueNode("\\(n\\)")];
 	var recurrence = getEmptyCreateIntermediateStepAnimation();
 	recurrence.intermediateId = intermId++;
 	recurrence.list = "start";
 	recurrence.position = "below";
-	recurrence.entities = ["\\(t(\\)", new ValueNode("\\(n\\)"), "\\() = t(\\)", new ValueNode("\\(n\\)"), "\\(-1\\)", "\\() + t(\\)", new ValueNode("\\(n\\)"), "\\(-2\\)", "\\()\\)"];
+	recurrence.entities = ["\\(t(\\)", nNodes[0], "\\() = t(\\)", nNodes[1], "\\(-1\\)", "\\() + t(\\)", nNodes[2], "\\(-2\\)", "\\()\\)"];
 	tracker.currentFrame.startAnimations.push(recurrence);
 	var nSpreadBundle = getEmptyBundleAnimation();
-	var nTransition = getEmptyTranslateAnimation();
-	nTransition.sourceSpec = getNodeSpecification(n, 0, [], "start", 0);
-	nTransition.destSpec = getNodeSpecification(recurrence.entities[1], 0, [], "start", 1);
-	nSpreadBundle.animations.push(nTransition);
-	nTransition = getEmptyTranslateAnimation();
-	nTransition.sourceSpec = getNodeSpecification(n, 0, [], "start", 0);
-	nTransition.destSpec = getNodeSpecification(recurrence.entities[3], 0, [], "start", 1);
-	nSpreadBundle.animations.push(nTransition);
-	nTransition = getEmptyTranslateAnimation();
-	nTransition.sourceSpec = getNodeSpecification(n, 0, [], "start", 0);
-	nTransition.destSpec = getNodeSpecification(recurrence.entities[6], 0, [], "start", 1);
-	nSpreadBundle.animations.push(nTransition);
+	var nChangeBundle = getEmptyBundleAnimation();
+	for (var i in nNodes) {
+		var nTransition = getEmptyTranslateAnimation();
+		nTransition.sourceSpec = getNodeSpecification(n, 0, [], "start", 0);
+		nTransition.destSpec = getNodeSpecification(nNodes[i], 0, [], "start", 1);
+		nSpreadBundle.animations.push(nTransition);
+		var nChangeValue = getEmptyChangeValueNodeAnimation();
+		nChangeValue.nodeSpec = nTransition.destSpec;
+		nChangeValue.newValue = n.value;
+		nChangeBundle.animations.push(nChangeValue);
+	}
 	tracker.currentFrame.startAnimations.push(nSpreadBundle);
+	tracker.currentFrame.startAnimations.push(nChangeBundle);
 	ans = fibonacci(new ValueNode(n.value - 1)).value + fibonacci(new ValueNode(n.value - 2)).value;
 	var tEntry = getEmptyDPTableEntry();
 	var value = new ValueNode(ans);
