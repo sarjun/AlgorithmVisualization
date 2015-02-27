@@ -42,12 +42,13 @@ function getEmptyDPTableEntry() {
 	};
 }
 
-function getNodeSpecification(node, parentLevel, childIndexes, list) {
+function getNodeSpecification(node, parentLevel, childIndexes, list, boxedListNum) {
 	return {
 		node: node,
 		parentLevel: parentLevel,   // 0 = this circle, 1 = this circle's parent, etc.
 		childIndexes: childIndexes, // the indexes are used after finding the circle using parentLevel
-		list: list
+		list: list,
+		boxedListNum: boxedListNum // -1 = above intermediate; boxedListCount = intermediate below
 	}
 }
 

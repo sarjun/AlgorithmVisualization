@@ -36,7 +36,7 @@ function fibonacci(n) {
 	recurrence.intermediateId = intermId++;
 	recurrence.list = "start";
 	recurrence.position = "below";
-	recurrence.entities = ["\\(t(n) = t(n-1) + t(n-2)\\)"];
+	recurrence.entities = ["\\(t(\\)", "\\(n\\)", "\\() = t(\\)", "\\(n-1\\)", "\\() + t(\\)", "\\(n-2\\)", "\\()\\)"];
 	tracker.currentFrame.startAnimations.push(recurrence);
 	ans = fibonacci(new ValueNode(n.value - 1)).value + fibonacci(new ValueNode(n.value - 2)).value;
 	var tEntry = getEmptyDPTableEntry();

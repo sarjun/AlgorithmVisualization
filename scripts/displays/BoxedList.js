@@ -330,12 +330,18 @@ BoxedList.prototype.getElem = function(nodeSpec) {
 		circle = circle.children[nodeSpec.childIndexes[i]];
 	}
 
-	// TODO: make circles store flattened nodemaps for the two stacks
 	var stack = nodeSpec.list == "start" ? circle.startStack : circle.endStack;
-	var nodeMap = $.extend.apply($, stack.map(function(blist) {
-		return blist.nodeMap;
-	}));
-	return nodeMap[nodeSpec.node.id];
+	if(!nodeSpec.boxedListNum) {
+		// TODO: make circles store flattened nodemaps for the two stacks
+		var nodeMap = $.extend.apply($, stack.map(function (blist) {
+			return blist.nodeMap;
+		}));
+		return nodeMap[nodeSpec.node.id];
+	}
+	else {
+		var search = circle.elem.find("div.intermediate." + nodeSpec.position);
+
+	}
 };
 
 BoxedList.prototype.getAdjacentBoxedList = function(listSpec) {
