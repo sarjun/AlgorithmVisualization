@@ -9,6 +9,7 @@ function Circle(parentCircle, parentElem, node, size) {
 	this.parent = parentCircle;
 	this.elem.width(size).height(size);
 	this.elem.append("<div class='circle-align-helper'></div>");
+	this.methodId = node.methodId;
 	Circle.methodIdMap[node.methodId] = this;
 	if (node.children.length > 0) {
 		this.elem.addClass("circle-node");
@@ -16,7 +17,7 @@ function Circle(parentCircle, parentElem, node, size) {
 		this.elem.addClass("circle-leaf");
 	}
 	this.elem.bind("click", [this], function(e) {
-		e.data[0].center(true);
+		e.data[0].center(true, null, null, true);
 		e.stopPropagation();
 	});
 	this.startStack = [];
@@ -104,7 +105,7 @@ function Circle(parentCircle, parentElem, node, size) {
 
 Circle.methodIdMap = {};
 
-Circle.prototype.center = function (animated, onComplete, shouldLock) {
+Circle.prototype.center = function (animated, onComplete, shouldLock, renderTable) {
 	if (BoxedList.animating != null) return;
 	if(shouldLock) BoxedList.animating = 42;//anything not null works
 	if (Circle.centered == this) {
@@ -123,6 +124,7 @@ Circle.prototype.center = function (animated, onComplete, shouldLock) {
 	var currentPos = {top: root.elem.css("top"), left: root.elem.css("left")};
 	root.elem.css({top: 0, left: 0});
 	var circleCenter = getCenter(this.elem);
+	var thisPointer = this;
 	if (animated) {
 		root.elem.css(currentPos);
 		root.elem.width(currentSize).height(currentSize);
@@ -134,11 +136,13 @@ Circle.prototype.center = function (animated, onComplete, shouldLock) {
 		}, 750, "easeInOutQuad", function () {
 			refreshCircleOverflow();
 			if (onComplete) onComplete();
+			if (thisPointer.methodId && renderTable) tableManager.renderTable(thisPointer.methodId);
 		});
 	} else {
 		root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
 		refreshCircleOverflow();
 		if (onComplete) onComplete();
+		if (thisPointer.methodId && renderTable) tableManager.renderTable(thisPointer.methodId);
 	}
 };
 
