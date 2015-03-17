@@ -20,6 +20,7 @@ function fibonacci(n) {
 		resetTable = getEmptySetTableAnimation();
 		tracker.currentFrame.endAnimations.push(resetTable);
 		var frame = tracker.logExit([ans.value]);
+		zoomAnimation.methodId = frame.methodId;
 		resetTable.maxShowID = frame.methodId - 1;
 		return ans.value;
 	}
@@ -30,6 +31,7 @@ function fibonacci(n) {
 		resetTable = getEmptySetTableAnimation();
 		tracker.currentFrame.endAnimations.push(resetTable);
 		var frame = tracker.logExit([n]);
+		zoomAnimation.methodId = frame.methodId;
 		tEntry.methodId = frame.methodId;
 		resetTable.maxShowID = frame.methodId - 1;
 		tracker.table[n.value] = tEntry;
