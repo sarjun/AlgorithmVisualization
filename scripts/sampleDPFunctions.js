@@ -5,6 +5,9 @@ funcName = "Fibonacci";
 var intermId = 0;
 function fibonacci(n) {
 	tracker.logEntry([n]);
+	var zoomAnimation = getEmptyAbsoluteZoomAnimation();
+	tracker.currentFrame.startAnimations.push(zoomAnimation);
+	tracker.currentFrame.endAnimations.push(zoomAnimation);
 	var resetTable = getEmptySetTableAnimation();
 	resetTable.maxShowID = tracker.maxId - 1;
 	tracker.currentFrame.startAnimations.push(resetTable);
@@ -101,6 +104,7 @@ function fibonacci(n) {
 	tEntry.value = value;
 	tEntry.params.n = n;
 	var frame = tracker.logExit([value]);
+	zoomAnimation.methodId = frame.methodId;
 	tEntry.methodId = frame.methodId;
 	resetTable.maxShowID = frame.methodId - 1;
 	resetTable = getEmptySetTableAnimation();

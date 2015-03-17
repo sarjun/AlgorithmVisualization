@@ -17,33 +17,25 @@ function Circle(parentCircle, parentElem, node, size) {
 		this.elem.addClass("circle-leaf");
 	}
 	this.elem.bind("click", [this], function(e) {
-		e.data[0].center(true, null, null, true);
+		if (BoxedList.animating != null) return;
+		e.data[0].center(true, false, true);
 		e.stopPropagation();
 	});
 	this.startStack = [];
 	this.endStack = [];
 	var startClicked = function (e) {
 		if (BoxedList.animating == null) {
-			e.data[0].center(true, function () {
-				boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
-				$("div.console.fresh").removeClass("fresh");
-				e.data[1].animate(node.startAnimations);
-			}, true);
+			boxedList.parent.elem.find("> div.node-stack-container.start paper-shadow > *").unwrap();
+			$("div.console.fresh").removeClass("fresh");
+			e.data[1].animate(node.startAnimations);
 		}
 		e.stopPropagation();
 	};
 	var endClicked = function (e) {
 		if (BoxedList.animating == null) {
-			var onComplete = function () {
-				boxedList.parent.elem.find("> div.node-stack-container.result paper-shadow > *").unwrap();
-				$("div.console.fresh").removeClass("fresh");
-				e.data[1].animate(node.endAnimations);
-			};
-			if (e.data[0].parent != null) {
-				e.data[0].parent.center(true, onComplete, true);
-			} else {
-				onComplete();
-			}
+			boxedList.parent.elem.find("> div.node-stack-container.result paper-shadow > *").unwrap();
+			$("div.console.fresh").removeClass("fresh");
+			e.data[1].animate(node.endAnimations);
 		}
 		e.stopPropagation();
 	};
@@ -105,11 +97,13 @@ function Circle(parentCircle, parentElem, node, size) {
 
 Circle.methodIdMap = {};
 
-Circle.prototype.center = function (animated, onComplete, shouldLock, renderTable) {
-	if (BoxedList.animating != null) return;
+Circle.prototype.getAdjacentCircleByMethodId = function(id) {
+	return Circle.methodIdMap[id];
+}
+
+Circle.prototype.center = function (animated, shouldLock, renderTable) {
 	if(shouldLock) BoxedList.animating = 42;//anything not null works
 	if (Circle.centered == this) {
-		if (onComplete) onComplete();
 		return;
 	}
 	//if (this.elem.hasClass("circle-leaf")) return;
@@ -133,15 +127,13 @@ Circle.prototype.center = function (animated, onComplete, shouldLock, renderTabl
 			height: zoomSize,
 			top: centerOfScreen[1] - circleCenter[1],
 			left: centerOfScreen[0] - circleCenter[0]
-		}, 750, "easeInOutQuad", function () {
+		}, TIME_ZOOM, "easeInOutQuad", function () {
 			refreshCircleOverflow();
-			if (onComplete) onComplete();
-			if (thisPointer.methodId && renderTable) tableManager.renderTable(thisPointer.methodId);
+			if (tracker instanceof DPTracker && renderTable) tableManager.renderTable(thisPointer.methodId);
 		});
 	} else {
 		root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
 		refreshCircleOverflow();
-		if (onComplete) onComplete();
 		if (thisPointer.methodId && renderTable) tableManager.renderTable(thisPointer.methodId);
 	}
 };

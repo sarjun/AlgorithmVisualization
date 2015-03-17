@@ -61,6 +61,13 @@ function getVisualizationSpecification(parentLevel, childIndexes, list, stackInd
 	}
 }
 
+function getCircleSpecification(parentLevel, childIndexes) {
+	return {
+		parentLevel: parentLevel,   // 0 = this circle, 1 = this circle's parent, etc.
+		childIndexes: childIndexes  // the indexes are used after finding the circle using parentLevel
+	}
+}
+
 function getIntermediateSpecification(parentLevel, childIndexes, list, position, intermIndex) {
 	return {
 		parentLevel: parentLevel,   // 0 = this circle, 1 = this circle's parent, etc.
@@ -201,6 +208,20 @@ function getEmptyRemoveIntermediateStepAnimation() {
 	}
 }
 
+function getEmptyRelativeZoomAnimation() {
+	return {
+		animationType: "zoomRelative",
+		circleSpec: null
+	}
+}
+
+function getEmptyAbsoluteZoomAnimation() {
+	return {
+		animationType: "zoomAbsolute",
+		methodId: 0
+	}
+}
+
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");
@@ -229,20 +250,15 @@ function Tracker() {
 	this.execution = getEmptyExecutionFrame();
 	this.currentFrame = this.execution;
 	this.type = "rearrange";
+	this.maxId = 0;
 }
 
 DPTracker.prototype = new Tracker();
 function DPTracker() {
 	Tracker.call(this);
 	this.table = {};
-	this.maxId = 0;
 }
 DPTracker.prototype.constructor = DPTracker;
-
-DPTracker.prototype.logExit = function(list) {
-	this.currentFrame.methodId = this.maxId++;
-	return Tracker.prototype.logExit.call(this, list);
-};
 
 Tracker.prototype.traceExecution = function () {
 	printFrame(this.execution, 0);
@@ -257,6 +273,7 @@ Tracker.prototype.logEntry = function (list) {
 };
 
 Tracker.prototype.logExit = function (list) {
+	this.currentFrame.methodId = this.maxId++;
 	this.currentFrame["result"] = list;
 
 	if (this.type == "rearrange") {

@@ -16,6 +16,7 @@ var TIME_TABLE = 0;
 var TIME_ADD_ENTRY = 1000;
 var TIME_GET_ENTRY = 1000;
 var TIME_REMOVE_ENTITY = 1000;
+var TIME_ZOOM = 750;
 
 function BoxedList(parent, parentElem, start, nodeList) {
 	this.nodeList = nodeList;
@@ -86,6 +87,15 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 
 				maxDelay = Math.max(maxDelay, TIME_ADD_ENTRY);
 				delay = skipDelays ? 0 : TIME_ADD_ENTRY;
+				break;
+			case "zoomAbsolute":
+				var circle = boxedList.parent.getAdjacentCircleByMethodId(animationList[i].methodId);
+				console.log(animationList[i].methodId);
+				console.log(circle.elem);
+				circle.center(true, true, false);
+
+				maxDelay = Math.max(maxDelay, TIME_ZOOM);
+				delay = skipDelays ? 0 : TIME_ZOOM;
 				break;
 			case "getEntry":
 				var sourceElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
@@ -388,28 +398,26 @@ BoxedList.prototype.getElem = function(nodeSpec) {
 };
 
 BoxedList.prototype.getAdjacentBoxedList = function(listSpec) {
-	var circle = this.parent;
-	for(var i = 0; i < listSpec.parentLevel; i++) {
-		circle = circle.parent;
-	}
-
-	for( var i=0; i<listSpec.childIndexes.length; i++) {
-		circle = circle.children[listSpec.childIndexes[i]];
-	}
+	var circle = this.getAdjacentCircle(listSpec);
 
 	var stack = listSpec.list == "start" ? circle.startStack : circle.endStack;
 	return stack[listSpec.stackIndex];
 };
 
 BoxedList.prototype.getAdjacentIntermediate = function(intermSpec) {
+	var circle = this.getAdjacentCircle(intermSpec);
+	return circle.elem.find("> div.node-stack-container." + (intermSpec.list == "start" ? "start" : "result") +
+		" div.node-list-container div.intermediateContainer." + intermSpec.position).children(":nth-child(" + intermSpec.intermIndex + ")");
+};
+
+BoxedList.prototype.getAdjacentCircle = function(circleSpec) {
 	var circle = this.parent;
-	for(var i = 0; i < intermSpec.parentLevel; i++) {
+	for(var i = 0; i < circleSpec.parentLevel; i++) {
 		circle = circle.parent;
 	}
 
-	for( var i=0; i<intermSpec.childIndexes.length; i++) {
-		circle = circle.children[intermSpec.childIndexes[i]];
+	for( var i=0; i<circleSpec.childIndexes.length; i++) {
+		circle = circle.children[listSpec.childIndexes[i]];
 	}
-	return circle.elem.find("> div.node-stack-container." + (intermSpec.list == "start" ? "start" : "result") +
-		" div.node-list-container div.intermediateContainer." + intermSpec.position).children(":nth-child(" + intermSpec.intermIndex + ")");
+	return circle;
 };

@@ -60,7 +60,7 @@ TableManager.prototype.createCell = function(tableEntry) {
 	var elem = $("<td class='text-node'><span nodeId='" + tableEntry.value.id + "' methodID='" + tableEntry.methodId +
 		"'>" + tableEntry.value.value + "</span></td>");
 	elem.bind("click", [tableEntry.methodId, this], function(e) {
-		Circle.methodIdMap[e.data[0]].center(true, null, null, true);
+		Circle.methodIdMap[e.data[0]].elem.click();
 	});
 	return elem;
 };
