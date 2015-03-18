@@ -96,6 +96,7 @@ function fibonacci(n) {
 	removeIntermediate.position = "below";
 	tracker.currentFrame.startAnimations.push(removeIntermediate);
 	ans = fibonacci(child1).value + fibonacci(child2).value;
+	var value = new ValueNode(ans);
 
 	// End animation
 	//nNodes = [new ValueNode("\\(t(n)\\)"), new ValueNode("\\(t(n-1)\\)"), new ValueNode("\\(t(n-2)\\)")];
@@ -131,10 +132,33 @@ function fibonacci(n) {
 		update.newValue = tracker.currentFrame.children[z].result[0].value;
 		updateRecurrence.animations.push(update);
 	}
-	//tracker.currentFrame.endAnimations.push(updateRecurrence);
+	tracker.currentFrame.endAnimations.push(updateRecurrence);
+	var getAnswer = getEmptyBundleAnimation();
+	var calcAnswer = getEmptyChangeValueNodeAnimation();
+	calcAnswer.nodeSpec = getNodeSpecification(nNodes[1], 0, [], "end", -1);
+	calcAnswer.newValue = tracker.currentFrame.children[0].result[0].value + tracker.currentFrame.children[1].result[0].value;
+	getAnswer.animations.push(calcAnswer);
+	removeIndices = [10, 8];
+	for(var z in removeIndices) {
+		var deleteStrings = getEmptyIntermediateRemoveEntityAnimation();
+		deleteStrings.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		deleteStrings.entityIndex = removeIndices[z];
+		deleteStrings.effectParams = ["highlight"];
+		getAnswer.animations.push(deleteStrings);
+	}
+	tracker.currentFrame.endAnimations.push(getAnswer);
+	var showAnswer = getEmptyTranslateAnimation();
+	showAnswer.sourceSpec = getNodeSpecification(nNodes[1], 0, [], "end", -1);
+	showAnswer.destSpec = getNodeSpecification(value, 0, [], "end", 0);
+	tracker.currentFrame.endAnimations.push(showAnswer);
+	removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
+	removeIntermediate.intermediateId = recurrence.intermediateId;
+	removeIntermediate.list = "end";
+	removeIntermediate.position = "above";
+	tracker.currentFrame.endAnimations.push(removeIntermediate);
+
 
 	var tEntry = getEmptyDPTableEntry();
-	var value = new ValueNode(ans);
 	var addEntry = getEmptyAddToTableAnimation();
 	addEntry.ansSpec = getNodeSpecification(value, 0, [], "end");
 	resetTable = getEmptySetTableAnimation();
