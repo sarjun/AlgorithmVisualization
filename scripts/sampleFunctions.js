@@ -231,9 +231,17 @@ trackerMapping[funcName] = Tracker;
 // Quick Select
 // ******************
 funcName = "Median of Medians";
-function quickSelect(k, list, selMedian) {
+function quickSelect(k, list, selMedian, interm) {
 	var entryList = list.slice(0);
 	tracker.logEntry([k, entryList]);
+	var zoomStart = getEmptyRelativeZoomAnimation();
+	zoomStart.circleSpec = getCircleSpecification(0, []);
+	tracker.currentFrame.startAnimations.push(zoomStart);
+	if(interm) {
+		var zoomEnd = getEmptyRelativeZoomAnimation();
+		zoomEnd.circleSpec = getCircleSpecification(1, []);
+		tracker.currentFrame.endAnimations.push(zoomEnd);
+	}
 	// Check error conditions
 	if(k.value > list.length - 1) {
 		var errorMsg = new ValueNode("The value of k is too high to be found in the list.");
@@ -326,7 +334,7 @@ function quickSelect(k, list, selMedian) {
 	tracker.currentFrame.startAnimations.push(medianListAnim);
 	tracker.currentFrame.startAnimations.push(resetAnim);
 
-	var pivot = quickSelect(new ValueNode(Math.floor(medians.length / 2)), medians, true);
+	var pivot = quickSelect(new ValueNode(Math.floor(medians.length / 2)), medians, true, true);
 	// Check if the pivot is the kth value. If not, recurse on the greater partition or the lesser partition
 	var temp = list[0];
 	var switchIndex = list.indexOf(pivot);
@@ -385,7 +393,7 @@ function quickSelect(k, list, selMedian) {
 	resetAnim.newState = entryList;
 	resetAnim.vSpec = getVisualizationSpecification(1, [], "start", 1);
 	if(stop == k.value) {
-		quickSelect(new ValueNode(0), [pivot], false);
+		quickSelect(new ValueNode(0), [pivot], false, true);
 		if(selMedian) {
 			animatePivotSelection(pivot);
 		}
@@ -396,7 +404,7 @@ function quickSelect(k, list, selMedian) {
 	}
 	else {
 		if(stop > k.value) {
-			var answer = quickSelect(k, list.slice(0, stop), false);
+			var answer = quickSelect(k, list.slice(0, stop), false, true);
 			if(selMedian) {
 				animatePivotSelection(answer);
 			}
@@ -405,7 +413,7 @@ function quickSelect(k, list, selMedian) {
 			return answer;
 		}
 		else {
-			var answer = quickSelect(new ValueNode(k.value - stop - 1), list.slice(stop + 1), false);
+			var answer = quickSelect(new ValueNode(k.value - stop - 1), list.slice(stop + 1), false, true);
 			if(selMedian) {
 				animatePivotSelection(answer);
 			}

@@ -95,6 +95,13 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				maxDelay = Math.max(maxDelay, TIME_ZOOM);
 				delay = skipDelays ? 0 : TIME_ZOOM;
 				break;
+			case "zoomRelative":
+				var circle = boxedList.getAdjacentCircle(animationList[i].circleSpec);
+				circle.center(true, true, false);
+
+				maxDelay = Math.max(maxDelay, TIME_ZOOM);
+				delay = skipDelays ? 0 : TIME_ZOOM;
+				break;
 			case "getEntry":
 				var sourceElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
 				var destElem = boxedList.getElem(animationList[i].ansSpec);
