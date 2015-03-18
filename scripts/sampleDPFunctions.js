@@ -2,8 +2,8 @@
  * Created by Arjun on 1/28/2015.
  */
 funcName = "Fibonacci";
-var intermId = 0;
 function fibonacci(n) {
+	var intermId = 0;
 	tracker.logEntry([n]);
 	var zoomAnimation = getEmptyAbsoluteZoomAnimation();
 	tracker.currentFrame.startAnimations.push(zoomAnimation);
@@ -96,6 +96,43 @@ function fibonacci(n) {
 	removeIntermediate.position = "below";
 	tracker.currentFrame.startAnimations.push(removeIntermediate);
 	ans = fibonacci(child1).value + fibonacci(child2).value;
+
+	// End animation
+	//nNodes = [new ValueNode("\\(t(n)\\)"), new ValueNode("\\(t(n-1)\\)"), new ValueNode("\\(t(n-2)\\)")];
+	nNodes = [new ValueNode("\\(" + n.value + "\\)"), new ValueNode("\\(" + (n.value - 1) + "\\)"), new ValueNode("\\(" + (n.value - 2) + "\\)")];
+	recurrence = getEmptyCreateIntermediateStepAnimation();
+	recurrence.intermediateId = intermId++;
+	recurrence.list = "end";
+	recurrence.position = "above";
+	//recurrence.entities = [nNodes[0], "\\( = \\)", nNodes[1], "\\( + \\)", nNodes[2]];
+	recurrence.entities = ["\\(t(\\)", nNodes[0], "\\()\\)", "\\( = \\)", "\\(t(\\)", nNodes[1], "\\()\\)",
+		"\\( + \\)", "\\(t(\\)", nNodes[2], "\\()\\)"];
+	tracker.currentFrame.endAnimations.push(recurrence);
+	var getFromChildren = getEmptyBundleAnimation();
+	for(var z=0; z<tracker.currentFrame.children.length; z++) {
+		var translate = getEmptyTranslateAnimation();
+		translate.sourceSpec = getNodeSpecification(tracker.currentFrame.children[z].result[0], 0, [z], "end", 0);
+		translate.destSpec = getNodeSpecification(nNodes[z + 1], 0, [], "end", -1);
+		getFromChildren.animations.push(translate);
+	}
+	removeIndices = [11, 9, 7, 5];
+	for(var z in removeIndices) {
+		var deleteStrings = getEmptyIntermediateRemoveEntityAnimation();
+		deleteStrings.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		deleteStrings.entityIndex = removeIndices[z];
+		deleteStrings.effectParams = ["highlight"];
+		getFromChildren.animations.push(deleteStrings);
+	}
+	tracker.currentFrame.endAnimations.push(getFromChildren);
+	var updateRecurrence = getEmptyBundleAnimation();
+	for(var z=0; z<tracker.currentFrame.children.length; z++) {
+		var update = getEmptyChangeValueNodeAnimation();
+		update.nodeSpec = getNodeSpecification(nNodes[z+1], 0, [], "end", -1);
+		update.newValue = tracker.currentFrame.children[z].result[0].value;
+		updateRecurrence.animations.push(update);
+	}
+	//tracker.currentFrame.endAnimations.push(updateRecurrence);
+
 	var tEntry = getEmptyDPTableEntry();
 	var value = new ValueNode(ans);
 	var addEntry = getEmptyAddToTableAnimation();
@@ -113,6 +150,7 @@ function fibonacci(n) {
 	frame.endAnimations.push(resetTable);
 	resetTable.maxShowID = frame.methodId + 1;
 	tracker.table[n.value] = tEntry;
+
 	return value;
 }
 

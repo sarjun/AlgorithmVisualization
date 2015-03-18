@@ -8,6 +8,7 @@ var TIME_TRANSLATE = 1000;
 var TIME_UNHIGHLIGHT = 100;
 var TIME_BUCKET = 1000;
 var TIME_TEXT_PER_WORD = 450;
+var TIME_CREATE_IMTERM = 1800;
 var TIME_LOOK_CONSOLE = 200;
 var TIME_SET_VISIBILITY = 0;
 var TIME_SWAP = 1000;
@@ -284,17 +285,20 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 							break;
 					}
 				}
-				intermediateContainer.append(toAppend);
+				intermediateContainer.append(toAppend).hide().show("fade");
 				MathJax.Hub.Queue(["Typeset",MathJax.Hub, toAppend[0]]);
-				maxDelay = Math.max(maxDelay, 0);
-				delay = skipDelays ? 0 : 0;
+				maxDelay = Math.max(maxDelay, TIME_CREATE_IMTERM);
+				delay = skipDelays ? 0 : TIME_CREATE_IMTERM;
 				break;
 			case "removeIntermediateStep":
 				var intermediateContainer = boxedList.parent.elem.find("> div.node-stack-container." + (animationList[i].list == "start" ? "start" : "result") +
 					" div.node-list-container div.intermediateContainer." + (animationList[i].position));
-				intermediateContainer.find("div[intermediateId=" + animationList[i].intermediateId + "]").remove();
-				maxDelay = Math.max(maxDelay, 0);
-				delay = skipDelays ? 0 : 0;
+				intermediateContainer.find("div[intermediateId=" + animationList[i].intermediateId + "]").animate({opacity: 0}, TIME_PHASE,
+					function() {
+						this.remove();
+					});
+				maxDelay = Math.max(maxDelay, TIME_PHASE);
+				delay = skipDelays ? 0 : TIME_PHASE;
 				break;
 			case "changeValueNode":
 				var elem = boxedList.getElem(animationList[i].nodeSpec);

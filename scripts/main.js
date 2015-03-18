@@ -74,7 +74,7 @@ function getIntermediateSpecification(parentLevel, childIndexes, list, position,
 		childIndexes: childIndexes, // the indexes are used after finding the circle using parentLevel
 		list: list,
 		position: position,
-		intermIndex: intermIndex
+		intermIndex: intermIndex    // 1 indexed.
 	}
 }
 
