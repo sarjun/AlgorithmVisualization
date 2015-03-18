@@ -69,8 +69,12 @@ function mergeSort(list) {
 	// eventually this would come from the web page
 	// for now, we will use mergesort
 	tracker.logEntry([list]);
+	var zoomAnimation = getEmptyAbsoluteZoomAnimation();
+	tracker.currentFrame.startAnimations.push(zoomAnimation);
+	tracker.currentFrame.endAnimations.push(zoomAnimation);
 	if (list.length == 1) {
-		tracker.logExit(list);
+		var frame = tracker.logExit(list);
+		zoomAnimation.methodId = frame.methodId;
 		return list;
 	}
 	var firstHalf = list.slice(0, Math.floor(list.length / 2));
@@ -78,8 +82,10 @@ function mergeSort(list) {
 	var bucket = getEmptyBucketAnimation();
 	bucket.addBuckets.push([0, Math.floor(list.length / 2) - 1]);
 	tracker.currentFrame.startAnimations.push(bucket);
+	bucket.visualizationSpec = getVisualizationSpecification(0, [], "start", 0);
 	bucket = getEmptyBucketAnimation();
 	bucket.addBuckets.push([Math.floor(list.length / 2), list.length - 1]);
+	bucket.visualizationSpec = getVisualizationSpecification(0, [], "start", 0);
 	tracker.currentFrame.startAnimations.push(bucket);
 	firstHalf = mergeSort(firstHalf);
 	secondHalf = mergeSort(secondHalf);
@@ -172,7 +178,8 @@ function mergeSort(list) {
 		}
 	}
 
-	tracker.logExit([sorted]);
+	var frame = tracker.logExit([sorted]);
+	zoomAnimation.methodId = frame.methodId;
 	return sorted;
 }
 

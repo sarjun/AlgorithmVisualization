@@ -90,8 +90,6 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				break;
 			case "zoomAbsolute":
 				var circle = boxedList.parent.getAdjacentCircleByMethodId(animationList[i].methodId);
-				console.log(animationList[i].methodId);
-				console.log(circle.elem);
 				circle.center(true, true, false);
 
 				maxDelay = Math.max(maxDelay, TIME_ZOOM);
