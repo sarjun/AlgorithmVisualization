@@ -17,8 +17,6 @@ function fibonacci(n) {
 		var getEntry = getEmptyGetFromTableAnimation();
 		getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
 		addStartAnimation(getEntry);
-		resetTable = getEmptySetTableAnimation();
-		addEndAnimation(resetTable);
 		var frame = tracker.logExit([ans.value]);
 		zoomAnimation.methodId = frame.methodId;
 		resetTable.maxShowID = frame.methodId - 1;
@@ -203,6 +201,9 @@ function lcs(x, y) {
 	var key = x.value.length + "," + y.value.length;
 	var ans = tracker.table[key];
 	if(ans != null) {
+		var getEntry = getEmptyGetFromTableAnimation();
+		getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
+		addStartAnimation(getEntry);
 		tracker.logExit([ans.value]);
 		return ans.value;
 	}
@@ -220,6 +221,37 @@ function lcs(x, y) {
 	var newX = new ValueNode(x.value.substr(1));
 	var newY = new ValueNode(y.value.substr(1));
 	if(x.value.charAt(0)== y.value.charAt(0)) {
+		var bundleAnim = getEmptyBundleAnimation();
+		var substringAnim = getEmptyChangeValueNodeAnimation();
+		substringAnim.nodeSpec = getNodeSpecification(x, 0, [], "start");
+		substringAnim.newValue = newX.value;
+		bundleAnim.animations.push(substringAnim);
+		substringAnim = getEmptyChangeValueNodeAnimation();
+		substringAnim.nodeSpec = getNodeSpecification(y, 0, [], "start");
+		substringAnim.newValue = newY.value;
+		bundleAnim.animations.push(substringAnim);
+		addStartAnimation(bundleAnim);
+		bundleAnim = getEmptyBundleAnimation();
+		var translateChildAnim = getEmptyTranslateAnimation();
+		translateChildAnim.sourceSpec = getNodeSpecification(x, 0, [], "start");
+		translateChildAnim.destSpec = getNodeSpecification(newX, 0, [0], "start");
+		bundleAnim.animations.push(translateChildAnim);
+		translateChildAnim = getEmptyTranslateAnimation();
+		translateChildAnim.sourceSpec = getNodeSpecification(y, 0, [], "start");
+		translateChildAnim.destSpec = getNodeSpecification(newY, 0, [0], "start");
+		bundleAnim.animations.push(translateChildAnim);
+		addStartAnimation(bundleAnim);
+		bundleAnim = getEmptyBundleAnimation();
+		var resetAnim = getEmptyPhaseAnimation();
+		resetAnim.vSpec = getVisualizationSpecification(0, [], "start", 0);
+		resetAnim.newState = [x];
+		bundleAnim.animations.push(resetAnim);
+		resetAnim = getEmptyPhaseAnimation();
+		resetAnim.vSpec = getVisualizationSpecification(0, [], "start", 1);
+		resetAnim.newState = [y];
+		bundleAnim.animations.push(resetAnim);
+		addStartAnimation(bundleAnim);
+
 		var ret = new ValueNode(1 + lcs(newX, newY).value);
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = ret;
