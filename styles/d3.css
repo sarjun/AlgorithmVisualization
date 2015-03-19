@@ -184,8 +184,11 @@ div.node-list-holder {
     border-radius: 2px;
     cursor: pointer;
     text-align: center;
-    display: inline-block;
     /*margin: 0 1px;*/
+}
+
+span.text-node:not(:empty) {
+    display: inline-block;
 }
 
 *.text-node.ghost {
