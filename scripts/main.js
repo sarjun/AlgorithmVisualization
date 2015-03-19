@@ -222,6 +222,14 @@ function getEmptyAbsoluteZoomAnimation() {
 	}
 }
 
+function addStartAnimation(anim) {
+	tracker.currentFrame.startAnimations.push(anim);
+}
+
+function addEndAnimation(anim) {
+	tracker.currentFrame.endAnimations.push(anim);
+}
+
 function printFrame(frame, indents) {
 	printTabs(indents);
 	print("{\n");

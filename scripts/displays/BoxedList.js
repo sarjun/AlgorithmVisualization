@@ -139,7 +139,6 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			case "translate":
 				var sourceElem = boxedList.getElem(animationList[i].sourceSpec);
 				var destElem = boxedList.getElem(animationList[i].destSpec);
-
 				if(sourceElem == null || destElem == null) break;
 				ValueNode.translate(sourceElem, destElem, animationList[i].moveSource);
 
@@ -332,7 +331,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				thisBoxedList.buckets = new Set();
 				for (var j in animationList[i].newState){
 					var nodeElem = thisBoxedList.nodeMap[animationList[i].newState[j].id];
-					nodeElem.css("border-color", "black");
+					nodeElem.css("border-color", "black").html(animationList[i].newState[j].value);
 					$(tds[j]).append(nodeElem);
 				}
 				ghost.animate({
@@ -343,6 +342,8 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				thisList.animate({
 					opacity: 1
 				}, TIME_PHASE);
+				maxDelay = Math.max(maxDelay, TIME_PHASE);
+				delay = skipDelays ? 0 : TIME_PHASE;
 				break;
 			case "bundle":
 				//console.log(animationList[i]);
@@ -368,18 +369,11 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 };
 
 BoxedList.prototype.getElem = function(nodeSpec) {
-	var circle = this.parent;
-	for(var i = 0; i < nodeSpec.parentLevel; i++) {
-		circle = circle.parent;
-	}
-
-	for( var i=0; i<nodeSpec.childIndexes.length; i++) {
-		circle = circle.children[nodeSpec.childIndexes[i]];
-	}
+	var circle = this.getAdjacentCircle(nodeSpec);
 
 	var stack = nodeSpec.list == "start" ? circle.startStack : circle.endStack;
 	var boxedListNum = nodeSpec.boxedListNum;
-	if(!boxedListNum) {
+	if(boxedListNum == null) {
 		// TODO: make circles store flattened nodemaps for the two stacks
 		var nodeMap = $.extend.apply($, stack.map(function (blist) {
 			return blist.nodeMap;
@@ -425,8 +419,8 @@ BoxedList.prototype.getAdjacentCircle = function(circleSpec) {
 		circle = circle.parent;
 	}
 
-	for( var i=0; i<circleSpec.childIndexes.length; i++) {
-		circle = circle.children[listSpec.childIndexes[i]];
+	for( var i=0; i < circleSpec.childIndexes.length; i++) {
+		circle = circle.children[circleSpec.childIndexes[i]];
 	}
 	return circle;
 };

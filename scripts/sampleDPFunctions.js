@@ -6,19 +6,19 @@ function fibonacci(n) {
 	var intermId = 0;
 	tracker.logEntry([n]);
 	var zoomAnimation = getEmptyAbsoluteZoomAnimation();
-	tracker.currentFrame.startAnimations.push(zoomAnimation);
-	tracker.currentFrame.endAnimations.push(zoomAnimation);
+	addStartAnimation(zoomAnimation);
+	addEndAnimation(zoomAnimation);
 	var resetTable = getEmptySetTableAnimation();
 	resetTable.maxShowID = tracker.maxId - 1;
-	tracker.currentFrame.startAnimations.push(resetTable);
+	addStartAnimation(resetTable);
 
 	var ans = tracker.table[n.value];
 	if(ans != null) {
 		var getEntry = getEmptyGetFromTableAnimation();
 		getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
-		tracker.currentFrame.startAnimations.push(getEntry);
+		addStartAnimation(getEntry);
 		resetTable = getEmptySetTableAnimation();
-		tracker.currentFrame.endAnimations.push(resetTable);
+		addEndAnimation(resetTable);
 		var frame = tracker.logExit([ans.value]);
 		zoomAnimation.methodId = frame.methodId;
 		resetTable.maxShowID = frame.methodId - 1;
@@ -29,7 +29,7 @@ function fibonacci(n) {
 		tEntry.value = n;
 		tEntry.params.n = n;
 		resetTable = getEmptySetTableAnimation();
-		tracker.currentFrame.endAnimations.push(resetTable);
+		addEndAnimation(resetTable);
 		var frame = tracker.logExit([n]);
 		zoomAnimation.methodId = frame.methodId;
 		tEntry.methodId = frame.methodId;
@@ -43,7 +43,7 @@ function fibonacci(n) {
 	recurrence.list = "start";
 	recurrence.position = "below";
 	recurrence.entities = ["\\(t(\\)", nNodes[0], "\\() = t(\\)", nNodes[1], "\\(-1\\)", "\\() + t(\\)", nNodes[2], "\\(-2\\)", "\\()\\)"];
-	tracker.currentFrame.startAnimations.push(recurrence);
+	addStartAnimation(recurrence);
 	var nSpreadBundle = getEmptyBundleAnimation();
 	var nChangeBundle = getEmptyBundleAnimation();
 	for (var i in nNodes) {
@@ -56,8 +56,8 @@ function fibonacci(n) {
 		nChangeValue.newValue = n.value;
 		nChangeBundle.animations.push(nChangeValue);
 	}
-	tracker.currentFrame.startAnimations.push(nSpreadBundle);
-	tracker.currentFrame.startAnimations.push(nChangeBundle);
+	addStartAnimation(nSpreadBundle);
+	addStartAnimation(nChangeBundle);
 	var mathRemoveBundle = getEmptyBundleAnimation();
 	var removeIndices = [8, 5];
 	for (var i in removeIndices) {
@@ -67,7 +67,7 @@ function fibonacci(n) {
 		mathRemove.effectParams = ["highlight"];
 		mathRemoveBundle.animations.push(mathRemove);
 	}
-	tracker.currentFrame.startAnimations.push(mathRemoveBundle);
+	addStartAnimation(mathRemoveBundle);
 	var child1 = new ValueNode(n.value - 1);
 	var child2 = new ValueNode(n.value - 2);
 	var doMathBundle = getEmptyBundleAnimation();
@@ -79,7 +79,7 @@ function fibonacci(n) {
 	doMath2.nodeSpec = getNodeSpecification(nNodes[2], 0, [], "start", 1);
 	doMath2.newValue = child2.value;
 	doMathBundle.animations.push(doMath2);
-	tracker.currentFrame.startAnimations.push(doMathBundle);
+	addStartAnimation(doMathBundle);
 	var subproblemBundle = getEmptyBundleAnimation();
 	var showProb = getEmptyTranslateAnimation();
 	showProb.sourceSpec = doMath1.nodeSpec;
@@ -89,12 +89,12 @@ function fibonacci(n) {
 	showProb.sourceSpec = doMath2.nodeSpec;
 	showProb.destSpec = getNodeSpecification(child2, 0, [1], "start", 0);
 	subproblemBundle.animations.push(showProb);
-	tracker.currentFrame.startAnimations.push(subproblemBundle);
+	addStartAnimation(subproblemBundle);
 	var removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
 	removeIntermediate.intermediateId = recurrence.intermediateId;
 	removeIntermediate.list = "start";
 	removeIntermediate.position = "below";
-	tracker.currentFrame.startAnimations.push(removeIntermediate);
+	addStartAnimation(removeIntermediate);
 	ans = fibonacci(child1).value + fibonacci(child2).value;
 	var value = new ValueNode(ans);
 
@@ -108,7 +108,7 @@ function fibonacci(n) {
 	//recurrence.entities = [nNodes[0], "\\( = \\)", nNodes[1], "\\( + \\)", nNodes[2]];
 	recurrence.entities = ["\\(t(\\)", nNodes[0], "\\()\\)", "\\( = \\)", "\\(t(\\)", nNodes[1], "\\()\\)",
 		"\\( + \\)", "\\(t(\\)", nNodes[2], "\\()\\)"];
-	tracker.currentFrame.endAnimations.push(recurrence);
+	addEndAnimation(recurrence);
 	var getFromChildren = getEmptyBundleAnimation();
 	for(var z=0; z<tracker.currentFrame.children.length; z++) {
 		var translate = getEmptyTranslateAnimation();
@@ -124,7 +124,7 @@ function fibonacci(n) {
 		deleteStrings.effectParams = ["highlight"];
 		getFromChildren.animations.push(deleteStrings);
 	}
-	tracker.currentFrame.endAnimations.push(getFromChildren);
+	addEndAnimation(getFromChildren);
 	var updateRecurrence = getEmptyBundleAnimation();
 	for(var z=0; z<tracker.currentFrame.children.length; z++) {
 		var update = getEmptyChangeValueNodeAnimation();
@@ -132,7 +132,7 @@ function fibonacci(n) {
 		update.newValue = tracker.currentFrame.children[z].result[0].value;
 		updateRecurrence.animations.push(update);
 	}
-	tracker.currentFrame.endAnimations.push(updateRecurrence);
+	addEndAnimation(updateRecurrence);
 	var getAnswer = getEmptyBundleAnimation();
 	var calcAnswer = getEmptyChangeValueNodeAnimation();
 	calcAnswer.nodeSpec = getNodeSpecification(nNodes[1], 0, [], "end", -1);
@@ -146,24 +146,24 @@ function fibonacci(n) {
 		deleteStrings.effectParams = ["highlight"];
 		getAnswer.animations.push(deleteStrings);
 	}
-	tracker.currentFrame.endAnimations.push(getAnswer);
+	addEndAnimation(getAnswer);
 	var showAnswer = getEmptyTranslateAnimation();
 	showAnswer.sourceSpec = getNodeSpecification(nNodes[1], 0, [], "end", -1);
 	showAnswer.destSpec = getNodeSpecification(value, 0, [], "end", 0);
-	tracker.currentFrame.endAnimations.push(showAnswer);
+	addEndAnimation(showAnswer);
 	removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
 	removeIntermediate.intermediateId = recurrence.intermediateId;
 	removeIntermediate.list = "end";
 	removeIntermediate.position = "above";
-	tracker.currentFrame.endAnimations.push(removeIntermediate);
+	addEndAnimation(removeIntermediate);
 
 
 	var tEntry = getEmptyDPTableEntry();
 	var addEntry = getEmptyAddToTableAnimation();
 	addEntry.ansSpec = getNodeSpecification(value, 0, [], "end");
 	resetTable = getEmptySetTableAnimation();
-	tracker.currentFrame.endAnimations.push(resetTable);
-	tracker.currentFrame.endAnimations.push(addEntry);
+	addEndAnimation(resetTable);
+	addEndAnimation(addEntry);
 	tEntry.value = value;
 	tEntry.params.n = n;
 	var frame = tracker.logExit([value]);
@@ -192,10 +192,14 @@ trackerMapping[funcName] = DPTracker;
 funcName = "Longest Common Subsequence";
 function lcs(x, y) {
 	tracker.logEntry([x, y]);
+	var zoomAnim = getEmptyRelativeZoomAnimation();
+	zoomAnim.circleSpec = getCircleSpecification(0, []);
+	addStartAnimation(zoomAnim);
+	addEndAnimation(zoomAnim);
 	var resetTable = getEmptySetTableAnimation();
 	resetTable.maxShowID = tracker.maxId - 1;
-	tracker.currentFrame.startAnimations.push(resetTable);
-
+	addStartAnimation(resetTable);
+	
 	var key = x.value.length + "," + y.value.length;
 	var ans = tracker.table[key];
 	if(ans != null) {
@@ -213,8 +217,10 @@ function lcs(x, y) {
 		tracker.table[key] = tEntry;
 		return ret;
 	}
+	var newX = new ValueNode(x.value.substr(1));
+	var newY = new ValueNode(y.value.substr(1));
 	if(x.value.charAt(0)== y.value.charAt(0)) {
-		var ret = new ValueNode(1 + lcs(new ValueNode(x.value.substr(1)), new ValueNode(y.value.substr(1))).value);
+		var ret = new ValueNode(1 + lcs(newX, newY).value);
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = ret;
 		tEntry.params.x = x;
@@ -225,8 +231,46 @@ function lcs(x, y) {
 		return ret;
 	}
 	else {
-		var ignoreX = lcs(new ValueNode(x.value.substr(1)), y);
-		var ignoreY = lcs(x, new ValueNode(y.value.substr(1)));
+		var substringAnim = getEmptyChangeValueNodeAnimation();
+		substringAnim.nodeSpec = getNodeSpecification(x, 0, [], "start");
+		substringAnim.newValue = newX.value;
+		addStartAnimation(substringAnim);
+		var moveToChildBundle = getEmptyBundleAnimation();
+		var translateChildAnim = getEmptyTranslateAnimation();
+		translateChildAnim.sourceSpec = getNodeSpecification(x, 0, [], "start");
+		translateChildAnim.destSpec = getNodeSpecification(newX, 0, [0], "start");
+		moveToChildBundle.animations.push(translateChildAnim);
+		translateChildAnim = getEmptyTranslateAnimation();
+		translateChildAnim.sourceSpec = getNodeSpecification(y, 0, [], "start");
+		translateChildAnim.destSpec = getNodeSpecification(y, 0, [0], "start");
+		moveToChildBundle.animations.push(translateChildAnim);
+		addStartAnimation(moveToChildBundle);
+		var resetAnim = getEmptyPhaseAnimation();
+		resetAnim.vSpec = getVisualizationSpecification(0, [], "start", 0);
+		resetAnim.newState = [x];
+		addStartAnimation(resetAnim);
+
+		substringAnim = getEmptyChangeValueNodeAnimation();
+		substringAnim.nodeSpec = getNodeSpecification(y, 0, [], "start");
+		substringAnim.newValue = newY.value;
+		addStartAnimation(substringAnim);
+		moveToChildBundle = getEmptyBundleAnimation();
+		translateChildAnim = getEmptyTranslateAnimation();
+		translateChildAnim.sourceSpec = getNodeSpecification(y, 0, [], "start");
+		translateChildAnim.destSpec = getNodeSpecification(newY, 0, [1], "start");
+		moveToChildBundle.animations.push(translateChildAnim);
+		translateChildAnim = getEmptyTranslateAnimation();
+		translateChildAnim.sourceSpec = getNodeSpecification(x, 0, [], "start");
+		translateChildAnim.destSpec = getNodeSpecification(x, 0, [1], "start");
+		moveToChildBundle.animations.push(translateChildAnim);
+		addStartAnimation(moveToChildBundle);
+		resetAnim = getEmptyPhaseAnimation();
+		resetAnim.vSpec = getVisualizationSpecification(0, [], "start", 1);
+		resetAnim.newState = [y];
+		addStartAnimation(resetAnim);
+
+		var ignoreX = lcs(newX, y);
+		var ignoreY = lcs(x, newY);
 		var ret = ignoreX.value > ignoreY.value ? ignoreX : ignoreY;
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = ret;

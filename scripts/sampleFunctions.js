@@ -70,8 +70,8 @@ function mergeSort(list) {
 	// for now, we will use mergesort
 	tracker.logEntry([list]);
 	var zoomAnimation = getEmptyAbsoluteZoomAnimation();
-	tracker.currentFrame.startAnimations.push(zoomAnimation);
-	tracker.currentFrame.endAnimations.push(zoomAnimation);
+	addStartAnimation(zoomAnimation);
+	addEndAnimation(zoomAnimation);
 	if (list.length == 1) {
 		var frame = tracker.logExit(list);
 		zoomAnimation.methodId = frame.methodId;
@@ -81,43 +81,43 @@ function mergeSort(list) {
 	var secondHalf = list.slice(Math.floor(list.length / 2));
 	var bucket = getEmptyBucketAnimation();
 	bucket.addBuckets.push([0, Math.floor(list.length / 2) - 1]);
-	tracker.currentFrame.startAnimations.push(bucket);
+	addStartAnimation(bucket);
 	bucket.visualizationSpec = getVisualizationSpecification(0, [], "start", 0);
 	bucket = getEmptyBucketAnimation();
 	bucket.addBuckets.push([Math.floor(list.length / 2), list.length - 1]);
 	bucket.visualizationSpec = getVisualizationSpecification(0, [], "start", 0);
-	tracker.currentFrame.startAnimations.push(bucket);
+	addStartAnimation(bucket);
 	firstHalf = mergeSort(firstHalf);
 	secondHalf = mergeSort(secondHalf);
-	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, 0, Math.floor(list.length / 2) - 1, 0));
-	tracker.currentFrame.startAnimations.push(getDivideInputAnimation(list, Math.floor(list.length / 2), list.length - 1, 1));
+	addStartAnimation(getDivideInputAnimation(list, 0, Math.floor(list.length / 2) - 1, 0));
+	addStartAnimation(getDivideInputAnimation(list, Math.floor(list.length / 2), list.length - 1, 1));
 
 	var sorted = [];
 	var first = 0, second = 0;
 	var hideResult = getEmptyVisibilityAnimation();
 	hideResult.hideRanges.push([0, list.length]);
 	hideResult.visualizationSpec = getVisualizationSpecification(0, [], "end", 0);
-	tracker.currentFrame.endAnimations.push(hideResult);
+	addEndAnimation(hideResult);
 	var highlightStart = getEmptyHighlightAnimation();
 	highlightStart.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
 	highlightStart.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
-	tracker.currentFrame.endAnimations.push(highlightStart);
+	addEndAnimation(highlightStart);
 	for (var i = 0; i < list.length; i++) {
 		if (first == firstHalf.length) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceSpec = getNodeSpecification(secondHalf[second], 0, [1], "end");
 			translate.destSpec = getNodeSpecification(secondHalf[second], 0, [], "end");
-			tracker.currentFrame.endAnimations.push(translate);
-			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
+			addEndAnimation(translate);
+			addEndAnimation(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
-			tracker.currentFrame.endAnimations.push(unhighlight);
+			addEndAnimation(unhighlight);
 			sorted.push(secondHalf[second++]);
-			tracker.currentFrame.endAnimations.push(unhighlight);
+			addEndAnimation(unhighlight);
 			if(second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
-				tracker.currentFrame.endAnimations.push(highlight);
+				addEndAnimation(highlight);
 			}
 			continue;
 		}
@@ -125,56 +125,56 @@ function mergeSort(list) {
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceSpec = getNodeSpecification(firstHalf[first], 0, [0], "end");
 			translate.destSpec = getNodeSpecification(firstHalf[first], 0, [], "end");
-			tracker.currentFrame.endAnimations.push(translate);
-			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
+			addEndAnimation(translate);
+			addEndAnimation(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
-			tracker.currentFrame.endAnimations.push(unhighlight);
+			addEndAnimation(unhighlight);
 			sorted.push(firstHalf[first++]);
 			if (first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
-				tracker.currentFrame.endAnimations.push(highlight);
+				addEndAnimation(highlight);
 			}
 			continue;
 		}
 		if (firstHalf[first].value > secondHalf[second].value) {
-			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
+			addEndAnimation(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, secondHalf[second].value));
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceSpec = getNodeSpecification(secondHalf[second], 0, [1], "end");
 			translate.destSpec = getNodeSpecification(secondHalf[second], 0, [], "end");
-			tracker.currentFrame.endAnimations.push(translate);
-			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
+			addEndAnimation(translate);
+			addEndAnimation(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
-			tracker.currentFrame.endAnimations.push(unhighlight);
+			addEndAnimation(unhighlight);
 			sorted.push(secondHalf[second++]);
 			if (second < secondHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodeSpecs.push(getNodeSpecification(secondHalf[second], 0, [1], "end"));
-				tracker.currentFrame.endAnimations.push(highlight);
+				addEndAnimation(highlight);
 			}
-			if (second == secondHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(1));
+			if (second == secondHalf.length) addEndAnimation(textAnimateDoneList(1));
 		}
 		else {
-			tracker.currentFrame.endAnimations.push(textAnimateSelect(firstHalf[first].value,
+			addEndAnimation(textAnimateSelect(firstHalf[first].value,
 				secondHalf[second].value, firstHalf[first].value));
 			var translate = getEmptyTranslateAnimation();
 			translate.sourceSpec = getNodeSpecification(firstHalf[first], 0, [0], "end");
 			translate.destSpec = getNodeSpecification(firstHalf[first], 0, [], "end");
-			tracker.currentFrame.endAnimations.push(translate);
-			tracker.currentFrame.endAnimations.push(getShowDestAnimation(i));
+			addEndAnimation(translate);
+			addEndAnimation(getShowDestAnimation(i));
 			var unhighlight = getEmptyUnhighlightAnimation();
 			unhighlight.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
-			tracker.currentFrame.endAnimations.push(unhighlight);
+			addEndAnimation(unhighlight);
 			sorted.push(firstHalf[first++]);
 			if (first < firstHalf.length) {
 				var highlight = getEmptyHighlightAnimation();
 				highlight.nodeSpecs.push(getNodeSpecification(firstHalf[first], 0, [0], "end"));
-				tracker.currentFrame.endAnimations.push(highlight);
+				addEndAnimation(highlight);
 			}
-			if (first == firstHalf.length) tracker.currentFrame.endAnimations.push(textAnimateDoneList(2));
+			if (first == firstHalf.length) addEndAnimation(textAnimateDoneList(2));
 		}
 	}
 
@@ -236,11 +236,11 @@ function quickSelect(k, list, selMedian, interm) {
 	tracker.logEntry([k, entryList]);
 	var zoomStart = getEmptyRelativeZoomAnimation();
 	zoomStart.circleSpec = getCircleSpecification(0, []);
-	tracker.currentFrame.startAnimations.push(zoomStart);
+	addStartAnimation(zoomStart);
 	if(interm) {
 		var zoomEnd = getEmptyRelativeZoomAnimation();
 		zoomEnd.circleSpec = getCircleSpecification(1, []);
-		tracker.currentFrame.endAnimations.push(zoomEnd);
+		addEndAnimation(zoomEnd);
 	}
 	// Check error conditions
 	if(k.value > list.length - 1) {
@@ -273,7 +273,7 @@ function quickSelect(k, list, selMedian, interm) {
 			var foundKth = getEmptyTranslateAnimation();
 			foundKth.sourceSpec = getNodeSpecification(list[k.value], 0, [], "start");
 			foundKth.destSpec = getNodeSpecification(list[k.value], 0, [], "end");
-			tracker.currentFrame.startAnimations.push(foundKth);
+			addStartAnimation(foundKth);
 			if(selMedian) {
 				animatePivotSelection(list[k.value]);
 			}
@@ -326,13 +326,13 @@ function quickSelect(k, list, selMedian, interm) {
 		translate.destSpec = getNodeSpecification(medianSelAnim.nodeSpecs[i].node, 0, [0], "start");
 		medianListAnim.animations.push(translate);
 	}
-	tracker.currentFrame.startAnimations.push(bucketAnim);
-	tracker.currentFrame.startAnimations.push(sortAnim);
-	tracker.currentFrame.startAnimations.push(showAnim);
-	tracker.currentFrame.startAnimations.push(medianSelAnim);
+	addStartAnimation(bucketAnim);
+	addStartAnimation(sortAnim);
+	addStartAnimation(showAnim);
+	addStartAnimation(medianSelAnim);
 	textAnimateMedians(medians);
-	tracker.currentFrame.startAnimations.push(medianListAnim);
-	tracker.currentFrame.startAnimations.push(resetAnim);
+	addStartAnimation(medianListAnim);
+	addStartAnimation(resetAnim);
 
 	var pivot = quickSelect(new ValueNode(Math.floor(medians.length / 2)), medians, true, true);
 	// Check if the pivot is the kth value. If not, recurse on the greater partition or the lesser partition
@@ -436,7 +436,7 @@ function textAnimateMedians(medians) {
 	explainMedOfMed.text += ". The " + index + suffix + " lowest value (zero-indexed) in these medians (the median of medians) will be " +
 	"found recursively to partition the input list.";
 
-	tracker.currentFrame.startAnimations.push(explainMedOfMed);
+	addStartAnimation(explainMedOfMed);
 }
 
 function getSuffix(num) {
@@ -463,7 +463,7 @@ function getSuffix(num) {
 function textAnimateBaseCase() {
 	var explainBase = getEmptyTextAnimation();
 	explainBase.text = "Since the input list is smaller than the size of one bucket (5), this is a base case. Return the desired element.";
-	tracker.currentFrame.startAnimations.push(explainBase);
+	addStartAnimation(explainBase);
 }
 
 function textAnimatePartitionSetup(elem) {
@@ -517,7 +517,7 @@ function animatePivotSelection(pivot) {
 	var showAnswer = getEmptyTranslateAnimation();
 	showAnswer.sourceSpec = getNodeSpecification(pivot, 0, [], "end");
 	showAnswer.destSpec = getNodeSpecification(pivot, 1, [], "start");
-	tracker.currentFrame.endAnimations.push(showAnswer);
+	addEndAnimation(showAnswer);
 }
 
 function highlightInParentStart(node) {
