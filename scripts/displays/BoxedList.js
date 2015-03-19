@@ -74,12 +74,12 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 		}
 		var delay = 0;
 		switch (animationList[i].animationType) {
-			case "table":
+			case "setTable":
 				tableManager.renderTable(animationList[i].maxShowID);
 				maxDelay = Math.max(maxDelay, TIME_TABLE);
 				delay = skipDelays ? 0 : TIME_TABLE;
 				break;
-			case "addEntry":
+			case "addToTable":
 				var sourceElem = boxedList.getElem(animationList[i].ansSpec);
 				var destElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
 
@@ -88,6 +88,16 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 
 				maxDelay = Math.max(maxDelay, TIME_ADD_ENTRY);
 				delay = skipDelays ? 0 : TIME_ADD_ENTRY;
+				break;
+			case "getFromTable":
+				var sourceElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
+				var destElem = boxedList.getElem(animationList[i].ansSpec);
+
+				if(sourceElem == null || destElem == null) break;
+				ValueNode.translate(sourceElem, destElem, false);
+
+				maxDelay = Math.max(maxDelay, TIME_GET_ENTRY);
+				delay = skipDelays ? 0 : TIME_GET_ENTRY;
 				break;
 			case "zoomAbsolute":
 				var circle = boxedList.parent.getAdjacentCircleByMethodId(animationList[i].methodId);
@@ -102,16 +112,6 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 
 				maxDelay = Math.max(maxDelay, TIME_ZOOM);
 				delay = skipDelays ? 0 : TIME_ZOOM;
-				break;
-			case "getEntry":
-				var sourceElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
-				var destElem = boxedList.getElem(animationList[i].ansSpec);
-
-				if(sourceElem == null || destElem == null) break;
-				ValueNode.translate(sourceElem, destElem, false);
-
-				maxDelay = Math.max(maxDelay, TIME_GET_ENTRY);
-				delay = skipDelays ? 0 : TIME_GET_ENTRY;
 				break;
 			case "highlight":
 				var nodeSpecs = animationList[i].nodeSpecs;
@@ -272,17 +272,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var toAppend = $("<div intermediateId='" + animationList[i].intermediateId + "'></div>");
 				for (var j in animationList[i].entities) {
 					var entity = animationList[i].entities[j];
-					switch (typeof entity) {
-						case "string":
-						case "number":
-							toAppend.append("<span>" + entity + "</span>");
-							break;
-						case "object":
-							if (entity instanceof ValueNode) {
-								toAppend.append("<span class='text-node' valueNodeId='" + entity.id + "'>" + entity.value + "</span>");
-							}
-							break;
-					}
+					toAppend.append(BoxedList.createElemForEntity(entity));
 				}
 				intermediateContainer.append(toAppend).hide().show("fade");
 				MathJax.Hub.Queue(["Typeset",MathJax.Hub, toAppend[0]]);
@@ -303,6 +293,18 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var elem = boxedList.getElem(animationList[i].nodeSpec);
 				elem.html(animationList[i].newValue);
 				MathJax.Hub.Queue(["Typeset",MathJax.Hub, elem[0]]);
+				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);
+				delay = skipDelays ? 0 : TIME_REMOVE_ENTITY;
+				break;
+			case "intermediateAddEntity":
+				var intermediate = boxedList.getAdjacentIntermediate(animationList[i].intermSpec);
+				var entity = $(BoxedList.createElemForEntity(animationList[i].newEntity));
+				intermediate.children(":nth-child(" + animationList[i].entityIndex + ")").after(entity);
+				if (animationList[i].effectParams.length > 0 && animationList[i].effectParams[0] != "") {
+					entity.hide();
+					animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
+					entity.show.apply(entity, animationList[i].effectParams);
+				}
 				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);
 				delay = skipDelays ? 0 : TIME_REMOVE_ENTITY;
 				break;
@@ -366,6 +368,20 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 	BoxedList.animating = 42;
 	doAnim(this);
 	return maxDelay;
+};
+
+BoxedList.createElemForEntity = function(entity) {
+	switch (typeof entity) {
+		case "string":
+		case "number":
+			return "<span>" + entity + "</span>";
+			break;
+		case "object":
+			if (entity instanceof ValueNode) {
+				return "<span class='text-node' valueNodeId='" + entity.id + "'>" + entity.value + "</span>";
+			}
+			break;
+	}
 };
 
 BoxedList.prototype.getElem = function(nodeSpec) {

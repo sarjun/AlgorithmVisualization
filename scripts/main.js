@@ -153,21 +153,21 @@ function getEmptyBundleAnimation() {
 
 function getEmptySetTableAnimation() {
 	return {
-		animationType: "table",
+		animationType: "setTable",
 		ansSpec: null
 	}
 }
 
 function getEmptyAddToTableAnimation() {
 	return {
-		animationType: "addEntry",
+		animationType: "addToTable",
 		ansSpec: null
 	}
 }
 
 function getEmptyGetFromTableAnimation() {
 	return {
-		animationType: "getEntry",
+		animationType: "getFromTable",
 		ansSpec: null
 	}
 }
@@ -187,6 +187,16 @@ function getEmptyChangeValueNodeAnimation() {
 		animationType: "changeValueNode",
 		nodeSpec: null,
 		newValue: null
+	}
+}
+
+function getEmptyIntermediateAddEntityAnimation() {
+	return {
+		animationType: "intermediateAddEntity",
+		intermSpec: null,
+		entityIndex: 0,//insert after this index
+		newEntity: null,
+		effectParams: null
 	}
 }
 

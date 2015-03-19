@@ -189,6 +189,7 @@ trackerMapping[funcName] = DPTracker;
 
 funcName = "Longest Common Subsequence";
 function lcs(x, y) {
+	var intermId = 0;
 	tracker.logEntry([x, y]);
 	var zoomAnim = getEmptyRelativeZoomAnimation();
 	zoomAnim.circleSpec = getCircleSpecification(0, []);
@@ -208,6 +209,20 @@ function lcs(x, y) {
 		return ans.value;
 	}
 	if(x.value.length == 0 || y.value.length == 0) {
+		var highlightAnim = getEmptyHighlightAnimation();
+		var unhighlightAnim = getEmptyUnhighlightAnimation();
+		highlightAnim.nodeSpecs = [];
+		if (x.value.length == 0) {
+			highlightAnim.nodeSpecs.push(getNodeSpecification(x, 0, [], "start"));
+		}
+		if (y.value.length == 0) {
+			highlightAnim.nodeSpecs.push(getNodeSpecification(y, 0, [], "start"));
+		}
+		unhighlightAnim.nodeSpecs = highlightAnim.nodeSpecs;
+		addStartAnimation(highlightAnim);
+		addStartAnimation(unhighlightAnim);
+		addEndAnimation(highlightAnim);
+		addEndAnimation(unhighlightAnim);
 		var ret = new ValueNode(0);
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = ret;
@@ -220,7 +235,7 @@ function lcs(x, y) {
 	}
 	var newX = new ValueNode(x.value.substr(1));
 	var newY = new ValueNode(y.value.substr(1));
-	if(x.value.charAt(0)== y.value.charAt(0)) {
+	if(x.value.charAt(0) == y.value.charAt(0)) {
 		var bundleAnim = getEmptyBundleAnimation();
 		var substringAnim = getEmptyChangeValueNodeAnimation();
 		substringAnim.nodeSpec = getNodeSpecification(x, 0, [], "start");
@@ -252,7 +267,62 @@ function lcs(x, y) {
 		bundleAnim.animations.push(resetAnim);
 		addStartAnimation(bundleAnim);
 
-		var ret = new ValueNode(1 + lcs(newX, newY).value);
+		// End animation
+		var recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		recurrence.list = "end";
+		recurrence.position = "above";
+		recurrence.entities = ["\\(t(x,y)=\\)", "\\(1+\\)", new ValueNode("\\(t(x-1,y-1)\\)")];
+		addEndAnimation(recurrence);
+
+		var childRet = lcs(newX, newY);
+		var ret = new ValueNode(1 + childRet.value);
+
+		var bundleAnim = getEmptyBundleAnimation();
+		var translateAnim = getEmptyTranslateAnimation();
+		translateAnim.sourceSpec = getNodeSpecification(childRet, 0, [0], "end");
+		translateAnim.destSpec = getNodeSpecification(recurrence.entities[2], 0, [], "end", -1);
+		bundleAnim.animations.push(translateAnim);
+		var removeEntityAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		removeEntityAnim.entityIndex = 3;
+		removeEntityAnim.effectParams = ["fade"];
+		bundleAnim.animations.push(removeEntityAnim);
+		addEndAnimation(bundleAnim);
+		var addEntityAnim = getEmptyIntermediateAddEntityAnimation();
+		addEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		addEntityAnim.entityIndex = 2;
+		addEntityAnim.effectParams = [""];
+		addEntityAnim.newEntity = childRet;
+		addEndAnimation(addEntityAnim);
+
+		bundleAnim = getEmptyBundleAnimation();
+		removeEntityAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		removeEntityAnim.entityIndex = 2;
+		removeEntityAnim.effectParams = ["highlight"];
+		bundleAnim.animations.push(removeEntityAnim);
+		var changeValueAnim = getEmptyChangeValueNodeAnimation();
+		changeValueAnim.nodeSpec = getNodeSpecification(childRet, 0, [], "end", -1);
+		changeValueAnim.newValue = ret.value;
+		bundleAnim.animations.push(changeValueAnim);
+		addEndAnimation(bundleAnim);
+
+		translateAnim = getEmptyTranslateAnimation();
+		translateAnim.sourceSpec = getNodeSpecification(childRet, 0, [], "end", -1);
+		translateAnim.destSpec = getNodeSpecification(ret, 0, [], "end");
+		addEndAnimation(translateAnim);
+
+		var removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
+		removeIntermediate.intermediateId = recurrence.intermediateId;
+		removeIntermediate.list = "end";
+		removeIntermediate.position = "above";
+		addEndAnimation(removeIntermediate);
+
+		var addToTableAnim = getEmptyAddToTableAnimation();
+		addToTableAnim.ansSpec = translateAnim.destSpec;
+		addEndAnimation(addToTableAnim);
+
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = ret;
 		tEntry.params.x = x;
