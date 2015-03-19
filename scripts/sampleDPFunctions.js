@@ -373,7 +373,86 @@ function lcs(x, y) {
 
 		var ignoreX = lcs(newX, y);
 		var ignoreY = lcs(x, newY);
-		var ret = ignoreX.value > ignoreY.value ? ignoreX : ignoreY;
+		var ret = new ValueNode(ignoreX.value > ignoreY.value ? ignoreX.value : ignoreY.value);
+
+		// End animation
+		var recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		recurrence.list = "end";
+		recurrence.position = "above";
+		recurrence.entities = ["\\(t(x,y)=\\;\\)", "\\(max(\\;\\)", new ValueNode("\\(t(x-1,y)\\)"), "\\(\\;,\\;\\)", new ValueNode("\\(t(x,y-1)\\)"), "\\(\\;)\\)"];
+		addEndAnimation(recurrence);
+
+		var bundleAnim = getEmptyBundleAnimation();
+		var translateAnim = getEmptyTranslateAnimation();
+		translateAnim.sourceSpec = getNodeSpecification(ignoreX, 0, [0], "end");
+		translateAnim.destSpec = getNodeSpecification(recurrence.entities[2], 0, [], "end", -1);
+		bundleAnim.animations.push(translateAnim);
+		var removeEntityAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		removeEntityAnim.entityIndex = 3;
+		removeEntityAnim.effectParams = ["fade"];
+		bundleAnim.animations.push(removeEntityAnim);
+		addEndAnimation(bundleAnim);
+		var addEntityAnim = getEmptyIntermediateAddEntityAnimation();
+		addEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		addEntityAnim.entityIndex = 2;
+		addEntityAnim.effectParams = [""];
+		addEntityAnim.newEntity = ignoreX;
+		addEndAnimation(addEntityAnim);
+
+		bundleAnim = getEmptyBundleAnimation();
+		translateAnim = getEmptyTranslateAnimation();
+		translateAnim.sourceSpec = getNodeSpecification(ignoreY, 0, [0], "end");
+		translateAnim.destSpec = getNodeSpecification(recurrence.entities[4], 0, [], "end", -1);
+		bundleAnim.animations.push(translateAnim);
+		removeEntityAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		removeEntityAnim.entityIndex = 6;
+		removeEntityAnim.effectParams = ["fade"];
+		bundleAnim.animations.push(removeEntityAnim);
+		addEndAnimation(bundleAnim);
+		addEntityAnim = getEmptyIntermediateAddEntityAnimation();
+		addEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		addEntityAnim.entityIndex = 5;
+		addEntityAnim.effectParams = [""];
+		addEntityAnim.newEntity = ignoreY;
+		addEndAnimation(addEntityAnim);
+
+		bundleAnim = getEmptyBundleAnimation();
+
+		for (var i = 2; i < 9; i++) {
+			removeEntityAnim = getEmptyIntermediateRemoveEntityAnimation();
+			removeEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+			removeEntityAnim.entityIndex = i;
+			removeEntityAnim.effectParams = ["fade"];
+			bundleAnim.animations.push(removeEntityAnim);
+		}
+		addEndAnimation(bundleAnim);
+
+
+		addEntityAnim = getEmptyIntermediateAddEntityAnimation();
+		addEntityAnim.intermSpec = getIntermediateSpecification(0, [], "end", "above", 1);
+		addEntityAnim.entityIndex = 1;
+		addEntityAnim.effectParams = ["fade"];
+		addEntityAnim.newEntity = ret;
+		addEndAnimation(addEntityAnim);
+
+		translateAnim = getEmptyTranslateAnimation();
+		translateAnim.sourceSpec = getNodeSpecification(ret, 0, [], "end", -1);
+		translateAnim.destSpec = getNodeSpecification(ret, 0, [], "end");
+		addEndAnimation(translateAnim);
+
+		var removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
+		removeIntermediate.intermediateId = recurrence.intermediateId;
+		removeIntermediate.list = "end";
+		removeIntermediate.position = "above";
+		addEndAnimation(removeIntermediate);
+
+		var addToTableAnim = getEmptyAddToTableAnimation();
+		addToTableAnim.ansSpec = translateAnim.destSpec;
+		addEndAnimation(addToTableAnim);
+
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = ret;
 		tEntry.params.x = x;
