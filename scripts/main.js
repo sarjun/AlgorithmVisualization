@@ -103,10 +103,14 @@ function getEmptyUnhighlightAnimation() {
 }
 
 function getEmptyTextAnimation() {
+	return getTextAnim();
+}
+
+function getTextAnim(text, cardColor) {
 	return {
 		animationType: "text",
-		text: null,
-		cardColor: null
+		text: text,
+		cardColor: cardColor
 	}
 }
 
@@ -154,7 +158,7 @@ function getEmptyBundleAnimation() {
 function getEmptySetTableAnimation() {
 	return {
 		animationType: "setTable",
-		ansSpec: null
+		maxShowID: null
 	}
 }
 

@@ -11,9 +11,13 @@ function fibonacci(n) {
 	var resetTable = getEmptySetTableAnimation();
 	resetTable.maxShowID = tracker.maxId - 1;
 	addStartAnimation(resetTable);
+	addEndAnimation(resetTable);
+
 
 	var ans = tracker.table[n.value];
 	if(ans != null) {
+		addStartAnimation(getTextAnim("We have already computed the Fibonacci of " + n.value + ". We can get the answer from the memoization table."));
+		addEndAnimation(getTextAnim("This answer was taken from the memoization table."));
 		var getEntry = getEmptyGetFromTableAnimation();
 		getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
 		addStartAnimation(getEntry);
@@ -23,15 +27,20 @@ function fibonacci(n) {
 		return ans.value;
 	}
 	if(n.value < 2){
+		addStartAnimation(getTextAnim("\\(" + n.value + " \\leq 1 \\), so this is a base case. The Fibonacci of " + n.value + " is " + n.value + "."));
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = n;
 		tEntry.params.n = n;
+		addEndAnimation(getTextAnim("The Fibonnaci of " + n.value + " does not exist in the memoization table, so now we add it."));
+		var addToTableAnim = getEmptyAddToTableAnimation();
+		addToTableAnim.ansSpec = getNodeSpecification(n, 0, [], "end");
+		addEndAnimation(addToTableAnim);
 		resetTable = getEmptySetTableAnimation();
 		addEndAnimation(resetTable);
 		var frame = tracker.logExit([n]);
+		resetTable.maxShowID = frame.methodId;
 		zoomAnimation.methodId = frame.methodId;
 		tEntry.methodId = frame.methodId;
-		resetTable.maxShowID = frame.methodId - 1;
 		tracker.table[n.value] = tEntry;
 		return n;
 	}
@@ -46,7 +55,7 @@ function fibonacci(n) {
 	var nChangeBundle = getEmptyBundleAnimation();
 	for (var i in nNodes) {
 		var nTransition = getEmptyTranslateAnimation();
-		nTransition.sourceSpec = getNodeSpecification(n, 0, [], "start", 0);
+		nTransition.sourceSpec = getNodeSpecification(n, 0, [], "start");
 		nTransition.destSpec = getNodeSpecification(nNodes[i], 0, [], "start", 1);
 		nSpreadBundle.animations.push(nTransition);
 		var nChangeValue = getEmptyChangeValueNodeAnimation();
@@ -81,11 +90,11 @@ function fibonacci(n) {
 	var subproblemBundle = getEmptyBundleAnimation();
 	var showProb = getEmptyTranslateAnimation();
 	showProb.sourceSpec = doMath1.nodeSpec;
-	showProb.destSpec = getNodeSpecification(child1, 0, [0], "start", 0);
+	showProb.destSpec = getNodeSpecification(child1, 0, [0], "start");
 	subproblemBundle.animations.push(showProb);
 	showProb = getEmptyTranslateAnimation();
 	showProb.sourceSpec = doMath2.nodeSpec;
-	showProb.destSpec = getNodeSpecification(child2, 0, [1], "start", 0);
+	showProb.destSpec = getNodeSpecification(child2, 0, [1], "start");
 	subproblemBundle.animations.push(showProb);
 	addStartAnimation(subproblemBundle);
 	var removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
@@ -97,6 +106,8 @@ function fibonacci(n) {
 	var value = new ValueNode(ans);
 
 	// End animation
+	resetTable = getEmptySetTableAnimation();
+	addEndAnimation(resetTable);
 	//nNodes = [new ValueNode("\\(t(n)\\)"), new ValueNode("\\(t(n-1)\\)"), new ValueNode("\\(t(n-2)\\)")];
 	nNodes = [new ValueNode("\\(" + n.value + "\\)"), new ValueNode("\\(" + (n.value - 1) + "\\)"), new ValueNode("\\(" + (n.value - 2) + "\\)")];
 	recurrence = getEmptyCreateIntermediateStepAnimation();
@@ -110,7 +121,7 @@ function fibonacci(n) {
 	var getFromChildren = getEmptyBundleAnimation();
 	for(var z=0; z<tracker.currentFrame.children.length; z++) {
 		var translate = getEmptyTranslateAnimation();
-		translate.sourceSpec = getNodeSpecification(tracker.currentFrame.children[z].result[0], 0, [z], "end", 0);
+		translate.sourceSpec = getNodeSpecification(tracker.currentFrame.children[z].result[0], 0, [z], "end");
 		translate.destSpec = getNodeSpecification(nNodes[z + 1], 0, [], "end", -1);
 		getFromChildren.animations.push(translate);
 	}
@@ -147,7 +158,7 @@ function fibonacci(n) {
 	addEndAnimation(getAnswer);
 	var showAnswer = getEmptyTranslateAnimation();
 	showAnswer.sourceSpec = getNodeSpecification(nNodes[1], 0, [], "end", -1);
-	showAnswer.destSpec = getNodeSpecification(value, 0, [], "end", 0);
+	showAnswer.destSpec = getNodeSpecification(value, 0, [], "end");
 	addEndAnimation(showAnswer);
 	removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
 	removeIntermediate.intermediateId = recurrence.intermediateId;
@@ -159,8 +170,6 @@ function fibonacci(n) {
 	var tEntry = getEmptyDPTableEntry();
 	var addEntry = getEmptyAddToTableAnimation();
 	addEntry.ansSpec = getNodeSpecification(value, 0, [], "end");
-	resetTable = getEmptySetTableAnimation();
-	addEndAnimation(resetTable);
 	addEndAnimation(addEntry);
 	tEntry.value = value;
 	tEntry.params.n = n;
@@ -178,11 +187,9 @@ function fibonacci(n) {
 
 funcMapping[funcName] = fibonacci;
 overviewMapping[funcName] = "This is a function that finds the nth number in the Fibonacci sequence.";
-divideMapping[funcName] = "The input list is divided into buckets of size 5. We then find the median of each bucket and " +
-"recursively find the median of these medians.";
-conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
-"The algorithm terminates if the median of medians is at" +
-" index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
+divideMapping[funcName] = "The nth number in the Fibonacci sequence is defined by the recurrence \\(t(n)=t(n-1)+t(n-2)\\). " +
+"We will calculate it recursively.";
+conquerMapping[funcName] = "We will store the calculated values of the sequence in the memoization table so no values are recalculated.";
 parameterMapping[funcName] = ["n : uint"];
 trackerMapping[funcName] = DPTracker;
 
