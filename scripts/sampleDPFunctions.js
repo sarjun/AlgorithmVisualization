@@ -481,3 +481,38 @@ conquerMapping[funcName] = "The input list is partitioned on the median of media
 " index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
 parameterMapping[funcName] = ["s1 : string", "s2 : string"];
 trackerMapping[funcName] = DPTracker;
+
+funcName = "Maximum Random Walk";
+function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
+	tracker.logEntry([pos, steps]);
+	var key = pos.value + "," + steps.value;
+	var ans = tracker.table[key];
+	if(ans != null) {
+		//var getEntry = getEmptyGetFromTableAnimation();
+		//getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
+		//addStartAnimation(getEntry);
+		var newAns = new ValueNode(Math.max(ans.value.value, maxRightSeen.value));
+		tracker.logExit([newAns]);
+		return newAns;
+	}
+	if(steps.value == 0) {
+		ans = new ValueNode(Math.max(pos.value, maxRightSeen.value));
+		tracker.logExit([ans]);
+		return ans;
+	}
+	else {
+		var moveLeft = maximumRandomWalk(new ValueNode(pos.value - 1), new ValueNode(steps.value - 1), pLeft, pRight);
+		var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), new ValueNode(steps.value - 1), pLeft, pRight);
+		ans = new ValueNode(moveLeft.value * pLeft.value + moveRight.value * pRight.value);
+		var tEntry = getEmptyDPTableEntry();
+		tEntry.params = {
+			"pos": pos,
+			"steps": steps
+		};
+		tEntry.value = ans;
+		tracker.table[key] = tEntry;
+		var frame = tracker.logExit([ans]);
+		tEntry.methodId = frame.methodId;
+		return ans;
+	}
+}
