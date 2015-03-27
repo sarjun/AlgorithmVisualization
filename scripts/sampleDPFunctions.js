@@ -484,8 +484,8 @@ trackerMapping[funcName] = DPTracker;
 
 funcName = "Maximum Random Walk";
 function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
-	tracker.logEntry([pos, steps]);
-	maxRightSeen = new ValueNode(Math.max(maxRightSeen.value, pos.value));
+	tracker.logEntry([pos, steps, maxRightSeen]);
+	maxRightSeen = new ValueNode(maxRightSeen.value);
 	var key = steps.value + "," + (maxRightSeen.value - pos.value);
 	var ans = tracker.table[key];
 	if(ans != null) {
@@ -496,9 +496,18 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		tracker.logExit([newAns]);
 		return newAns;
 	}
+	var offsetFromMax = new ValueNode(maxRightSeen.value - pos.value);
 	if (steps.value <= 0) {
 		ans = maxRightSeen;
-		tracker.logExit([ans]);
+		var tEntry = getEmptyDPTableEntry();
+		tEntry.params = {
+			"steps": steps,
+			"offsetFromMacs": offsetFromMax
+		};
+		tEntry.value = offsetFromMax;
+		tracker.table[key] = tEntry;
+		var frame = tracker.logExit([ans]);
+		tEntry.methodId = frame.methodId;
 		return ans;
 	} else {
 		var newStep = new ValueNode(steps.value - 1);
@@ -507,20 +516,20 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 			var moveLeft = maximumRandomWalk(new ValueNode(pos.value - 1), newStep, pLeft, pRight, maxRightSeen);
 			ans += pLeft.value * moveLeft.value;
 		}
-		if (pRight.value > 0) {
-			var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), newStep, pLeft, pRight, maxRightSeen);
-			ans += pRight.value * moveRight.value;
-		}
 		var pStay = 1 - pLeft.value - pRight.value;
 		if (pStay > 0) {
 			var stay = maximumRandomWalk(pos, newStep, pLeft, pRight, maxRightSeen);
 			ans += pStay * stay.value;
 		}
+		if (pRight.value > 0) {
+			var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), newStep, pLeft, pRight, new ValueNode(Math.max(pos.value + 1, maxRightSeen.value)));
+			ans += pRight.value * moveRight.value;
+		}
 		ans = new ValueNode(ans);
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.params = {
 			"steps": steps,
-			"offsetFromMacs": new ValueNode(maxRightSeen.value - pos.value)
+			"offsetFromMacs": offsetFromMax
 		};
 		tEntry.value = new ValueNode(ans.value - pos.value);
 		tracker.table[key] = tEntry;
@@ -529,3 +538,14 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		return ans;
 	}
 }
+
+funcMapping[funcName] = maximumRandomWalk;
+overviewMapping[funcName] = "This function selects the kth smallest (where k is zero-indexed) element from the input list. " +
+"This is done by repeatedly partitioning the list and looking in the appropriate half until the selected partition is the desired element.";
+divideMapping[funcName] = "The input list is divided into buckets of size 5. We then find the median of each bucket and " +
+"recursively find the median of these medians.";
+conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
+"The algorithm terminates if the median of medians is at" +
+" index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
+parameterMapping[funcName] = ["position : int", "steps : int", "probability step left : float", "probability step right : float", "rightmost seen position : int"];
+trackerMapping[funcName] = DPTracker;
