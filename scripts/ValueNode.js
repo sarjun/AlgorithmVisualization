@@ -5,13 +5,28 @@ ValueNode.ID = 0;
 
 function ValueNode(val, type){
 	if (type != null) {
+		this.type = type;
 		switch (type) {
 			case "string":
 				val += "";
 				break;
-			default:
+			case "int":
 				val *= 1;
 				break;
+			default:
+				val *= 1;
+				if (typeof(val) == "number") {
+					if (val % 1 != 0) {
+						this.type = "float";
+					}
+				}
+				break;
+		}
+	} else {
+		if (typeof(val) == "number") {
+			if (val % 1 != 0) {
+				this.type = "float";
+			}
 		}
 	}
     this.value = val;
@@ -20,6 +35,19 @@ function ValueNode(val, type){
 	//this.animationStyle = anim;
 	//this.elem = this.animationStyle.generateElement(this);
 }
+
+ValueNode.prototype.getDisplayString = function() {
+	if (this.type != null) {
+		switch (this.type) {
+			case "float":
+				return Math.round(this.value * 1000) /  1000;
+				break;
+			default:
+				break;
+		}
+	}
+	return this.value;
+};
 
 ValueNode.translate = function(sourceElem, destElem, moveSource) {
 	var sourcePosition = offsetFrom(sourceElem, mainDiv);

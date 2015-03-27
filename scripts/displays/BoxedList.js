@@ -46,7 +46,7 @@ BoxedList.prototype.generateChildren = function () {
 BoxedList.prototype.generateChildElement = function (thisNode) {
 	var childElem = $("<td><span class='text-node'></span></td>");
 	this.nodeMap[thisNode.id] = childElem.find(".text-node");
-	this.nodeMap[thisNode.id].text(thisNode.value);
+	this.nodeMap[thisNode.id].text(thisNode.getDisplayString());
 	this.elem.append(childElem);
 };
 
@@ -334,7 +334,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				thisBoxedList.buckets = new Set();
 				for (var j in animationList[i].newState){
 					var nodeElem = thisBoxedList.nodeMap[animationList[i].newState[j].id];
-					nodeElem.css("border-color", "black").html(animationList[i].newState[j].value);
+					nodeElem.css("border-color", "black").html(animationList[i].newState[j].getDisplayString());
 					$(tds[j]).append(nodeElem);
 				}
 				ghost.animate({
@@ -379,7 +379,7 @@ BoxedList.createElemForEntity = function(entity) {
 			break;
 		case "object":
 			if (entity instanceof ValueNode) {
-				return "<span class='text-node' valueNodeId='" + entity.id + "'>" + entity.value + "</span>";
+				return "<span class='text-node' valueNodeId='" + entity.id + "'>" + entity.getDisplayString() + "</span>";
 			}
 			break;
 	}

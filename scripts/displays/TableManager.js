@@ -17,7 +17,7 @@ TableManager.prototype.createTable = function(table) {
 	for(entryKey in table) {
 		var index = 0;
 		for(param in table[entryKey].params) {
-			keys[index++].add(table[entryKey].params[param].value);
+			keys[index++].add(table[entryKey].params[param].getDisplayString());
 		}
 	}
 
@@ -58,7 +58,7 @@ TableManager.prototype.createTable = function(table) {
 TableManager.prototype.createCell = function(tableEntry) {
 	if(tableEntry == undefined) return $("<td class='text-node'></td>");
 	var elem = $("<td class='text-node'><span nodeId='" + tableEntry.value.id + "' methodID='" + tableEntry.methodId +
-		"'>" + tableEntry.value.value + "</span></td>");
+		"'>" + tableEntry.value.getDisplayString() + "</span></td>");
 	elem.bind("click", [tableEntry.methodId, this], function(e) {
 		Circle.methodIdMap[e.data[0]].elem.click();
 	});
