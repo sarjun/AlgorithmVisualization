@@ -205,6 +205,9 @@ function lcs(x, y) {
 	var resetTable = getEmptySetTableAnimation();
 	resetTable.maxShowID = tracker.maxId - 1;
 	addStartAnimation(resetTable);
+	var endReset = getEmptySetTableAnimation();
+	endReset.maxShowID = tracker.maxId - 1;
+	addEndAnimation(endReset);
 	
 	var key = x.value.length + "," + y.value.length;
 	var ans = tracker.table[key];
@@ -283,6 +286,7 @@ function lcs(x, y) {
 		addEndAnimation(recurrence);
 
 		var childRet = lcs(newX, newY);
+		endReset.maxShowID = tracker.maxId - 1;
 		var ret = new ValueNode(1 + childRet.value);
 
 		var bundleAnim = getEmptyBundleAnimation();
@@ -329,6 +333,10 @@ function lcs(x, y) {
 		var addToTableAnim = getEmptyAddToTableAnimation();
 		addToTableAnim.ansSpec = translateAnim.destSpec;
 		addEndAnimation(addToTableAnim);
+
+		var updateTable = getEmptySetTableAnimation();
+		updateTable.maxShowID = tracker.maxId;
+		addEndAnimation(updateTable);
 
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = ret;
@@ -380,6 +388,7 @@ function lcs(x, y) {
 
 		var ignoreX = lcs(newX, y);
 		var ignoreY = lcs(x, newY);
+		endReset.maxShowID = tracker.maxId - 1;
 		var ret = new ValueNode(ignoreX.value > ignoreY.value ? ignoreX.value : ignoreY.value);
 
 		// End animation
@@ -460,6 +469,10 @@ function lcs(x, y) {
 		addToTableAnim.ansSpec = translateAnim.destSpec;
 		addEndAnimation(addToTableAnim);
 
+		var updateTable = getEmptySetTableAnimation();
+		updateTable.maxShowID = tracker.maxId;
+		addEndAnimation(updateTable);
+
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.value = ret;
 		tEntry.params.x = x;
@@ -485,6 +498,14 @@ trackerMapping[funcName] = DPTracker;
 funcName = "Maximum Random Walk";
 function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 	tracker.logEntry([pos, steps, maxRightSeen]);
+	var zoomAnim = getEmptyRelativeZoomAnimation();
+	zoomAnim.circleSpec = getCircleSpecification(0, []);
+	addStartAnimation(zoomAnim);
+	addEndAnimation(zoomAnim);
+	var resetTable = getEmptySetTableAnimation();
+	resetTable.maxShowID = tracker.maxId - 1;
+	addStartAnimation(resetTable);
+
 	maxRightSeen = new ValueNode(maxRightSeen.value);
 	var key = steps.value + "," + (maxRightSeen.value - pos.value);
 	var ans = tracker.table[key];
