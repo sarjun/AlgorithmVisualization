@@ -497,6 +497,7 @@ trackerMapping[funcName] = DPTracker;
 
 funcName = "Maximum Random Walk";
 function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
+	var intermId = 0;
 	tracker.logEntry([pos, steps, maxRightSeen]);
 	var zoomAnim = getEmptyRelativeZoomAnimation();
 	zoomAnim.circleSpec = getCircleSpecification(0, []);
@@ -505,6 +506,9 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 	var resetTable = getEmptySetTableAnimation();
 	resetTable.maxShowID = tracker.maxId - 1;
 	addStartAnimation(resetTable);
+	var endReset = getEmptySetTableAnimation();
+	endReset.maxShowID = tracker.maxId - 1;
+	addEndAnimation(endReset);
 
 	maxRightSeen = new ValueNode(maxRightSeen.value);
 	var key = steps.value + "," + (maxRightSeen.value - pos.value);
@@ -531,6 +535,80 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		tEntry.methodId = frame.methodId;
 		return ans;
 	} else {
+		// Start animation
+		var nNodes = [new ValueNode("\\(P_{left}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"),
+			new ValueNode("\\(P_{stay}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"),
+			new ValueNode("\\(P_{right}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)")];
+		var recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		recurrence.list = "start";
+		recurrence.position = "below";
+		recurrence.entities = ["\\(t(S,P,M) = \\)", nNodes[0], "\\(t(\\)", nNodes[1], "\\(,\\)", nNodes[2], "\\(,\\)", nNodes[3], "\\()\\)"];
+		addStartAnimation(recurrence);
+		recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		recurrence.list = "start";
+		recurrence.position = "below";
+		recurrence.entities = ["\\( + \\)", nNodes[4], "\\(t(\\)", nNodes[5], "\\(,\\)", nNodes[6], "\\(,\\)", nNodes[7], "\\()\\)"];
+		addStartAnimation(recurrence);
+		recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		recurrence.list = "start";
+		recurrence.position = "below";
+		recurrence.entities = ["\\( + \\)", nNodes[8], "\\(t(\\)", nNodes[9], "\\(,\\)", nNodes[10], "\\(,\\)", nNodes[11], "\\()\\)"];
+		addStartAnimation(recurrence);
+		//var nSpreadBundle = getEmptyBundleAnimation();
+		//var nChangeBundle = getEmptyBundleAnimation();
+		//for (var i in nNodes) {
+		//	var nTransition = getEmptyTranslateAnimation();
+		//	nTransition.sourceSpec = getNodeSpecification(n, 0, [], "start");
+		//	nTransition.destSpec = getNodeSpecification(nNodes[i], 0, [], "start", 1);
+		//	nSpreadBundle.animations.push(nTransition);
+		//	var nChangeValue = getEmptyChangeValueNodeAnimation();
+		//	nChangeValue.nodeSpec = nTransition.destSpec;
+		//	nChangeValue.newValue = n.value;
+		//	nChangeBundle.animations.push(nChangeValue);
+		//}
+		//addStartAnimation(nSpreadBundle);
+		//addStartAnimation(nChangeBundle);
+		//var mathRemoveBundle = getEmptyBundleAnimation();
+		//var removeIndices = [8, 5];
+		//for (var i in removeIndices) {
+		//	var mathRemove = getEmptyIntermediateRemoveEntityAnimation();
+		//	mathRemove.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		//	mathRemove.entityIndex = removeIndices[i];
+		//	mathRemove.effectParams = ["highlight"];
+		//	mathRemoveBundle.animations.push(mathRemove);
+		//}
+		//addStartAnimation(mathRemoveBundle);
+		//var child1 = new ValueNode(n.value - 1);
+		//var child2 = new ValueNode(n.value - 2);
+		//var doMathBundle = getEmptyBundleAnimation();
+		//var doMath1 = getEmptyChangeValueNodeAnimation();
+		//doMath1.nodeSpec = getNodeSpecification(nNodes[1], 0, [], "start", 1);
+		//doMath1.newValue = child1.value;
+		//doMathBundle.animations.push(doMath1);
+		//var doMath2 = getEmptyChangeValueNodeAnimation();
+		//doMath2.nodeSpec = getNodeSpecification(nNodes[2], 0, [], "start", 1);
+		//doMath2.newValue = child2.value;
+		//doMathBundle.animations.push(doMath2);
+		//addStartAnimation(doMathBundle);
+		//var subproblemBundle = getEmptyBundleAnimation();
+		//var showProb = getEmptyTranslateAnimation();
+		//showProb.sourceSpec = doMath1.nodeSpec;
+		//showProb.destSpec = getNodeSpecification(child1, 0, [0], "start");
+		//subproblemBundle.animations.push(showProb);
+		//showProb = getEmptyTranslateAnimation();
+		//showProb.sourceSpec = doMath2.nodeSpec;
+		//showProb.destSpec = getNodeSpecification(child2, 0, [1], "start");
+		//subproblemBundle.animations.push(showProb);
+		//addStartAnimation(subproblemBundle);
+		//var removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
+		//removeIntermediate.intermediateId = recurrence.intermediateId;
+		//removeIntermediate.list = "start";
+		//removeIntermediate.position = "below";
+		//addStartAnimation(removeIntermediate);
+
 		var newStep = new ValueNode(steps.value - 1);
 		var ans = 0;
 		if (pLeft.value > 0) {
@@ -546,6 +624,7 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 			var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), newStep, pLeft, pRight, new ValueNode(Math.max(pos.value + 1, maxRightSeen.value)));
 			ans += pRight.value * moveRight.value;
 		}
+		endReset.maxShowID = tracker.maxId - 1;
 		ans = new ValueNode(ans);
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.params = {
