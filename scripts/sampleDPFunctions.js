@@ -485,31 +485,44 @@ trackerMapping[funcName] = DPTracker;
 funcName = "Maximum Random Walk";
 function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 	tracker.logEntry([pos, steps]);
-	var key = pos.value + "," + steps.value;
+	maxRightSeen = new ValueNode(Math.max(maxRightSeen.value, pos.value));
+	var key = steps.value + "," + (maxRightSeen.value - pos.value);
 	var ans = tracker.table[key];
 	if(ans != null) {
 		//var getEntry = getEmptyGetFromTableAnimation();
 		//getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
 		//addStartAnimation(getEntry);
-		var newAns = new ValueNode(Math.max(ans.value.value, maxRightSeen.value));
+		var newAns = new ValueNode(ans.value.value + pos.value);
 		tracker.logExit([newAns]);
 		return newAns;
 	}
-	if(steps.value == 0) {
-		ans = new ValueNode(Math.max(pos.value, maxRightSeen.value));
+	if (steps.value <= 0) {
+		ans = maxRightSeen;
 		tracker.logExit([ans]);
 		return ans;
-	}
-	else {
-		var moveLeft = maximumRandomWalk(new ValueNode(pos.value - 1), new ValueNode(steps.value - 1), pLeft, pRight);
-		var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), new ValueNode(steps.value - 1), pLeft, pRight);
-		ans = new ValueNode(moveLeft.value * pLeft.value + moveRight.value * pRight.value);
+	} else {
+		var newStep = new ValueNode(steps.value - 1);
+		var ans = 0;
+		if (pLeft.value > 0) {
+			var moveLeft = maximumRandomWalk(new ValueNode(pos.value - 1), newStep, pLeft, pRight, maxRightSeen);
+			ans += pLeft.value * moveLeft.value;
+		}
+		if (pRight.value > 0) {
+			var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), newStep, pLeft, pRight, maxRightSeen);
+			ans += pRight.value * moveRight.value;
+		}
+		var pStay = 1 - pLeft.value - pRight.value;
+		if (pStay > 0) {
+			var stay = maximumRandomWalk(pos, newStep, pLeft, pRight, maxRightSeen);
+			ans += pStay * stay.value;
+		}
+		ans = new ValueNode(ans);
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.params = {
-			"pos": pos,
-			"steps": steps
+			"steps": steps,
+			"offsetFromMacs": new ValueNode(maxRightSeen.value - pos.value)
 		};
-		tEntry.value = ans;
+		tEntry.value = new ValueNode(ans.value - pos.value);
 		tracker.table[key] = tEntry;
 		var frame = tracker.logExit([ans]);
 		tEntry.methodId = frame.methodId;
