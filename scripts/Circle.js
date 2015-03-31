@@ -45,11 +45,7 @@ function Circle(parentCircle, parentElem, node, size) {
 	var endContainer = this.elem.find("div.result div.node-list-container");
 	for (var i in node.start) {
 		var boxedList = null;
-		if (Array.isArray(node.start[i])) {
-			boxedList = new BoxedList(this, startContainer, true, node.start[i]);
-		} else {
-			boxedList = new BoxedList(this, startContainer, true, [node.start[i]]);
-		}
+		boxedList = new BoxedList(this, startContainer, true, node.start[i]);
 		this.startStack.push(boxedList);
 		boxedList.generateChildren();
 		boxedList.elem.bind("click", [this, boxedList], startClicked)
@@ -70,11 +66,7 @@ function Circle(parentCircle, parentElem, node, size) {
 	}
 	for (var i in node.result) {
 		var boxedList = null;
-		if (Array.isArray(node.result[i])) {
-			boxedList = new BoxedList(this, endContainer, false, node.result[i]);
-		} else {
-			boxedList = new BoxedList(this, endContainer, false, [node.result[i]]);
-		}
+		boxedList = new BoxedList(this, endContainer, false, node.result[i]);
 		this.endStack.push(boxedList);
 		boxedList.generateChildren();
 		boxedList.elem.bind("click", [this, boxedList], endClicked)

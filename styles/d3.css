@@ -158,6 +158,11 @@ div.node-list-container {
 div.node-list-holder {
     text-align: center;
 }
+
+div.node-list-holder.scalar {
+    display: inline-block;
+}
+
 *.node-list {
     display: inline-block;
     border-collapse: collapse;

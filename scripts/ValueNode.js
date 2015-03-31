@@ -49,6 +49,14 @@ ValueNode.prototype.getDisplayString = function() {
 	return this.value;
 };
 
+ValueNode.prototype.getType = function() {
+	if (this.type != null) {
+		return this.type;
+	}
+	//TODO: if problems, check here first
+	return typeof(this.value);
+};
+
 ValueNode.translate = function(sourceElem, destElem, moveSource) {
 	var sourcePosition = offsetFrom(sourceElem, mainDiv);
 	var ghost = $(sourceElem[0].outerHTML);

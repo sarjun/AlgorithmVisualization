@@ -19,8 +19,16 @@ var TIME_GET_ENTRY = 1000;
 var TIME_REMOVE_ENTITY = 1000;
 var TIME_ZOOM = 750;
 
+var VECTOR_TYPES = ["string"];
+
 function BoxedList(parent, parentElem, start, nodeList) {
-	this.nodeList = nodeList;
+	if (Array.isArray(nodeList)) {
+		this.nodeList = nodeList;
+		this.scalar = false;
+	} else {
+		this.nodeList = [nodeList];
+		this.scalar = VECTOR_TYPES.indexOf(nodeList.getType()) < 0;
+	}
 	this.nodeMap = {};
 	this.parent = parent;
 	this.buckets = new Set();
@@ -28,6 +36,9 @@ function BoxedList(parent, parentElem, start, nodeList) {
 
 	var container = $("<table class='node-list'></table>");
 	container.wrap("<div class='node-list-holder'></div>");
+	if (this.scalar) {
+		container.parent().addClass("scalar");
+	}
 	parentElem.append(container.parent());//.append("<br>");
 	this.elem = $("<tr></tr>");
 	container.append(this.elem);
