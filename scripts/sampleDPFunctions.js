@@ -535,6 +535,10 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		tEntry.methodId = frame.methodId;
 		return ans;
 	} else {
+
+		var newStep = new ValueNode(steps.value - 1);
+		var pStay = new ValueNode(1 - pLeft.value - pRight.value);
+
 		// Start animation
 		var nNodes = [new ValueNode("\\(P_{left}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"),
 			new ValueNode("\\(P_{stay}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"),
@@ -544,19 +548,33 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		recurrence.list = "start";
 		recurrence.position = "below";
 		recurrence.entities = ["\\(t(S,P,M) =\\; \\)", nNodes[0], "\\(\\times t(\\)", nNodes[1], "\\(,\\)", nNodes[2], "\\(,\\)", nNodes[3], "\\()\\)"];
+		recurrence.inline = true;
 		addStartAnimation(recurrence);
 		recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
 		recurrence.list = "start";
 		recurrence.position = "below";
 		recurrence.entities = ["\\( + \\)", nNodes[4], "\\(\\times t(\\)", nNodes[5], "\\(,\\)", nNodes[6], "\\(,\\)", nNodes[7], "\\()\\)"];
+		recurrence.inline = true;
 		addStartAnimation(recurrence);
 		recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
 		recurrence.list = "start";
 		recurrence.position = "below";
 		recurrence.entities = ["\\( + \\)", nNodes[8], "\\(\\times t(\\)", nNodes[9], "\\(,\\)", nNodes[10], "\\(,\\)", nNodes[11], "\\()\\)"];
+		recurrence.inline = true;
 		addStartAnimation(recurrence);
+
+		var changeBundle = getEmptyBundleAnimation();
+		var probNodes = [nNodes[0], nNodes[4], nNodes[8]];
+		var probVals = [pLeft.getDisplayString(), pStay.getDisplayString(), pRight.getDisplayString()];
+		for (var i in probNodes) {
+			var changeProbAnim = getEmptyChangeValueNodeAnimation();
+			changeProbAnim.nodeSpec = getNodeSpecification(probNodes[i], 0, [], "start", 3 + i*1);
+			changeProbAnim.newValue = probVals[i];
+			changeBundle.animations.push(changeProbAnim);
+		}
+		addStartAnimation(changeBundle);
 		//var nSpreadBundle = getEmptyBundleAnimation();
 		//var nChangeBundle = getEmptyBundleAnimation();
 		//for (var i in nNodes) {
@@ -609,18 +627,16 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		//removeIntermediate.position = "below";
 		//addStartAnimation(removeIntermediate);
 
-		var newStep = new ValueNode(steps.value - 1);
 		var ans = 0;
-		if (pLeft.value > 0) {
+		if (pLeft.value > EPSILON) {
 			var moveLeft = maximumRandomWalk(new ValueNode(pos.value - 1), newStep, pLeft, pRight, maxRightSeen);
 			ans += pLeft.value * moveLeft.value;
 		}
-		var pStay = 1 - pLeft.value - pRight.value;
-		if (pStay > 0) {
+		if (pStay.value > EPSILON) {
 			var stay = maximumRandomWalk(pos, newStep, pLeft, pRight, maxRightSeen);
-			ans += pStay * stay.value;
+			ans += pStay.value * stay.value;
 		}
-		if (pRight.value > 0) {
+		if (pRight.value > EPSILON) {
 			var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), newStep, pLeft, pRight, new ValueNode(Math.max(pos.value + 1, maxRightSeen.value)));
 			ans += pRight.value * moveRight.value;
 		}

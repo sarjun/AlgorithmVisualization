@@ -93,6 +93,7 @@ function init() {
 		reinitConsole();
 		setContentSize();
 		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+		document.querySelector("core-drawer-panel").closeDrawer();
 	});
 	$("#btnStartTutorial").click(function() {
 		root.center(true);

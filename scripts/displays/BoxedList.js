@@ -286,6 +286,9 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					var entity = animationList[i].entities[j];
 					toAppend.append(BoxedList.createElemForEntity(entity));
 				}
+				if (animationList[i].inline) {
+					toAppend.css("display", "inline-block");
+				}
 				intermediateContainer.append(toAppend).hide().show("fade");
 				MathJax.Hub.Queue(["Typeset",MathJax.Hub, toAppend[0]]);
 				maxDelay = Math.max(maxDelay, TIME_CREATE_IMTERM);

@@ -4,6 +4,8 @@
 
 $.ischrome = (typeof window.chrome === "object");
 
+var EPSILON = 0.000001;
+
 function addConsoleCard(text, background) {
 	var divText = "<div class='inner'><paper-shadow z='2'>" + text + "</paper-shadow></div>";
 	var card = $(divText);
