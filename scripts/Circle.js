@@ -2,12 +2,12 @@
  *
  * Created by Arjun on 10/7/2014.
  */
-function Circle(parentCircle, parentElem, node, size) {
+function Circle(parentCircle, parentElem, node, height, width) {
 	this.children = [];
 
 	this.elem = $("<div class='circle'></div>");
 	this.parent = parentCircle;
-	this.elem.width(size).height(size);
+	this.elem.width(width).height(height);
 	this.elem.append("<div class='circle-align-helper'></div>");
 	this.methodId = node.methodId;
 	Circle.methodIdMap[node.methodId] = this;
@@ -102,21 +102,24 @@ Circle.prototype.center = function (animated, shouldLock, renderTable) {
 	Circle.centered = this;
 	mainDiv.find("div.circle").removeClass("centered");
 	this.elem.addClass("centered");
-	var currentSize = root.elem.width();
-	var zoomSize = rootSize * root.elem.width() / this.elem.width();
-	root.elem.width(zoomSize).height(zoomSize);
-	zoomSize = rootSize * root.elem.width() / this.elem.width();
-	root.elem.width(zoomSize).height(zoomSize);
+	var currentHeight = root.elem.height();
+	var currentWidth = root.elem.width();
+	var zoomHeight = rootHeight * root.elem.height() / this.elem.height();
+	var zoomWidth = rootWidth * root.elem.width() / this.elem.width();
+	root.elem.width(zoomWidth).height(zoomHeight);
+	zoomHeight = rootHeight * root.elem.height() / this.elem.height();
+	zoomWidth = rootWidth * root.elem.width() / this.elem.width();
+	root.elem.width(zoomWidth).height(zoomHeight);
 	var currentPos = {top: root.elem.css("top"), left: root.elem.css("left")};
 	root.elem.css({top: 0, left: 0});
 	var circleCenter = getCenter(this.elem);
 	var thisPointer = this;
 	if (animated) {
 		root.elem.css(currentPos);
-		root.elem.width(currentSize).height(currentSize);
+		root.elem.width(currentWidth).height(currentHeight);
 		root.elem.animate({
-			width: zoomSize,
-			height: zoomSize,
+			width: zoomWidth,
+			height: zoomHeight,
 			top: centerOfScreen[1] - circleCenter[1],
 			left: centerOfScreen[0] - circleCenter[0]
 		}, TIME_ZOOM, "easeInOutQuad", function () {
@@ -134,8 +137,10 @@ Circle.prototype.checkOverflow = function () {
 	var myOffset = offsetFrom(this.elem, mainDiv);
 	var centerX = myOffset.left + this.elem.width() / 2;
 	var centerY = myOffset.top + this.elem.height() / 2;
-	var rad = this.elem.width() * this.elem.width() / 4;
-	rad *= 1.09;
+	var radX = this.elem.width() * this.elem.width() / 4;
+	var radY = this.elem.height() * this.elem.height() / 4;
+	radX *= 1.09;
+	radY *= 1.09;
 	var tables = this.elem.find("> div.node-stack-container table.node-list");
 	for (var i = 0; i < tables.length; i++) {
 		var table = $(tables[i]);
@@ -147,7 +152,7 @@ Circle.prototype.checkOverflow = function () {
 			[tableOffset.left + table.width(), tableOffset.top + table.height()]
 		];
 		for (var c in corners) {
-			if ((centerX - corners[c][0]) * (centerX - corners[c][0]) + (centerY - corners[c][1]) * (centerY - corners[c][1]) >= rad) {
+			if ((centerX - corners[c][0]) * (centerX - corners[c][0]) / radX + (centerY - corners[c][1]) * (centerY - corners[c][1]) / radY > 1) {
 				this.elem.addClass("abbrev");
 				return true;
 			}

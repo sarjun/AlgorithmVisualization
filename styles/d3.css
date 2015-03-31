@@ -108,7 +108,9 @@ div.circle.circle-leaf {
 }
 div.circle.abbrev {
     background-image: url(../images/ellipsis.png);
-    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 }
 div.circle.abbrev > div {
     visibility: hidden;

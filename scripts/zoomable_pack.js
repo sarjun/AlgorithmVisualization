@@ -2,19 +2,28 @@
 
 document.addEventListener('polymer-ready', init);
 var root;
-var rootSize;
+var rootHeight, rootWidth;
 var centerOfScreen, parentHeight, parentWidth;
 var mainDiv, mainPanel, contentDiv, memoDiv, contentHolderDiv;
 var btnSetRoot;
 var tableManager;
+var MAX_RATIO = Math.sqrt(2);
 
 function setContentSize() {
 	parentHeight = mainPanel.height() - $("core-header-panel[main] core-toolbar#mainheader").height();
 	parentWidth = contentDiv.width();
 	centerOfScreen = [parentWidth / 2, parentHeight / 2];
-	rootSize = Math.floor(Math.min(parentHeight, parentWidth) * 0.9);
+	rootHeight = parentHeight * 0.9;
+	rootWidth = parentWidth * 0.9;
+	if (rootWidth > rootHeight) {
+		if (rootWidth > rootHeight * MAX_RATIO) rootWidth = rootHeight * MAX_RATIO;
+	} else {
+		if (rootHeight > rootWidth * MAX_RATIO) rootHeight = rootWidth * MAX_RATIO;
+	}
+	//rootHeight = Math.floor(Math.min(parentHeight, parentWidth) * 0.9);
+	//rootWidth = Math.floor(Math.min(parentHeight, parentWidth) * 0.9);
 	if (root != null) {
-		root.elem.width(rootSize).height(rootSize);
+		root.elem.width(rootWidth).height(rootHeight);
 		var currentCenter = Circle.centered;
 		Circle.centered = null;
 		currentCenter.center(false);
@@ -48,7 +57,7 @@ function init() {
 	setContentSize();
 	$(window).resize(setContentSize);
 	//mainDiv.width(parentWidth).height(parentHeight);
-	makeCircle(null, data, mainDiv, rootSize);
+	makeCircle(null, data, mainDiv, rootHeight, rootWidth);
 	root.center(false);
 	document.querySelector("#navicon").addEventListener('click', function() {
 		document.querySelector("core-drawer-panel").togglePanel();
@@ -226,16 +235,17 @@ function reinitConsole() {
 
 }
 
-function makeCircle(parentCircle, node, parentElem, size) {
-	var newCircle = new Circle(parentCircle, parentElem, node, size);
+function makeCircle(parentCircle, node, parentElem, height, width) {
+	var newCircle = new Circle(parentCircle, parentElem, node, height, width);
 	if (root == null) {
 		root = newCircle;
-		rootSize = size;
+		rootHeight = height;
+		rootWidth = width;
 	}
 	if (node.children.length > 0) {
 		var childSize = 100 / Math.max(2, node.children.length) + "%";
 		for (var i = 0; i < node.children.length; i++) {
-			newCircle.children.push(makeCircle(newCircle, node.children[i], newCircle.elem, childSize));
+			newCircle.children.push(makeCircle(newCircle, node.children[i], newCircle.elem, childSize, childSize));
 		}
 	}
 	return newCircle;
