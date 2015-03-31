@@ -543,7 +543,7 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		recurrence.intermediateId = intermId++;
 		recurrence.list = "start";
 		recurrence.position = "below";
-		recurrence.entities = ["\\(t(S,P,M) = \\)", nNodes[0], "\\(t(\\)", nNodes[1], "\\(,\\)", nNodes[2], "\\(,\\)", nNodes[3], "\\()\\)"];
+		recurrence.entities = ["\\(t(S,P,M) =\\; \\)", nNodes[0], "\\(t(\\)", nNodes[1], "\\(,\\)", nNodes[2], "\\(,\\)", nNodes[3], "\\()\\)"];
 		addStartAnimation(recurrence);
 		recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;

@@ -210,6 +210,10 @@ div.intermediateContainer.below {
     top: 100%;
 }
 
+div.intermediateContainer > div {
+    padding: 2px 0;
+}
+
 core-header-panel {
     background: #eee;
 }
