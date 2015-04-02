@@ -327,6 +327,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var intermediate = boxedList.getAdjacentIntermediate(animationList[i].intermSpec);
 				var entity = intermediate.children(":nth-child(" + animationList[i].entityIndex + ")");
 				animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
+				entity.css("display", "inline-block");
 				entity.hide.apply(entity, animationList[i].effectParams);
 				//entity.remove();
 				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);

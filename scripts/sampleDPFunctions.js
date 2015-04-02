@@ -496,7 +496,7 @@ parameterMapping[funcName] = ["s1 : string", "s2 : string"];
 trackerMapping[funcName] = DPTracker;
 
 funcName = "Maximum Random Walk";
-function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
+function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 	var intermId = 0;
 	tracker.logEntry([pos, steps, maxRightSeen]);
 	var zoomAnim = getEmptyRelativeZoomAnimation();
@@ -547,11 +547,20 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		recurrence.intermediateId = intermId++;
 		recurrence.list = "start";
 		recurrence.position = "below";
-		recurrence.entities = ["\\(t(S,P,M) =\\; \\)", nNodes[0], "\\(\\times t(\\)", nNodes[1], "\\(,\\)", nNodes[2], "\\(,\\)", nNodes[3], "\\()\\)"];
+		recurrence.entities = ["\\(t(S,P,M) =\\; \\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
 		recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
+		var leftId = recurrence.intermediateId;
+		recurrence.list = "start";
+		recurrence.position = "below";
+		recurrence.entities = [nNodes[0], "\\(\\times t(\\)", nNodes[1], "\\(,\\)", nNodes[2], "\\(,\\)", nNodes[3], "\\()\\)"];
+		recurrence.inline = true;
+		addStartAnimation(recurrence);
+		recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		var stayId = recurrence.intermediateId;
 		recurrence.list = "start";
 		recurrence.position = "below";
 		recurrence.entities = ["\\( + \\)", nNodes[4], "\\(\\times t(\\)", nNodes[5], "\\(,\\)", nNodes[6], "\\(,\\)", nNodes[7], "\\()\\)"];
@@ -559,6 +568,7 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		addStartAnimation(recurrence);
 		recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
+		var rightId = recurrence.intermediateId;
 		recurrence.list = "start";
 		recurrence.position = "below";
 		recurrence.entities = ["\\( + \\)", nNodes[8], "\\(\\times t(\\)", nNodes[9], "\\(,\\)", nNodes[10], "\\(,\\)", nNodes[11], "\\()\\)"];
@@ -570,65 +580,37 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 		var probVals = [pLeft.getDisplayString(), pStay.getDisplayString(), pRight.getDisplayString()];
 		for (var i in probNodes) {
 			var changeProbAnim = getEmptyChangeValueNodeAnimation();
-			changeProbAnim.nodeSpec = getNodeSpecification(probNodes[i], 0, [], "start", 3 + i*1);
+			changeProbAnim.nodeSpec = getNodeSpecification(probNodes[i], 0, [], "start", 4 + i*1);
 			changeProbAnim.newValue = probVals[i];
 			changeBundle.animations.push(changeProbAnim);
 		}
 		addStartAnimation(changeBundle);
-		//var nSpreadBundle = getEmptyBundleAnimation();
-		//var nChangeBundle = getEmptyBundleAnimation();
-		//for (var i in nNodes) {
-		//	var nTransition = getEmptyTranslateAnimation();
-		//	nTransition.sourceSpec = getNodeSpecification(n, 0, [], "start");
-		//	nTransition.destSpec = getNodeSpecification(nNodes[i], 0, [], "start", 1);
-		//	nSpreadBundle.animations.push(nTransition);
-		//	var nChangeValue = getEmptyChangeValueNodeAnimation();
-		//	nChangeValue.nodeSpec = nTransition.destSpec;
-		//	nChangeValue.newValue = n.value;
-		//	nChangeBundle.animations.push(nChangeValue);
-		//}
-		//addStartAnimation(nSpreadBundle);
-		//addStartAnimation(nChangeBundle);
-		//var mathRemoveBundle = getEmptyBundleAnimation();
-		//var removeIndices = [8, 5];
-		//for (var i in removeIndices) {
-		//	var mathRemove = getEmptyIntermediateRemoveEntityAnimation();
-		//	mathRemove.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
-		//	mathRemove.entityIndex = removeIndices[i];
-		//	mathRemove.effectParams = ["highlight"];
-		//	mathRemoveBundle.animations.push(mathRemove);
-		//}
-		//addStartAnimation(mathRemoveBundle);
-		//var child1 = new ValueNode(n.value - 1);
-		//var child2 = new ValueNode(n.value - 2);
-		//var doMathBundle = getEmptyBundleAnimation();
-		//var doMath1 = getEmptyChangeValueNodeAnimation();
-		//doMath1.nodeSpec = getNodeSpecification(nNodes[1], 0, [], "start", 1);
-		//doMath1.newValue = child1.value;
-		//doMathBundle.animations.push(doMath1);
-		//var doMath2 = getEmptyChangeValueNodeAnimation();
-		//doMath2.nodeSpec = getNodeSpecification(nNodes[2], 0, [], "start", 1);
-		//doMath2.newValue = child2.value;
-		//doMathBundle.animations.push(doMath2);
-		//addStartAnimation(doMathBundle);
-		//var subproblemBundle = getEmptyBundleAnimation();
-		//var showProb = getEmptyTranslateAnimation();
-		//showProb.sourceSpec = doMath1.nodeSpec;
-		//showProb.destSpec = getNodeSpecification(child1, 0, [0], "start");
-		//subproblemBundle.animations.push(showProb);
-		//showProb = getEmptyTranslateAnimation();
-		//showProb.sourceSpec = doMath2.nodeSpec;
-		//showProb.destSpec = getNodeSpecification(child2, 0, [1], "start");
-		//subproblemBundle.animations.push(showProb);
-		//addStartAnimation(subproblemBundle);
-		//var removeIntermediate = getEmptyRemoveIntermediateStepAnimation();
-		//removeIntermediate.intermediateId = recurrence.intermediateId;
-		//removeIntermediate.list = "start";
-		//removeIntermediate.position = "below";
-		//addStartAnimation(removeIntermediate);
+
+		var probs = [pLeft.value, pStay.value, pRight.value];
+		var check = [0, EPSILON, 0];
+		var ids = [leftId, stayId, rightId];
+		var removeZeroBundle = getEmptyBundleAnimation();
+		for(var i = 2; i >=0; i--) {
+			if(probs[i] <= check[i]) {
+				var removeInterm = getEmptyRemoveIntermediateStepAnimation();
+				removeInterm.intermediateId = ids[i];
+				removeInterm.position = "below";
+				removeInterm.list = "start";
+				removeZeroBundle.animations.push(removeInterm);
+				if(i == 0) {
+					var removePlus = getEmptyIntermediateRemoveEntityAnimation();
+					if(pStay.value > EPSILON) removePlus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 3);
+					else removePlus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 4);
+					removePlus.effectParams = ["fade"];
+					removePlus.entityIndex = 1;
+					removeZeroBundle.animations.push(removePlus);
+				}
+			}
+		}
+		addStartAnimation(removeZeroBundle);
 
 		var ans = 0;
-		if (pLeft.value > EPSILON) {
+		if (pLeft.value > 0) {
 			var moveLeft = maximumRandomWalk(new ValueNode(pos.value - 1), newStep, pLeft, pRight, maxRightSeen);
 			ans += pLeft.value * moveLeft.value;
 		}
@@ -636,7 +618,7 @@ function maximumRandomWalk(pos, steps, pRight, pLeft, maxRightSeen) {
 			var stay = maximumRandomWalk(pos, newStep, pLeft, pRight, maxRightSeen);
 			ans += pStay.value * stay.value;
 		}
-		if (pRight.value > EPSILON) {
+		if (pRight.value > 0) {
 			var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), newStep, pLeft, pRight, new ValueNode(Math.max(pos.value + 1, maxRightSeen.value)));
 			ans += pRight.value * moveRight.value;
 		}
