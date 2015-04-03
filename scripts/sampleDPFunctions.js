@@ -538,7 +538,10 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 	} else {
 
 		var newStep = new ValueNode(steps.value - 1);
+		var newMax = new ValueNode(Math.max(pos.value + 1, maxRightSeen.value));
 		var pStay = new ValueNode(1 - pLeft.value - pRight.value);
+		var walkLeft = new ValueNode(pos.value - 1);
+		var walkRight = new ValueNode(pos.value + 1);
 
 		// Start animation
 		var nNodes = [new ValueNode("\\(P_{left}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"),
@@ -574,7 +577,7 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		recurrence.list = "start";
 		recurrence.position = "below";
 		recurrence.entities = ["\\( + \\)", nNodes[8], "\\(\\times t(\\)", nNodes[9], "\\( - 1\\)", "\\(,\\)", nNodes[10],
-			"\\( + 1\\)", "\\(,\\)", "\\(max(\\)", nNodes[11], "\\(,\\)", nNodes[12], "\\( + 1)\\)", "\\()\\)"];
+			"\\( + 1\\)", "\\(,\\)", "\\(max(\\)", nNodes[11], "\\(,\\)", nNodes[12], "\\( + 1\\)", "\\()\\)", "\\()\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
 
@@ -593,10 +596,7 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		var check = [0, EPSILON, 0];
 		var ids = [leftId, stayId, rightId];
 		var removeZeroBundle = getEmptyBundleAnimation();
-		var fillBundle = getEmptyBundleAnimation();
-		var ss = [3, 4, 4];
-		var ps = [[6], [7], [7, 13]];
-		var ms = [9, 9, 11];
+		var childP = [walkLeft, pos, walkRight];
 		var deleted = [];
 		for(var i = 2; i >=0; i--) {
 			deleted.unshift(probs[i] <= check[i]);
@@ -617,33 +617,152 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 				}
 			}
 		}
+		var fillBundle = getEmptyBundleAnimation();
+		var updateBundle = getEmptyBundleAnimation();
+		var doMathBundle = getEmptyBundleAnimation();
+		var callChildren = getEmptyBundleAnimation();
 		for(var i=0; i<3; i++) {
 			if(deleted[i]) continue;
+
 			var moveS = getEmptyTranslateAnimation();
 			moveS.sourceSpec = getNodeSpecification(steps, 0, [], "start");
-			moveS.destSpec = getNodeSpecification(nNodes[1+4*i], 0, [], "start", 4+(i*1) - deleted.slice(0,i).filter(function(a){return a}).length);
+			moveS.destSpec = getNodeSpecification(nNodes[1+4*i], 0, [], "start", 4+(i*1));
 			fillBundle.animations.push(moveS);
+			var updateS = getEmptyChangeValueNodeAnimation();
+			updateS.nodeSpec = moveS.destSpec;
+			updateS.newValue = steps.value;
+			updateBundle.animations.push(updateS);
+			var deleteMinus = getEmptyIntermediateRemoveEntityAnimation();
+			deleteMinus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 2+i);
+			deleteMinus.entityIndex = i > 0 ? 5 : 4;
+			deleteMinus.effectParams = {width:0};
+			updateS = getEmptyChangeValueNodeAnimation();
+			updateS.nodeSpec = moveS.destSpec;
+			updateS.newValue = newStep.value;
+			doMathBundle.animations.push(deleteMinus);
+			doMathBundle.animations.push(updateS);
+			var toChild = getEmptyTranslateAnimation();
+			toChild.sourceSpec = moveS.destSpec;
+			toChild.destSpec = getNodeSpecification(newStep, 0, [i - deleted.slice(0,i).filter(function(a){return a;}).length], "start");
+			callChildren.animations.push(toChild);
+
 			var moveP = getEmptyTranslateAnimation();
 			moveP.sourceSpec = getNodeSpecification(pos, 0, [], "start");
-			moveP.destSpec = getNodeSpecification(nNodes[2+4*i], 0, [], "start", 4+(i*1) - deleted.slice(0,i).filter(function(a){return a}).length);
+			moveP.destSpec = getNodeSpecification(nNodes[2+4*i], 0, [], "start", 4+(i*1));
 			fillBundle.animations.push(moveP);
+			var updateP = getEmptyChangeValueNodeAnimation();
+			updateP.nodeSpec = moveP.destSpec;
+			updateP.newValue = pos.value;
+			updateBundle.animations.push(updateP);
+			toChild = getEmptyTranslateAnimation();
+			toChild.sourceSpec = moveP.destSpec;
+			toChild.destSpec = getNodeSpecification(childP[i], 0, [i - deleted.slice(0,i).filter(function(a){return a;}).length], "start");
+			callChildren.animations.push(toChild);
+			if(i%2==0) {
+				var deleteArith = getEmptyIntermediateRemoveEntityAnimation();
+				deleteArith.intermSpec = getIntermediateSpecification(0, [], "start", "below", 2 + i);
+				deleteArith.entityIndex = i == 0 ? 7 : 8;
+				deleteArith.effectParams = {width: 0};
+				doMathBundle.animations.push(deleteArith);
+				updateP = getEmptyChangeValueNodeAnimation();
+				updateP.nodeSpec = moveP.destSpec;
+				updateP.newValue = i == 0 ? (pos.value - 1) : (pos.value + 1);
+				doMathBundle.animations.push(updateP);
+			}
+
 			if(i==2) {
 				moveP = getEmptyTranslateAnimation();
 				moveP.sourceSpec = getNodeSpecification(pos, 0, [], "start");
-				moveP.destSpec = getNodeSpecification(nNodes[12], 0, [], "start", 4+(i*1) - deleted.slice(0,i).filter(function(a){return a}).length);
+				moveP.destSpec = getNodeSpecification(nNodes[12], 0, [], "start", 4+(i*1));
 				fillBundle.animations.push(moveP);
+				updateP = getEmptyChangeValueNodeAnimation();
+				updateP.nodeSpec = moveP.destSpec;
+				updateP.newValue = pos.value;
+				updateBundle.animations.push(updateP);
+
+				var deletePlus = getEmptyIntermediateRemoveEntityAnimation();
+				deletePlus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 4);
+				deletePlus.entityIndex = 14;
+				deletePlus.effectParams = {width:0};
+				var updateVal = getEmptyChangeValueNodeAnimation();
+				updateVal.nodeSpec = moveP.destSpec;
+				updateVal.newValue = pos.value + 1;
+				doMathBundle.animations.push(deletePlus);
+				doMathBundle.animations.push(updateVal);
 			}
+
 			var moveM = getEmptyTranslateAnimation();
 			moveM.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
-			moveM.destSpec = getNodeSpecification(nNodes[3+4*i], 0, [], "start", 4+(i*1) - deleted.slice(0,i).filter(function(a){return a}).length);
+			moveM.destSpec = getNodeSpecification(nNodes[3+4*i], 0, [], "start", 4+(i*1));
 			fillBundle.animations.push(moveM);
+			var updateM = getEmptyChangeValueNodeAnimation();
+			updateM.nodeSpec = moveM.destSpec;
+			updateM.newValue = oldMax.value;
+			updateBundle.animations.push(updateM);
+			if(i != 2) {
+				toChild = getEmptyTranslateAnimation();
+				toChild.sourceSpec = moveM.destSpec;
+				toChild.destSpec = getNodeSpecification(maxRightSeen, 0, [i - deleted.slice(0,i).filter(function(a){return a;}).length], "start");
+				callChildren.animations.push(toChild);
+			}
 		}
 		addStartAnimation(removeZeroBundle);
 		addStartAnimation(fillBundle);
+		addStartAnimation(updateBundle);
+		addStartAnimation(doMathBundle);
+		var resolveMaxBundle = getEmptyBundleAnimation();
+		if(!deleted[2]) {
+			var intermSpec = getIntermediateSpecification(0, [], "start", "below", 4);
+			var effectParams = {width:0};
+			var remove = getEmptyIntermediateRemoveEntityAnimation();
+			remove.intermSpec = intermSpec;
+			remove.entityIndex = 15;
+			remove.effectParams = effectParams;
+			resolveMaxBundle.animations.push(remove);
+			remove = getEmptyIntermediateRemoveEntityAnimation();
+			remove.intermSpec = intermSpec;
+			remove.entityIndex = 12;
+			remove.effectParams = effectParams;
+			resolveMaxBundle.animations.push(remove);
+			remove = getEmptyIntermediateRemoveEntityAnimation();
+			remove.intermSpec = intermSpec;
+			remove.entityIndex = pos.value + 1 > oldMax.value ? 11 : 13;
+			remove.effectParams = effectParams;
+			resolveMaxBundle.animations.push(remove);
+			remove = getEmptyIntermediateRemoveEntityAnimation();
+			remove.intermSpec = intermSpec;
+			remove.entityIndex = 10;
+			remove.effectParams = effectParams;
+			resolveMaxBundle.animations.push(remove);
+
+			var maxToChild = getEmptyTranslateAnimation();
+			maxToChild.sourceSpec = getNodeSpecification(pos.value + 1 > oldMax.value ? nNodes[12] : nNodes[11], 0, [], "start", 6);
+			maxToChild.destSpec = getNodeSpecification(newMax, 0, [2 - deleted.slice(0,2).filter(function(a){return a;}).length], "start");
+			callChildren.animations.push(maxToChild);
+		}
+		addStartAnimation(resolveMaxBundle);
+		addStartAnimation(callChildren);
+		var clearInterms = getEmptyBundleAnimation();
+		removeInterm = getEmptyRemoveIntermediateStepAnimation();
+		removeInterm.intermediateId = leftId - 1;
+		removeInterm.position = "below";
+		removeInterm.list = "start";
+		removeInterm.effectParams = {width:0};
+		clearInterms.animations.push(removeInterm);
+		for(var i in deleted) {
+			if(deleted[i]) continue;
+			removeInterm = getEmptyRemoveIntermediateStepAnimation();
+			removeInterm.intermediateId = ids[i];
+			removeInterm.position = "below";
+			removeInterm.list = "start";
+			removeInterm.effectParams = {width:0};
+			clearInterms.animations.push(removeInterm);
+		}
+		addStartAnimation(clearInterms);
 
 		var ans = 0;
 		if (pLeft.value > 0) {
-			var moveLeft = maximumRandomWalk(new ValueNode(pos.value - 1), newStep, pLeft, pRight, maxRightSeen);
+			var moveLeft = maximumRandomWalk(walkLeft, newStep, pLeft, pRight, maxRightSeen);
 			ans += pLeft.value * moveLeft.value;
 		}
 		if (pStay.value > EPSILON) {
@@ -651,7 +770,7 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 			ans += pStay.value * stay.value;
 		}
 		if (pRight.value > 0) {
-			var moveRight = maximumRandomWalk(new ValueNode(pos.value + 1), newStep, pLeft, pRight, new ValueNode(Math.max(pos.value + 1, maxRightSeen.value)));
+			var moveRight = maximumRandomWalk(walkRight, newStep, pLeft, pRight, newMax);
 			ans += pRight.value * moveRight.value;
 		}
 		endReset.maxShowID = tracker.maxId - 1;

@@ -299,10 +299,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var intermediateContainer = boxedList.parent.elem.find("> div.node-stack-container." + (animationList[i].list == "start" ? "start" : "result") +
 					" div.node-list-container div.intermediateContainer." + (animationList[i].position));
 				var effectParams = $.extend({opacity: 0}, animationList[i].effectParams);
-				intermediateContainer.find("div[intermediateId=" + animationList[i].intermediateId + "]").animate(effectParams, TIME_PHASE,
-					function() {
-						this.remove();
-					});
+				intermediateContainer.find("div[intermediateId=" + animationList[i].intermediateId + "]").animate(effectParams, TIME_PHASE);
 				maxDelay = Math.max(maxDelay, TIME_PHASE);
 				delay = skipDelays ? 0 : (TIME_PHASE);
 				break;
@@ -333,7 +330,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					entity.hide.apply(entity, animationList[i].effectParams);
 				}
 				else {
-					var effectParams = $.extend({opacity: 0}, animationList[i].effectParams);
+					var effectParams = $.extend({opacity: 0, padding:0, borderWidth:0, margin:0}, animationList[i].effectParams);
 					entity.animate(effectParams, TIME_REMOVE_ENTITY);
 				}
 				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);
