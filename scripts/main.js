@@ -214,6 +214,12 @@ function getEmptyIntermediateRemoveEntityAnimation() {
 	}
 }
 
+function getEmptyClearIntermediateAnimation() {
+	return {
+		animationType: "clearIntermediates"
+	}
+}
+
 function getEmptyRemoveIntermediateStepAnimation() {
 	return {
 		animationType: "removeIntermediateStep",

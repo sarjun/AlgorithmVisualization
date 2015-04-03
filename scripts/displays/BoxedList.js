@@ -299,9 +299,14 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var intermediateContainer = boxedList.parent.elem.find("> div.node-stack-container." + (animationList[i].list == "start" ? "start" : "result") +
 					" div.node-list-container div.intermediateContainer." + (animationList[i].position));
 				var effectParams = $.extend({opacity: 0}, animationList[i].effectParams);
-				intermediateContainer.find("div[intermediateId=" + animationList[i].intermediateId + "]").animate(effectParams, TIME_PHASE);
+				intermediateContainer.find("div[intermediateId=" + animationList[i].intermediateId + "]").addClass("to-remove").animate(effectParams, TIME_PHASE);
 				maxDelay = Math.max(maxDelay, TIME_PHASE);
 				delay = skipDelays ? 0 : (TIME_PHASE);
+				break;
+			case "clearIntermediates":
+				$("div.intermediateContainer > div.to-remove").remove();
+				maxDelay = Math.max(maxDelay, 0);
+				delay = 0;
 				break;
 			case "changeValueNode":
 				var elem = boxedList.getElem(animationList[i].nodeSpec);

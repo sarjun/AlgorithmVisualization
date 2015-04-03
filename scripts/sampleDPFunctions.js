@@ -102,6 +102,7 @@ function fibonacci(n) {
 	removeIntermediate.list = "start";
 	removeIntermediate.position = "below";
 	addStartAnimation(removeIntermediate);
+	addStartAnimation(getEmptyClearIntermediateAnimation());
 	ans = fibonacci(child1).value + fibonacci(child2).value;
 	var value = new ValueNode(ans);
 
@@ -165,7 +166,7 @@ function fibonacci(n) {
 	removeIntermediate.list = "end";
 	removeIntermediate.position = "above";
 	addEndAnimation(removeIntermediate);
-
+	addEndAnimation(getEmptyClearIntermediateAnimation());
 
 	var tEntry = getEmptyDPTableEntry();
 	var addEntry = getEmptyAddToTableAnimation();
@@ -464,6 +465,7 @@ function lcs(x, y) {
 		removeIntermediate.list = "end";
 		removeIntermediate.position = "above";
 		addEndAnimation(removeIntermediate);
+		addEndAnimation(getEmptyClearIntermediateAnimation());
 
 		var addToTableAnim = getEmptyAddToTableAnimation();
 		addToTableAnim.ansSpec = translateAnim.destSpec;
@@ -759,6 +761,7 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 			clearInterms.animations.push(removeInterm);
 		}
 		addStartAnimation(clearInterms);
+		addStartAnimation(getEmptyClearIntermediateAnimation());
 
 		var ans = 0;
 		if (pLeft.value > 0) {
