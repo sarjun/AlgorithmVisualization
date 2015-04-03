@@ -597,12 +597,15 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		var ss = [3, 4, 4];
 		var ps = [[6], [7], [7, 13]];
 		var ms = [9, 9, 11];
+		var deleted = [];
 		for(var i = 2; i >=0; i--) {
-			if(probs[i] <= check[i]) {
+			deleted.unshift(probs[i] <= check[i]);
+			if(deleted[0]) {
 				var removeInterm = getEmptyRemoveIntermediateStepAnimation();
 				removeInterm.intermediateId = ids[i];
 				removeInterm.position = "below";
 				removeInterm.list = "start";
+				removeInterm.effectParams = {width:0};
 				removeZeroBundle.animations.push(removeInterm);
 				if(i == 0) {
 					var removePlus = getEmptyIntermediateRemoveEntityAnimation();
@@ -612,27 +615,28 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 					removePlus.entityIndex = 1;
 					removeZeroBundle.animations.push(removePlus);
 				}
-			} else {
-				// TODO: this wont work in this loop.
-				var moveS = getEmptyTranslateAnimation();
-				moveS.sourceSpec = getNodeSpecification(steps, 0, [], "start");
-				moveS.destSpec = getNodeSpecification(nNodes[1+4*i], 0, [], "start", 4+(i*1));
-				fillBundle.animations.push(moveS);
-				var moveP = getEmptyTranslateAnimation();
-				moveP.sourceSpec = getNodeSpecification(pos, 0, [], "start");
-				moveP.destSpec = getNodeSpecification(nNodes[2+4*i], 0, [], "start", 4+(i*1));
-				fillBundle.animations.push(moveP);
-				if(i==2) {
-					moveP = getEmptyTranslateAnimation();
-					moveP.sourceSpec = getNodeSpecification(pos, 0, [], "start");
-					moveP.destSpec = getNodeSpecification(nNodes[12], 0, [], "start", 4+(i*1));
-					fillBundle.animations.push(moveP);
-				}
-				var moveM = getEmptyTranslateAnimation();
-				moveM.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
-				moveM.destSpec = getNodeSpecification(nNodes[3+4*i], 0, [], "start", 4+(i*1));
-				fillBundle.animations.push(moveM);
 			}
+		}
+		for(var i=0; i<3; i++) {
+			if(deleted[i]) continue;
+			var moveS = getEmptyTranslateAnimation();
+			moveS.sourceSpec = getNodeSpecification(steps, 0, [], "start");
+			moveS.destSpec = getNodeSpecification(nNodes[1+4*i], 0, [], "start", 4+(i*1) - deleted.slice(0,i).filter(function(a){return a}).length);
+			fillBundle.animations.push(moveS);
+			var moveP = getEmptyTranslateAnimation();
+			moveP.sourceSpec = getNodeSpecification(pos, 0, [], "start");
+			moveP.destSpec = getNodeSpecification(nNodes[2+4*i], 0, [], "start", 4+(i*1) - deleted.slice(0,i).filter(function(a){return a}).length);
+			fillBundle.animations.push(moveP);
+			if(i==2) {
+				moveP = getEmptyTranslateAnimation();
+				moveP.sourceSpec = getNodeSpecification(pos, 0, [], "start");
+				moveP.destSpec = getNodeSpecification(nNodes[12], 0, [], "start", 4+(i*1) - deleted.slice(0,i).filter(function(a){return a}).length);
+				fillBundle.animations.push(moveP);
+			}
+			var moveM = getEmptyTranslateAnimation();
+			moveM.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
+			moveM.destSpec = getNodeSpecification(nNodes[3+4*i], 0, [], "start", 4+(i*1) - deleted.slice(0,i).filter(function(a){return a}).length);
+			fillBundle.animations.push(moveM);
 		}
 		addStartAnimation(removeZeroBundle);
 		addStartAnimation(fillBundle);
