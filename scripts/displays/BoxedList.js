@@ -303,8 +303,8 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					function() {
 						this.remove();
 					});
-				maxDelay = Math.max(maxDelay, TIME_PHASE + COOLDOWN);
-				delay = skipDelays ? 0 : (TIME_PHASE + COOLDOWN);
+				maxDelay = Math.max(maxDelay, TIME_PHASE);
+				delay = skipDelays ? 0 : (TIME_PHASE);
 				break;
 			case "changeValueNode":
 				var elem = boxedList.getElem(animationList[i].nodeSpec);
@@ -328,10 +328,14 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			case "intermediateRemoveEntity":
 				var intermediate = boxedList.getAdjacentIntermediate(animationList[i].intermSpec);
 				var entity = intermediate.children(":nth-child(" + animationList[i].entityIndex + ")");
-				animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
-				entity.css("display", "inline-block");
-				entity.hide.apply(entity, animationList[i].effectParams);
-				//entity.remove();
+				if(Array.isArray(animationList[i].effectParams)) {
+					animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
+					entity.hide.apply(entity, animationList[i].effectParams);
+				}
+				else {
+					var effectParams = $.extend({opacity: 0}, animationList[i].effectParams);
+					entity.animate(effectParams, TIME_REMOVE_ENTITY);
+				}
 				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);
 				delay = skipDelays ? 0 : TIME_REMOVE_ENTITY;
 				break;

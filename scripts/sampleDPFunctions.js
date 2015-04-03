@@ -611,7 +611,7 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 					var removePlus = getEmptyIntermediateRemoveEntityAnimation();
 					if(pStay.value > EPSILON) removePlus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 3);
 					else removePlus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 4);
-					removePlus.effectParams = ["fade"];
+					removePlus.effectParams = {width:0};
 					removePlus.entityIndex = 1;
 					removeZeroBundle.animations.push(removePlus);
 				}

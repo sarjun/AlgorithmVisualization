@@ -207,6 +207,7 @@ div.intermediateContainer > div {
 
 div.intermediateContainer > div > span {
     display: inline-block;
+    vertical-align: middle;
 }
 
 div.intermediateContainer > div.inline {
