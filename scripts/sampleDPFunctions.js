@@ -789,12 +789,16 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 }
 
 funcMapping[funcName] = maximumRandomWalk;
-overviewMapping[funcName] = "This function selects the kth smallest (where k is zero-indexed) element from the input list. " +
-"This is done by repeatedly partitioning the list and looking in the appropriate half until the selected partition is the desired element.";
-divideMapping[funcName] = "The input list is divided into buckets of size 5. We then find the median of each bucket and " +
-"recursively find the median of these medians.";
-conquerMapping[funcName] = "The input list is partitioned on the median of medians from the previous recursive call. " +
-"The algorithm terminates if the median of medians is at" +
-" index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
+overviewMapping[funcName] = "This function computes the expected right-most position reached after taking \\(S\\) random " +
+"steps from starting position \\(P\\). The probabilities of moving to the left, staying in the current spot, and moving to " +
+"the right are given by \\(P_{left}, 1-P_{left}-P_{right}, \\) and \\(P_{right},\\) respectively. Note that staying in " +
+"the same spot counts as an action that consumes a step.";
+divideMapping[funcName] = "This is done by repeatedly computing the weighted average of the expected results of moving " +
+"left, staying still, and moving right. This can be represented by the following recurrence: \\(t(S,P,M)=P_{left}\\times " +
+"t(S-1, P-1, M) + P_{stay}\\times t(S-1,P,M) + P_{right}\\times t(S-1, P+1, max(M, P+1))\\). S always decreases by " +
+"one in the sub-problems because the number of steps remaining decreases by 1. P changes according to whether the " +
+"sub-problem represents movement to the right, left, or staying in place. M only has the potential to change when moving " +
+"to the right, because otherwise the maximum location seen so far cannot increase (and it will never decrease).";
+conquerMapping[funcName] = "Explanation of why memoization is 2D instead of 3D.";
 parameterMapping[funcName] = ["position : int", "steps : int", "probability step left : float", "probability step right : float", "rightmost seen position : int"];
 trackerMapping[funcName] = DPTracker;
