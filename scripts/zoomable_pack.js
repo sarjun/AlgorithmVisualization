@@ -102,6 +102,7 @@ function init() {
 		reinitConsole();
 		setContentSize();
 		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+		formatVerticalText();
 		document.querySelector("core-drawer-panel").closeDrawer();
 	});
 	$("#btnStartTutorial").click(function() {

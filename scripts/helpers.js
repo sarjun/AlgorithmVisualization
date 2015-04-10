@@ -63,3 +63,11 @@ function shuffle(array) {
 
 	return array;
 }
+
+function formatVerticalText(){
+	$(".vertical-text").each(function (i, e) {
+		elem = $(e);
+		forceHeight = elem.children().first().width();
+		elem.height(forceHeight);
+	});
+}

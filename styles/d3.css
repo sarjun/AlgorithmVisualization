@@ -48,6 +48,47 @@ div.memo {
     max-width: 20%;
 }
 
+td.memo-label {
+    text-align: center;
+}
+
+div.table-container {
+    display: flex;
+    margin-top: 8px;
+    padding-bottom: 1em;
+}
+div.table-container > * {
+    flex-shrink: 0;
+}
+
+div.table-container td {
+    /*white-space: nowrap;*/
+}
+
+div.table-container td.expand {
+    width: 99%;
+}
+
+*.vertical-text {
+    position: relative;
+    width: 1.2em;
+}
+
+div.table-container.two-dimen span.vertical-text {
+    margin-top: 2em;
+}
+
+*.vertical-text > * {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    white-space: nowrap;
+    transform: rotate(-90deg);
+    transform-origin: bottom right 0;
+    height: 1em;
+}
+
 div.console div.inner {
     position: relative;
 }
@@ -318,8 +359,4 @@ paper-button[raised].colored::shadow #focusBg {
 }
 paper-dropdown .core-selected {
     background: greenyellow;
-}
-
-td.memo-label {
-    text-align: center;
 }
