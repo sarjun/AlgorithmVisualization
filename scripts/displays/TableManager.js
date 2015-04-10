@@ -8,7 +8,10 @@ function TableManager() {
 }
 
 TableManager.prototype.createTable = function(table) {
+	this.tableContainer = $("<div class='table-container'></div>");
 	this.tableElem = $("<table></table>");
+	var hAxisName = "horizontal axis";
+	var vAxisName = "vertical axis";
 	var keys = [];
 	var sampleEntry = table[Object.keys(table)[0]];
 	for(var i = 0; i<Object.keys(sampleEntry.params).length; i++) {
@@ -17,11 +20,11 @@ TableManager.prototype.createTable = function(table) {
 	for(entryKey in table) {
 		var index = 0;
 		for(param in table[entryKey].params) {
+			// Order keys
 			keys[index++].add(table[entryKey].params[param].getDisplayString());
 		}
 	}
 
-	// Order keys
 	for(var z=0; z<keys.length; z++) {
 		var sorted = [];
 		for (key1 of keys[z]) {
@@ -31,16 +34,26 @@ TableManager.prototype.createTable = function(table) {
 		keys[z] = sorted;
 	}
 
+
+	var oneKey = keys.length == 1;
+
 	var rowElem = $("<tr><td></td></tr>");
 	for(key2 in keys[1]) {
 		rowElem.append("<td class='memo-label'>" + key2 + "</td>");
 	}
-	this.tableElem.append(rowElem);
+
+	if (!oneKey) {
+		this.tableElem.append("<tr><td></td><td colspan='" + (keys[1].length + 0) + "'>" + hAxisName + "</td></tr>");
+		//rowElem.append("<td class='expand'></td>");
+		this.tableElem.append(rowElem);
+		this.tableContainer.addClass("two-dimen");
+	}
+
 	for(key1 in keys[0]) {
 		var rowElem = $("<tr></tr>");
-		rowElem.append("<td memo-label>" + key1 + "</td>");
+		rowElem.append("<td class='memo-label'>" + key1 + "</td>");
 		var val = undefined;
-		if(keys.length == 1) {
+		if(oneKey) {
 			var val = table[key1+""];
 			rowElem.append(this.createCell(val));
 		}
@@ -49,10 +62,14 @@ TableManager.prototype.createTable = function(table) {
 				var val = table[key1 + "," + key2];
 				rowElem.append(this.createCell(val));
 			}
+			//rowElem.append("<td class='expand'></td>");
 		}
 		this.tableElem.append(rowElem);
 	}
-	this.memoDiv.append(this.tableElem);
+	this.tableContainer.append("<span class='vertical-text'><span>" + vAxisName + "</span></span>");
+	this.tableContainer.append(this.tableElem);
+	//this.memoDiv.append("<div>horizontal axis</div>");
+	this.memoDiv.append(this.tableContainer);
 };
 
 TableManager.prototype.createCell = function(tableEntry) {
