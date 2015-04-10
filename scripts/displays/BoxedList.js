@@ -347,8 +347,12 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var intermediate = boxedList.getAdjacentIntermediate(animationList[i].intermSpec);
 				var entity = intermediate.children(":nth-child(" + animationList[i].entityIndex + ")");
 				if(Array.isArray(animationList[i].effectParams)) {
-					animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
-					entity.hide.apply(entity, animationList[i].effectParams);
+					if (animationList[i].effectParams.length > 0 && animationList[i].effectParams[0] != "") {
+						animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
+						entity.hide.apply(entity, animationList[i].effectParams);
+					} else {
+						entity.hide();
+					}
 				}
 				else {
 					var effectParams = $.extend({opacity: 0, padding:0, borderWidth:0, margin:0}, animationList[i].effectParams);

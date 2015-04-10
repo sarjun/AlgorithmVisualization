@@ -517,10 +517,111 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 	var key = steps.value + "," + (maxRightSeen.value - pos.value);
 	var ans = tracker.table[key];
 	if(ans != null) {
-		//var getEntry = getEmptyGetFromTableAnimation();
-		//getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
-		//addStartAnimation(getEntry);
 		var newAns = new ValueNode(ans.value.value + pos.value);
+		nNodes = [new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(P\\)")];
+		var addInterm = getEmptyCreateIntermediateStepAnimation();
+		addInterm.intermediateId = intermId++;
+		addInterm.entities = ["\\(t(\\)", nNodes[0], "\\(,\\)", nNodes[1], "\\(,\\)", nNodes[2], "\\( )=\\; \\)", "\\(Table \\; \\mathbf{[} \\;\\)", nNodes[3], "\\(,\\)", nNodes[4], "\\(+\\)", nNodes[5], "\\(\\; \\mathbf{]} \\;\\)", "\\(-\\)", nNodes[6]];
+		addInterm.list = "start";
+		addInterm.position = "below";
+		addStartAnimation(addInterm);
+		var transBundle = getEmptyBundleAnimation();
+		var setBundle = getEmptyBundleAnimation();
+		var sources = [steps, pos, oldMax];
+		var dests = ["\\(S\\)", "\\(P\\)", "\\(M\\)"];
+		for (var n in nNodes) {
+			var transAnim = getEmptyTranslateAnimation();
+			var source = sources[dests.indexOf(nNodes[n].value)];
+			transAnim.sourceSpec = getNodeSpecification(source, 0, [], "start");
+			transAnim.destSpec = getNodeSpecification(nNodes[n], 0, [], "start", 3);
+			transBundle.animations.push(transAnim);
+			var setAnim = getEmptyChangeValueNodeAnimation();
+			setAnim.nodeSpec = transAnim.destSpec;
+			setAnim.newValue = source.value;
+			setBundle.animations.push(setAnim);
+		}
+		addStartAnimation(transBundle);
+		addStartAnimation(setBundle);
+		var changeBundle = getEmptyBundleAnimation();
+		var changeAnim = getEmptyChangeValueNodeAnimation();
+		changeAnim.nodeSpec = getNodeSpecification(nNodes[4], 0, [], "start", 3);
+		changeAnim.newValue = (maxRightSeen.value - pos.value);
+		changeBundle.animations.push(changeAnim);
+		var removeAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeAnim.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		removeAnim.entityIndex = 12;
+		removeAnim.effectParams = {width: 0};
+		changeBundle.animations.push(removeAnim);
+		removeAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeAnim.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		removeAnim.entityIndex = 13;
+		removeAnim.effectParams = {width: 0};
+		changeBundle.animations.push(removeAnim);
+		addStartAnimation(changeBundle);
+		changeBundle = getEmptyBundleAnimation();
+		for (var i = 8; i <= 14; i++) {
+			removeAnim = getEmptyIntermediateRemoveEntityAnimation();
+			removeAnim.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+			removeAnim.entityIndex = i;
+			removeAnim.effectParams = {width: 0};
+			changeBundle.animations.push(removeAnim);
+		}
+		addStartAnimation(changeBundle);
+		transBundle = getEmptyBundleAnimation();
+		var addAnim = getEmptyIntermediateAddEntityAnimation();
+		addAnim.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		addAnim.newEntity = ans.value;
+		addAnim.entityIndex = 8;
+		addAnim.effectParams = {width: 1, opacity: 0};
+		var getEntry = getEmptyGetFromTableAnimation();
+		getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "start", 3);
+		transBundle.animations.push(addAnim);
+		transBundle.animations.push(getEntry);
+		addStartAnimation(transBundle);
+		changeBundle = getEmptyBundleAnimation();
+		removeAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeAnim.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		removeAnim.entityIndex = 9;
+		removeAnim.effectParams = [""];
+		changeBundle.animations.push(removeAnim);
+		addAnim = getEmptyIntermediateAddEntityAnimation();
+		addAnim.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		addAnim.newEntity = new ValueNode(ans.value.value);
+		addAnim.entityIndex = 8;
+		addAnim.effectParams = [""];
+		changeBundle.animations.push(addAnim);
+		changeAnim = getEmptyChangeValueNodeAnimation();
+		changeAnim.nodeSpec = getNodeSpecification(nNodes[5], 0, [], "start", 3);
+		changeAnim.newValue = "";
+		changeBundle.animations.push(changeAnim);
+		addStartAnimation(changeBundle);
+		changeBundle = getEmptyBundleAnimation();
+		changeAnim = getEmptyChangeValueNodeAnimation();
+		changeAnim.nodeSpec = getNodeSpecification(addAnim.newEntity, 0, [], "start", 3);
+		changeAnim.newValue = newAns.getDisplayString();
+		changeBundle.animations.push(changeAnim);
+		var removeAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeAnim.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		removeAnim.entityIndex = 17;
+		removeAnim.effectParams = {width: 0};
+		changeBundle.animations.push(removeAnim);
+		removeAnim = getEmptyIntermediateRemoveEntityAnimation();
+		removeAnim.intermSpec = getIntermediateSpecification(0, [], "start", "below", 1);
+		removeAnim.entityIndex = 18;
+		removeAnim.effectParams = {width: 0};
+		changeBundle.animations.push(removeAnim);
+		addStartAnimation(changeBundle);
+		transAnim = getEmptyTranslateAnimation();
+		transAnim.sourceSpec = getNodeSpecification(addAnim.newEntity, 0, [], "start", 3);
+		transAnim.destSpec = getNodeSpecification(newAns, 0, [], "end");
+		addStartAnimation(transAnim);
+		removeAnim = getEmptyRemoveIntermediateStepAnimation();
+		removeAnim.list = "start";
+		removeAnim.position = "below";
+		removeAnim.intermediateId = intermId - 1;
+		removeAnim.effectParams = {};
+		addStartAnimation(removeAnim);
+		addStartAnimation(getEmptyClearIntermediateAnimation());
 		tracker.logExit([newAns]);
 		return newAns;
 	}
@@ -529,8 +630,8 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		ans = maxRightSeen;
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.params = {
-			"steps": steps,
-			"offsetFromMacs": offsetFromMax
+			"Steps": steps,
+			"Offset from Max": offsetFromMax
 		};
 		tEntry.value = offsetFromMax;
 		tracker.table[key] = tEntry;
@@ -820,8 +921,8 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		ans = new ValueNode(ans);
 		var tEntry = getEmptyDPTableEntry();
 		tEntry.params = {
-			"steps": steps,
-			"offsetFromMacs": offsetFromMax
+			"Steps": steps,
+			"Offset from Max": offsetFromMax
 		};
 		tEntry.value = new ValueNode(ans.value - pos.value);
 		tracker.table[key] = tEntry;
