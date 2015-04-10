@@ -10,10 +10,10 @@ function TableManager() {
 TableManager.prototype.createTable = function(table) {
 	this.tableContainer = $("<div class='table-container'></div>");
 	this.tableElem = $("<table></table>");
-	var hAxisName = "horizontal axis";
-	var vAxisName = "vertical axis";
-	var keys = [];
 	var sampleEntry = table[Object.keys(table)[0]];
+	var vAxisName = "\\(\\leftarrow \\;\\)" + Object.keys(sampleEntry.params)[0];
+	var hAxisName = Object.keys(sampleEntry.params)[1] + "\\( \\; \\rightarrow\\)";
+	var keys = [];
 	for(var i = 0; i<Object.keys(sampleEntry.params).length; i++) {
 		keys.push(new Set());
 	}
@@ -70,6 +70,7 @@ TableManager.prototype.createTable = function(table) {
 	this.tableContainer.append(this.tableElem);
 	//this.memoDiv.append("<div>horizontal axis</div>");
 	this.memoDiv.append(this.tableContainer);
+	MathJax.Hub.Queue(["Typeset",MathJax.Hub, this.tableContainer[0]]);
 };
 
 TableManager.prototype.createCell = function(tableEntry) {
