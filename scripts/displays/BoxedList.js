@@ -327,17 +327,18 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 					}
 				}
 				else if(animationList[i].effectParams != null) {
-					for (key in animationList[i].effectParams) {
+					var effectParams = $.extend({}, animationList[i].effectParams);
+					for (key in effectParams) {
 						if(key == "width") {
-							animationList[i].effectParams[key] *= entity.width();
+							effectParams[key] *= entity.width();
 						} else if(key == "height") {
-							animationList[i].effectParams[key] *= entity.height();
+							effectParams[key] *= entity.height();
 						} else {
-							animationList[i].effectParams[key] *= entity.css(key);
+							effectParams[key] *= entity.css(key);
 						}
 						entity.css(key, 0);
 					}
-					entity.animate(animationList[i].effectParams, TIME_REMOVE_ENTITY);
+					entity.animate(effectParams, TIME_REMOVE_ENTITY);
 				}
 				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);
 				delay = skipDelays ? 0 : TIME_REMOVE_ENTITY;

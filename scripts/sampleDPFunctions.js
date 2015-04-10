@@ -534,7 +534,18 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		};
 		tEntry.value = offsetFromMax;
 		tracker.table[key] = tEntry;
+
+		// Start animation
+		var getAnswer = getEmptyTranslateAnimation();
+		getAnswer.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
+		getAnswer.destSpec = getNodeSpecification(ans, 0, [], "end");
+		addStartAnimation(getAnswer);
+
+		// End animation
+		var updateTable = answerToKey(steps, pos, maxRightSeen, intermId, ans, tEntry);
+
 		var frame = tracker.logExit([ans]);
+		updateTable.maxShowID = frame.methodId;
 		tEntry.methodId = frame.methodId;
 		return ans;
 	} else {
@@ -918,81 +929,87 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		removeOne.position = "above";
 		removeRec.animations.push(removeOne);
 		addEndAnimation(removeRec);
-		nNodes = [new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"), new ValueNode("\\(P\\)"),
-			new ValueNode("\\(t(S,P,M)\\)"), new ValueNode("P")];
-		var newValues = [steps.value, maxRightSeen.value, pos.value, "\\(t(" + steps.value + "," + pos.value + "," +
-			maxRightSeen.value + ")\\)", pos.value];
-		var getMemo = getEmptyCreateIntermediateStepAnimation();
-		getMemo.entities = ["\\(Table\\;\\mathbf{[}\\;\\)", nNodes[0], "\\(, \\)", nNodes[1], "\\(-\\)", nNodes[2], "\\(\\;\\mathbf{]}\\; = \\;\\)",
-			nNodes[3], "\\(-\\)", nNodes[4]];
-		getMemo.intermediateId = intermId++;
-		getMemo.list = "end";
-		getMemo.position = "below";
-		addEndAnimation(getMemo);
-		var updateVals = getEmptyBundleAnimation();
-		for(var i=0; i<nNodes.length; i++) {
-			update = getEmptyChangeValueNodeAnimation();
-			update.nodeSpec = getNodeSpecification(nNodes[i], 0, [], "end", 1);
-			update.newValue = newValues[i];
-			updateVals.animations.push(update);
-		}
-		addEndAnimation(updateVals);
-		var getAnswer = getEmptyTranslateAnimation();
-		getAnswer.sourceSpec = getNodeSpecification(ans, 0, [], "end");
-		getAnswer.destSpec = getNodeSpecification(nNodes[3], 0, [], "end", 1);
-		addEndAnimation(getAnswer);
-		updateVal = getEmptyChangeValueNodeAnimation();
-		updateVal.nodeSpec = getAnswer.destSpec;
-		updateVal.newValue = ans.getDisplayString();
-		addEndAnimation(updateVal);
-		updateVals = getEmptyBundleAnimation();
-		for(var i=4; i<7; i++) {
-			var removeStuff = getEmptyIntermediateRemoveEntityAnimation();
-			removeStuff.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
-			removeStuff.effectParams = {width: 0};
-			removeStuff.entityIndex = i;
-			updateVals.animations.push(removeStuff);
-		}
-		addEndAnimation(updateVals);
-		var addAnswer = getEmptyIntermediateAddEntityAnimation();
-		addAnswer.entityIndex = 3;
-		addAnswer.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
-		addAnswer.newEntity = new ValueNode(maxRightSeen.value - pos.value);
-		addAnswer.effectParams = {width:1, opacity:1};
-		addEndAnimation(addAnswer);
-		updateVals = getEmptyBundleAnimation();
-		for(var i=9; i<12; i++) {
-			var removeStuff = getEmptyIntermediateRemoveEntityAnimation();
-			removeStuff.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
-			removeStuff.effectParams = {width: 0};
-			removeStuff.entityIndex = i;
-			updateVals.animations.push(removeStuff);
-		}
-		addEndAnimation(updateVals);
-		addAnswer = getEmptyIntermediateAddEntityAnimation();
-		addAnswer.entityIndex = getMemo.entities.length - 1;
-		addAnswer.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
-		addAnswer.newEntity = tEntry.value;
-		addAnswer.effectParams = {width:1, opacity:1};
-		addEndAnimation(addAnswer);
-		var addToTable = getEmptyAddToTableAnimation();
-		addToTable.ansSpec = getNodeSpecification(tEntry.value, 0, [], "end", 1);
-		addEndAnimation(addToTable);
-		var updateTable = getEmptySetTableAnimation();
-		addEndAnimation(updateTable);
-		removeInterm = getEmptyRemoveIntermediateStepAnimation();
-		removeInterm.intermediateId = intermId - 1;
-		removeInterm.list = "end";
-		removeInterm.position = "below";
-		removeInterm.effectParams = {};
-		addEndAnimation(removeInterm);
-		addEndAnimation(getEmptyClearIntermediateAnimation());
+		var updateTable = answerToKey(steps, pos, maxRightSeen, intermId, ans, tEntry);
 
 		var frame = tracker.logExit([ans]);
 		tEntry.methodId = frame.methodId;
 		updateTable.maxShowID = frame.methodId;
 		return ans;
 	}
+}
+
+function answerToKey(steps, pos, maxRightSeen, intermId, ans, tEntry) {
+	intermId += 1000;
+	var nNodes = [new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"), new ValueNode("\\(P\\)"),
+		new ValueNode("\\(t(S,P,M)\\)"), new ValueNode("P")];
+	var newValues = [steps.value, maxRightSeen.value, pos.value, "\\(t(" + steps.value + "," + pos.value + "," +
+	maxRightSeen.value + ")\\)", pos.value];
+	var getMemo = getEmptyCreateIntermediateStepAnimation();
+	getMemo.entities = ["\\(Table\\;\\mathbf{[}\\;\\)", nNodes[0], "\\(, \\)", nNodes[1], "\\(-\\)", nNodes[2], "\\(\\;\\mathbf{]}\\; = \\;\\)",
+		nNodes[3], "\\(-\\)", nNodes[4]];
+	getMemo.intermediateId = intermId++;
+	getMemo.list = "end";
+	getMemo.position = "below";
+	addEndAnimation(getMemo);
+	var updateVals = getEmptyBundleAnimation();
+	for(var i=0; i<nNodes.length; i++) {
+		var update = getEmptyChangeValueNodeAnimation();
+		update.nodeSpec = getNodeSpecification(nNodes[i], 0, [], "end", 1);
+		update.newValue = newValues[i];
+		updateVals.animations.push(update);
+	}
+	addEndAnimation(updateVals);
+	var getAnswer = getEmptyTranslateAnimation();
+	getAnswer.sourceSpec = getNodeSpecification(ans, 0, [], "end");
+	getAnswer.destSpec = getNodeSpecification(nNodes[3], 0, [], "end", 1);
+	addEndAnimation(getAnswer);
+	var updateVal = getEmptyChangeValueNodeAnimation();
+	updateVal.nodeSpec = getAnswer.destSpec;
+	updateVal.newValue = ans.getDisplayString();
+	addEndAnimation(updateVal);
+	updateVals = getEmptyBundleAnimation();
+	for(var i=4; i<7; i++) {
+		var removeStuff = getEmptyIntermediateRemoveEntityAnimation();
+		removeStuff.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
+		removeStuff.effectParams = {width: 0};
+		removeStuff.entityIndex = i;
+		updateVals.animations.push(removeStuff);
+	}
+	var addAnswer = getEmptyIntermediateAddEntityAnimation();
+	addAnswer.entityIndex = 3;
+	addAnswer.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
+	addAnswer.newEntity = new ValueNode(maxRightSeen.value - pos.value);
+	addAnswer.effectParams = {width:1, opacity:1};
+	updateVals.animations.push(addAnswer);
+	addEndAnimation(updateVals);
+	updateVals = getEmptyBundleAnimation();
+	for(var i=9; i<12; i++) {
+		var removeStuff = getEmptyIntermediateRemoveEntityAnimation();
+		removeStuff.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
+		removeStuff.effectParams = {width: 0};
+		removeStuff.entityIndex = i;
+		updateVals.animations.push(removeStuff);
+	}
+	addAnswer = getEmptyIntermediateAddEntityAnimation();
+	addAnswer.entityIndex = getMemo.entities.length - 1;
+	addAnswer.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
+	addAnswer.newEntity = tEntry.value;
+	addAnswer.effectParams = {width:1, opacity:1};
+	updateVals.animations.push(addAnswer);
+	addEndAnimation(updateVals);
+	var addToTable = getEmptyAddToTableAnimation();
+	addToTable.ansSpec = getNodeSpecification(tEntry.value, 0, [], "end", 1);
+	addEndAnimation(addToTable);
+	var updateTable = getEmptySetTableAnimation();
+	addEndAnimation(updateTable);
+	var removeInterm = getEmptyRemoveIntermediateStepAnimation();
+	removeInterm.intermediateId = intermId - 1;
+	removeInterm.list = "end";
+	removeInterm.position = "below";
+	removeInterm.effectParams = {};
+	addEndAnimation(removeInterm);
+	addEndAnimation(getEmptyClearIntermediateAnimation());
+	return updateTable;
 }
 
 funcMapping[funcName] = maximumRandomWalk;
