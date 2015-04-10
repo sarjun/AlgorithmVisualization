@@ -816,11 +816,181 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		tracker.table[key] = tEntry;
 
 		// End animations
-		//nNodes = [new ValueNode()]
-		//var recurrence = getEmptyCreateIntermediateStepAnimation();
+		nNodes = [new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + (pos.value - 1) + "\\(,\\)" + oldMax.value + "\\()\\)"),
+			new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + pos.value + "\\(,\\)" + oldMax.value + "\\()\\)"),
+			new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + (pos.value + 1) + "\\(,\\)" + newMax.value + "\\()\\)")];
+		recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		recurrence.list = "end";
+		recurrence.position = "above";
+		recurrence.entities = [new ValueNode("\\(t(" + steps.value + "," + pos.value + "," + oldMax.value + ")\\)"), "\\( = \\;\\)"];
+		recurrence.inline = true;
+		addEndAnimation(recurrence);
+		if(!deleted[0]) {
+			recurrence = getEmptyCreateIntermediateStepAnimation();
+			leftId = recurrence.intermediateId = intermId++;
+			recurrence.list = "end";
+			recurrence.position = "above";
+			recurrence.entities = ["\\(" + pLeft.getDisplayString() + "\\times\\)", nNodes[0]];
+			recurrence.inline = true;
+			addEndAnimation(recurrence);
+		}
+		if(!deleted[1]) {
+			recurrence = getEmptyCreateIntermediateStepAnimation();
+			stayId = recurrence.intermediateId = intermId++;
+			recurrence.list = "end";
+			recurrence.position = "above";
+			recurrence.entities = [deleted[0] ? "" : "\\(+\\)", "\\(" + pStay.getDisplayString() + "\\times\\)", nNodes[1]];
+			recurrence.inline = true;
+			addEndAnimation(recurrence);
+		}
+		if(!deleted[2]) {
+			recurrence = getEmptyCreateIntermediateStepAnimation();
+			rightId = recurrence.intermediateId = intermId++;
+			recurrence.list = "end";
+			recurrence.position = "above";
+			recurrence.entities = [(deleted[0] && deleted[1]) ? "" : "\\(+\\)", "\\(" + pRight.getDisplayString() + "\\times\\)", nNodes[2]];
+			recurrence.inline = true;
+			addEndAnimation(recurrence);
+		}
+		var getFromChildren = getEmptyBundleAnimation();
+		var updateVals = getEmptyBundleAnimation();
+		var multiply = getEmptyBundleAnimation();
+		var add = getEmptyBundleAnimation();
+		var skipCount = 0;
+		var intermIds = [leftId, stayId, rightId];
+		for(var i = 0; i < 3; i++) {
+			if(deleted[i]) {
+				skipCount++;
+				continue;
+			}
+			var getAnim = getEmptyTranslateAnimation();
+			getAnim.sourceSpec = getNodeSpecification(tracker.currentFrame.children[i - skipCount].result[0], 0, [i - skipCount], "end");
+			getAnim.destSpec = getNodeSpecification(nNodes[i], 0, [], "end",
+				i-3 + deleted.slice(i+1,3).filter(function(a){return a;}).length);
+			getFromChildren.animations.push(getAnim);
+			var update = getEmptyChangeValueNodeAnimation();
+			update.nodeSpec = getAnim.destSpec;
+			update.newValue = tracker.currentFrame.children[i - skipCount].result[0].getDisplayString();
+			updateVals.animations.push(update);
+			update = getEmptyChangeValueNodeAnimation();
+			update.nodeSpec = getAnim.destSpec;
+			update.newValue = new ValueNode(probVals[i] * tracker.currentFrame.children[i - skipCount].result[0].value).getDisplayString();
+			multiply.animations.push(update);
+			var removeMult = getEmptyIntermediateRemoveEntityAnimation();
+			removeMult.intermSpec = getIntermediateSpecification(0, [], "end", "above", i + 2 - skipCount);
+			removeMult.entityIndex = i == 0 ? 1 : 2;
+			removeMult.effectParams = {width: 0};
+			multiply.animations.push(removeMult);
+			if(deleted.slice(0,i).filter(function(a){return !a;}).length > 0) {
+				var deleteAnim = getEmptyRemoveIntermediateStepAnimation();
+				deleteAnim.intermediateId = intermIds[i];
+				deleteAnim.effectParams = {width: 0};
+				deleteAnim.list = "end";
+				deleteAnim.position = "above";
+				add.animations.push(deleteAnim);
+			}
+		}
+		addEndAnimation(getFromChildren);
+		addEndAnimation(updateVals);
+		addEndAnimation(multiply);
+		var addAnim = getEmptyChangeValueNodeAnimation();
+		addAnim.nodeSpec = getNodeSpecification(nNodes[deleted.indexOf(false)], 0, [], "end",
+			-3 + deleted.filter(function(a){return a}).length);
+		addAnim.newValue = ans.getDisplayString();
+		add.animations.push(addAnim);
+		addEndAnimation(add);
+		var getAnswer = getEmptyTranslateAnimation();
+		getAnswer.sourceSpec = addAnim.nodeSpec;
+		getAnswer.destSpec = getNodeSpecification(ans, 0, [], "end");
+		addEndAnimation(getAnswer);
+		var removeRec = getEmptyBundleAnimation();
+		var removeOne = getEmptyRemoveIntermediateStepAnimation();
+		removeOne.intermediateId = leftId - 1;
+		removeOne.effectParams = {width: 0};
+		removeOne.list = "end";
+		removeOne.position = "above";
+		removeRec.animations.push(removeOne);
+		removeOne = getEmptyRemoveIntermediateStepAnimation();
+		removeOne.intermediateId = intermIds[deleted.indexOf(false)];
+		removeOne.effectParams = {width: 0};
+		removeOne.list = "end";
+		removeOne.position = "above";
+		removeRec.animations.push(removeOne);
+		addEndAnimation(removeRec);
+		nNodes = [new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"), new ValueNode("\\(P\\)"),
+			new ValueNode("\\(t(S,P,M)\\)"), new ValueNode("P")];
+		var newValues = [steps.value, maxRightSeen.value, pos.value, "\\(t(" + steps.value + "," + pos.value + "," +
+			maxRightSeen.value + ")\\)", pos.value];
+		var getMemo = getEmptyCreateIntermediateStepAnimation();
+		getMemo.entities = ["\\(Table\\;\\mathbf{[}\\;\\)", nNodes[0], "\\(, \\)", nNodes[1], "\\(-\\)", nNodes[2], "\\(\\;\\mathbf{]}\\; = \\;\\)",
+			nNodes[3], "\\(-\\)", nNodes[4]];
+		getMemo.intermediateId = intermId++;
+		getMemo.list = "end";
+		getMemo.position = "below";
+		addEndAnimation(getMemo);
+		var updateVals = getEmptyBundleAnimation();
+		for(var i=0; i<nNodes.length; i++) {
+			update = getEmptyChangeValueNodeAnimation();
+			update.nodeSpec = getNodeSpecification(nNodes[i], 0, [], "end", 1);
+			update.newValue = newValues[i];
+			updateVals.animations.push(update);
+		}
+		addEndAnimation(updateVals);
+		var getAnswer = getEmptyTranslateAnimation();
+		getAnswer.sourceSpec = getNodeSpecification(ans, 0, [], "end");
+		getAnswer.destSpec = getNodeSpecification(nNodes[3], 0, [], "end", 1);
+		addEndAnimation(getAnswer);
+		updateVal = getEmptyChangeValueNodeAnimation();
+		updateVal.nodeSpec = getAnswer.destSpec;
+		updateVal.newValue = ans.getDisplayString();
+		addEndAnimation(updateVal);
+		updateVals = getEmptyBundleAnimation();
+		for(var i=4; i<7; i++) {
+			var removeStuff = getEmptyIntermediateRemoveEntityAnimation();
+			removeStuff.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
+			removeStuff.effectParams = {width: 0};
+			removeStuff.entityIndex = i;
+			updateVals.animations.push(removeStuff);
+		}
+		addEndAnimation(updateVals);
+		var addAnswer = getEmptyIntermediateAddEntityAnimation();
+		addAnswer.entityIndex = 3;
+		addAnswer.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
+		addAnswer.newEntity = new ValueNode(maxRightSeen.value - pos.value);
+		addAnswer.effectParams = {width:1, opacity:1};
+		addEndAnimation(addAnswer);
+		updateVals = getEmptyBundleAnimation();
+		for(var i=9; i<12; i++) {
+			var removeStuff = getEmptyIntermediateRemoveEntityAnimation();
+			removeStuff.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
+			removeStuff.effectParams = {width: 0};
+			removeStuff.entityIndex = i;
+			updateVals.animations.push(removeStuff);
+		}
+		addEndAnimation(updateVals);
+		addAnswer = getEmptyIntermediateAddEntityAnimation();
+		addAnswer.entityIndex = getMemo.entities.length - 1;
+		addAnswer.intermSpec = getIntermediateSpecification(0, [], "end", "below", 1);
+		addAnswer.newEntity = tEntry.value;
+		addAnswer.effectParams = {width:1, opacity:1};
+		addEndAnimation(addAnswer);
+		var addToTable = getEmptyAddToTableAnimation();
+		addToTable.ansSpec = getNodeSpecification(tEntry.value, 0, [], "end", 1);
+		addEndAnimation(addToTable);
+		var updateTable = getEmptySetTableAnimation();
+		addEndAnimation(updateTable);
+		removeInterm = getEmptyRemoveIntermediateStepAnimation();
+		removeInterm.intermediateId = intermId - 1;
+		removeInterm.list = "end";
+		removeInterm.position = "below";
+		removeInterm.effectParams = {};
+		addEndAnimation(removeInterm);
+		addEndAnimation(getEmptyClearIntermediateAnimation());
 
 		var frame = tracker.logExit([ans]);
 		tEntry.methodId = frame.methodId;
+		updateTable.maxShowID = frame.methodId;
 		return ans;
 	}
 }

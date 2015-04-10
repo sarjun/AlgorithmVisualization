@@ -319,10 +319,25 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var intermediate = boxedList.getAdjacentIntermediate(animationList[i].intermSpec);
 				var entity = $(BoxedList.createElemForEntity(animationList[i].newEntity));
 				intermediate.children(":nth-child(" + animationList[i].entityIndex + ")").after(entity);
-				if (animationList[i].effectParams.length > 0 && animationList[i].effectParams[0] != "") {
-					entity.hide();
-					animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
-					entity.show.apply(entity, animationList[i].effectParams);
+				if (Array.isArray(animationList[i].effectParams)) {
+					if (animationList[i].effectParams.length > 0 && animationList[i].effectParams[0] != "") {
+						entity.hide();
+						animationList[i].effectParams.push(TIME_REMOVE_ENTITY);
+						entity.show.apply(entity, animationList[i].effectParams);
+					}
+				}
+				else if(animationList[i].effectParams != null) {
+					for (key in animationList[i].effectParams) {
+						if(key == "width") {
+							animationList[i].effectParams[key] *= entity.width();
+						} else if(key == "height") {
+							animationList[i].effectParams[key] *= entity.height();
+						} else {
+							animationList[i].effectParams[key] *= entity.css(key);
+						}
+						entity.css(key, 0);
+					}
+					entity.animate(animationList[i].effectParams, TIME_REMOVE_ENTITY);
 				}
 				maxDelay = Math.max(maxDelay, TIME_REMOVE_ENTITY);
 				delay = skipDelays ? 0 : TIME_REMOVE_ENTITY;
