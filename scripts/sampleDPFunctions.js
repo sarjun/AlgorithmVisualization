@@ -549,12 +549,12 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		var nNodes = [new ValueNode("\\(P_{left}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"),
 			new ValueNode("\\(P_{stay}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"),
 			new ValueNode("\\(P_{right}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"),
-			new ValueNode("\\(P\\)")];
+			new ValueNode("\\(P\\)"), new ValueNode("S"), new ValueNode("P"), new ValueNode("M")];
 		var recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
 		recurrence.list = "start";
 		recurrence.position = "below";
-		recurrence.entities = ["\\(t(S,P,M) =\\; \\)"];
+		recurrence.entities = ["\\(t(\\)", nNodes[13], "\\(,\\)", nNodes[14], "\\(,\\)", nNodes[15], "\\() =\\; \\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
 		recurrence = getEmptyCreateIntermediateStepAnimation();
@@ -582,6 +582,35 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 			"\\( + 1\\)", "\\(,\\)", "\\(max(\\)", nNodes[11], "\\(,\\)", nNodes[12], "\\( + 1\\)", "\\()\\)", "\\()\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
+
+		var initRecurrence = getEmptyBundleAnimation();
+		var setRecurrence = getEmptyBundleAnimation();
+		var initS = getEmptyTranslateAnimation();
+		initS.sourceSpec = getNodeSpecification(steps, 0, [], "start");
+		initS.destSpec = getNodeSpecification(nNodes[13], 0, [], "start", 3);
+		initRecurrence.animations.push(initS);
+		var setS = getEmptyChangeValueNodeAnimation();
+		setS.nodeSpec = initS.destSpec;
+		setS.newValue = steps.getDisplayString();
+		setRecurrence.animations.push(setS);
+		var initP = getEmptyTranslateAnimation();
+		initP.sourceSpec = getNodeSpecification(pos, 0, [], "start");
+		initP.destSpec = getNodeSpecification(nNodes[14], 0, [], "start", 3);
+		initRecurrence.animations.push(initP);
+		var setP = getEmptyChangeValueNodeAnimation();
+		setP.nodeSpec = initP.destSpec;
+		setP.newValue = pos.getDisplayString();
+		setRecurrence.animations.push(setP);
+		var initM = getEmptyTranslateAnimation();
+		initM.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
+		initM.destSpec = getNodeSpecification(nNodes[15], 0, [], "start", 3);
+		initRecurrence.animations.push(initM);
+		var setM = getEmptyChangeValueNodeAnimation();
+		setM.nodeSpec = initM.destSpec;
+		setM.newValue = oldMax.getDisplayString();
+		setRecurrence.animations.push(setM);
+		addStartAnimation(initRecurrence);
+		addStartAnimation(setRecurrence);
 
 		var changeBundle = getEmptyBundleAnimation();
 		var probNodes = [nNodes[0], nNodes[4], nNodes[8]];
@@ -785,6 +814,11 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		};
 		tEntry.value = new ValueNode(ans.value - pos.value);
 		tracker.table[key] = tEntry;
+
+		// End animations
+		//nNodes = [new ValueNode()]
+		//var recurrence = getEmptyCreateIntermediateStepAnimation();
+
 		var frame = tracker.logExit([ans]);
 		tEntry.methodId = frame.methodId;
 		return ans;
