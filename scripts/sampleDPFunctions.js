@@ -1124,6 +1124,16 @@ divideMapping[funcName] = "This is done by repeatedly computing the weighted ave
 "one in the sub-problems because the number of steps remaining decreases by 1. P changes according to whether the " +
 "sub-problem represents movement to the right, left, or staying in place. M only has the potential to change when moving " +
 "to the right, because otherwise the maximum location seen so far cannot increase (and it will never decrease).";
-conquerMapping[funcName] = "Explanation of why memoization is 2D instead of 3D.";
+conquerMapping[funcName] = "This algorithm takes 3 parameters \\((S, P, M)\\), so it can be memoized with a 3-dimensional table. " +
+	"However, if we knew the average rightmost position reached by taking \\(S\\) steps from position 0, we could add that to any position \\(P\\) " +
+"to get the average rightmost position reached by taking \\(S\\) steps from \\(P\\). However, the rightmost position seen so far could change some " +
+"of our answers if it is higher than the current position. Therefore, we also need to know the rightmost position we have seen relative " +
+"to the current position in addition to the number of steps left. Given those two, we know the average rightmost position relative " +
+"to our distance from the rightmost position already seen. If we add that to the current position, that gives us the overall rightmost position " +
+"seen to any problem instance."+
+//"However, it is sufficient to memoize the expected maximum position relative to the current position \\((t(S,P,M)-P)\\). " +
+//"This expected relative maximum position only depends upon the number of steps left to take \\((S)\\) and the maximum position seen relative to the current position \\((M-P)\\). " +
+"Therefore, we can use a 2-dimensional table where the dimensions are \\(S\\) and \\(M-P\\) and add the memoized value to the current position for the final answer. This reduces the running time of the algorithm from " +
+"\\(\\Theta(n^3)\\) with a 3-dimensional table to \\(\\Theta(n^2)\\).";
 parameterMapping[funcName] = ["position : int", "steps : int", "probability step left : float", "probability step right : float", "rightmost seen position : int"];
 trackerMapping[funcName] = DPTracker;
