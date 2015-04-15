@@ -57,7 +57,7 @@ function init() {
 	setContentSize();
 	$(window).resize(setContentSize);
 	//mainDiv.width(parentWidth).height(parentHeight);
-	makeCircle(null, data, mainDiv, rootHeight, rootWidth);
+	makeCircle(null, data, mainDiv, rootHeight, rootWidth, 0);
 	root.center(false);
 	document.querySelector("#navicon").addEventListener('click', function() {
 		document.querySelector("core-drawer-panel").togglePanel();
@@ -94,7 +94,7 @@ function init() {
 		mainDiv.empty();
 		root = null;
 		memoDiv.empty();
-		makeCircle(null, data, mainDiv, Math.floor(Math.min(parentHeight, parentWidth) * 0.9));
+		makeCircle(null, data, mainDiv, 0, 0, 0);
 		if(tracker.table != null) {
 			tableManager.createTable(tracker.table);
 		}
@@ -236,7 +236,7 @@ function reinitConsole() {
 
 }
 
-function makeCircle(parentCircle, node, parentElem, height, width) {
+function makeCircle(parentCircle, node, parentElem, height, width, depth) {
 	var newCircle = new Circle(parentCircle, parentElem, node, height, width);
 	if (root == null) {
 		root = newCircle;
@@ -246,9 +246,10 @@ function makeCircle(parentCircle, node, parentElem, height, width) {
 	if (node.children.length > 0) {
 		var childSize = 100 / Math.max(2, node.children.length) + "%";
 		for (var i = 0; i < node.children.length; i++) {
-			newCircle.children.push(makeCircle(newCircle, node.children[i], newCircle.elem, childSize, childSize));
+			newCircle.children.push(makeCircle(newCircle, node.children[i], newCircle.elem, childSize, childSize, depth + 1));
 		}
 	}
+	newCircle.depth = depth;
 	return newCircle;
 }
 

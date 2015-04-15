@@ -172,6 +172,27 @@ div.circle-align-helper {
     height: 100%;
 }
 
+div.circle.collapse {
+    visibility: hidden;
+}
+
+div.circle.currentRoot {
+    visibility: visible;
+}
+
+div.circle.engorge {
+    position: absolute;
+    width: 100% !important;
+    height: 100% !important;
+    background: none;
+    top: 0;
+    left: 0;
+}
+
+div.circle.animated {
+    transition: width 1s, height 1s;
+}
+
 div.node-stack-container {
     position: absolute;
     height: 100%;

@@ -98,14 +98,37 @@ Circle.prototype.center = function (animated, shouldLock, renderTable) {
 	if (Circle.centered == this) {
 		return;
 	}
+	console.log(this.depth);
 	//if (this.elem.hasClass("circle-leaf")) return;
+	if (Circle.centered != null && this.depth >= Circle.centered.depth + 9) {
+		var node = this.parent;
+		var parents = [], visibleParents = [], animatedParents = [], collapsedParents = [];
+		while (node != root) {
+			if (node.depth >= this.depth - 5) visibleParents.push(node.elem[0]);
+			else if (node.depth >= this.depth - 9) animatedParents.push(node.elem[0]);
+			else collapsedParents.push(node.elem[0]);
+			parents.push(node.elem[0]);
+			node = node.parent;
+		}
+		parents = $(parents);
+		visibleParents = $(visibleParents);
+		animatedParents = $(animatedParents);
+		collapsedParents = $(collapsedParents);
+		root.elem.addClass("collapse");
+		collapsedParents.addClass("engorge");
+		animatedParents.addClass("engorge");
+		visibleParents.last().addClass("currentRoot");
+
+	}
 	Circle.centered = this;
 	mainDiv.find("div.circle").removeClass("centered");
 	this.elem.addClass("centered");
 	var currentHeight = root.elem.height();
 	var currentWidth = root.elem.width();
+	//console.log("child: " + this.elem.width() + " x " + this.elem.height());
 	var zoomHeight = rootHeight * root.elem.height() / this.elem.height();
 	var zoomWidth = rootWidth * root.elem.width() / this.elem.width();
+	//console.log("zoom: " + zoomWidth + " x " + zoomHeight);
 	root.elem.width(zoomWidth).height(zoomHeight);
 	zoomHeight = rootHeight * root.elem.height() / this.elem.height();
 	zoomWidth = rootWidth * root.elem.width() / this.elem.width();
@@ -115,6 +138,10 @@ Circle.prototype.center = function (animated, shouldLock, renderTable) {
 	var circleCenter = getCenter(this.elem);
 	var thisPointer = this;
 	if (animated) {
+		if (Circle.centered != null && this.depth >= Circle.centered.depth + 9) {
+			collapsedParents.removeClass("engorge");
+			animatedParents.removeClass("engorge");
+		}
 		root.elem.css(currentPos);
 		root.elem.width(currentWidth).height(currentHeight);
 		root.elem.animate({
@@ -123,14 +150,20 @@ Circle.prototype.center = function (animated, shouldLock, renderTable) {
 			top: centerOfScreen[1] - circleCenter[1],
 			left: centerOfScreen[0] - circleCenter[0]
 		}, TIME_ZOOM, "easeInOutQuad", function () {
+			$("div.circle").removeClass("animated");
 			refreshCircleOverflow();
 			if (tracker instanceof DPTracker && renderTable) tableManager.renderTable(thisPointer.methodId);
 		});
+		if (Circle.centered != null && this.depth >= Circle.centered.depth + 9) {
+			collapsedParents.addClass("animated engorge");
+			animatedParents.addClass("animated engorge");
+		}
 	} else {
 		root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
 		refreshCircleOverflow();
 		if (thisPointer.methodId && renderTable) tableManager.renderTable(thisPointer.methodId);
 	}
+
 };
 
 Circle.prototype.checkOverflow = function () {
