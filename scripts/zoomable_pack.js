@@ -246,7 +246,7 @@ function makeCircle(parentCircle, node, parentElem, height, width, depth) {
 	if (node.children.length > 0) {
 		var childSize = 100 / Math.max(2, node.children.length) + "%";
 		for (var i = 0; i < node.children.length; i++) {
-			newCircle.children.push(makeCircle(newCircle, node.children[i], newCircle.elem, childSize, childSize, depth + 1));
+			newCircle.children.push(makeCircle(newCircle, node.children[i], newCircle.elem, childSize, "", depth + 1));
 		}
 	}
 	newCircle.depth = depth;
