@@ -517,6 +517,9 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 	var key = steps.value + "," + (maxRightSeen.value - pos.value);
 	var ans = tracker.table[key];
 	if(ans != null) {
+		addStartAnimation(getTextAnim("Another similar problem where there was \\(S\\) steps left and where the current position " +
+		"was \\(M-P\\) away from the rightmost spot seen has already been solved. Therefore, the average rightward displacement going forward " +
+		"(taking \\(M-P\\) into account ) is stored in the memoization table."));
 		var newAns = new ValueNode(ans.value.value + pos.value);
 		nNodes = [new ValueNode("\\(S\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(M\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"), new ValueNode("\\(P\\)"), new ValueNode("\\(P\\)")];
 		var addInterm = getEmptyCreateIntermediateStepAnimation();
@@ -525,6 +528,9 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		addInterm.list = "start";
 		addInterm.position = "below";
 		addStartAnimation(addInterm);
+		addStartAnimation(getTextAnim("We will get the average rightward displacement by indexing the table at \\([S,M-P]\\)." +
+		"We will add \\(P\\) to the value in the table to get the average rightmost position reached from this particular " +
+		"position."));
 		var transBundle = getEmptyBundleAnimation();
 		var setBundle = getEmptyBundleAnimation();
 		var sources = [steps, pos, oldMax];
@@ -622,6 +628,8 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		removeAnim.effectParams = {};
 		addStartAnimation(removeAnim);
 		addStartAnimation(getEmptyClearIntermediateAnimation());
+		addEndAnimation(getTextAnim("This answer was calculated using stored values in the memoization table. Click on the input " +
+		"values to this problem instance to see how."));
 		tracker.logExit([newAns]);
 		return newAns;
 	}
@@ -637,6 +645,8 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		tracker.table[key] = tEntry;
 
 		// Start animation
+		addStartAnimation(getTextAnim("The number of steps remaining, \\(S\\), is zero, so this is a base case. The " +
+		"rightmost position is simply equal to \\(M\\), or the rightmost position seen on the path to here."));
 		var getAnswer = getEmptyTranslateAnimation();
 		getAnswer.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
 		getAnswer.destSpec = getNodeSpecification(ans, 0, [], "end");
@@ -694,6 +704,10 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 			"\\( + 1\\)", "\\(,\\)", "\\(max(\\)", nNodes[11], "\\(,\\)", nNodes[12], "\\( + 1\\)", "\\()\\)", "\\()\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
+		addStartAnimation(getTextAnim("The recurrence shown is derived as follows: <br><br> The average " +
+		"rightmost position reached starting from position \\(P\\) with \\(S\\) steps left and having already been as far right as " +
+		"\\(M\\) is equal to a weighted average of the solution after moving to the left (\\(P-1\\)), " +
+		"staying in the same position(\\(P\\)), and moving to the right (\\(P+1\\))."));
 
 		var initRecurrence = getEmptyBundleAnimation();
 		var setRecurrence = getEmptyBundleAnimation();
@@ -852,6 +866,8 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 		addStartAnimation(removeZeroBundle);
 		addStartAnimation(fillBundle);
 		addStartAnimation(updateBundle);
+		addStartAnimation(getTextAnim("Note that \\(M\\) may be different for the method call " +
+		"representing movement to the right because \\(P+1\\) may be the new rightmost position seen along this path."));
 		addStartAnimation(doMathBundle);
 		var resolveMaxBundle = getEmptyBundleAnimation();
 		if(!deleted[2]) {
@@ -1040,6 +1056,8 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 }
 
 function answerToKey(steps, pos, maxRightSeen, intermId, ans, tEntry) {
+	addEndAnimation(getTextAnim("Now we want to store this answer in the memoization table for lookup when solving " +
+	"similar problems."));
 	intermId += 1000;
 	var nNodes = [new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"), new ValueNode("\\(P\\)"),
 		new ValueNode("\\(t(S,P,M)\\)"), new ValueNode("P")];
@@ -1052,6 +1070,15 @@ function answerToKey(steps, pos, maxRightSeen, intermId, ans, tEntry) {
 	getMemo.list = "end";
 	getMemo.position = "below";
 	addEndAnimation(getMemo);
+	addEndAnimation(getTextAnim("The table entry is formed by subtracting the current position from \\(t(S,P,M)\\). " +
+	"Recall that even though there are three variables in the recurrence, the answer to problems with the same value " +
+	"for \\(S\\) and \\((M-P)\\) is the same.<br><br>This is because the average rightmost position from any \\(P\\) " +
+	"can be found by figuring out the average rightmost displacement looking forward using \\(S\\) steps left and knowing " +
+	"that we have been \\(M-P\\) further to the right in the past than we are now. We can " +
+	"then add the current position to that value to get the overall average rightmost position from any specifc value of \\(P\\)."));
+	addEndAnimation(getTextAnim("Therefore, the table will be indexed by \\(S\\) and \\(M-P\\) and the table entry " +
+	"will have this specific value of \\(P\\) subtracted out so that it can be used for any problem with \\(S\\) steps left " +
+	"and where we have been \\(M-P\\) further to the right in the past than we are now."));
 	var updateVals = getEmptyBundleAnimation();
 	for(var i=0; i<nNodes.length; i++) {
 		var update = getEmptyChangeValueNodeAnimation();
