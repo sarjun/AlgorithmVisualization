@@ -34,8 +34,23 @@ function init() {
 	tableManager = new TableManager();
 	funcName = "Maximum Random Walk";
 	tracker = new trackerMapping[funcName]();
-	funcMapping[funcName].apply(null, initParams[funcName]);
+	var localInitParams = initParams[funcName].slice(0, initParams[funcName].length);
+	for(var i=0; i<localInitParams.length; i++) {
+		if(Array.isArray(localInitParams[i])) {
+			var newList = [];
+			for(var j=0; j<localInitParams[i].length; j++) {
+				newList[j] = new ValueNode(localInitParams[i][j].value);
+			}
+			localInitParams[i] = newList;
+		} else {
+			localInitParams[i] = new ValueNode(localInitParams[i].value);
+		}
+	}
+	funcMapping[funcName].apply(null, localInitParams);
 	var data = tracker.execution.children[0];
+	if(tracker.table != null) {
+		tableManager.createTable(tracker.table);
+	}
 
 	initAlgorithm(funcName);
 	initAlgoSelect();
@@ -123,23 +138,28 @@ function initMenuValues() {
 	};
 	setTimeout(initDropdown, 100);
 
-	var initParams = function() {
+	var initParamValues = function() {
 		try {
 			var inputs = document.querySelector("#params").children;
-			inputs[0].value = kValue.value + "";
-			var show = "[";
-			for(var index = 0; index < toSort.length; index++) {
-				show += toSort[index].value + ",";
+			for(var i=0; i<initParams[funcName].length; i++) {
+				if(Array.isArray(initParams[funcName][i])) {
+					var show = "[";
+					for(var index = 0; index < initParams[funcName][i].length; index++) {
+						show += initParams[funcName][i][index].value + ",";
+					}
+					show = show.substr(0, show.length - 1) + "]";
+					inputs[i].value = show;
+				} else {
+					inputs[i].value = initParams[funcName][i].value + "";
+				}
 			}
-			show = show.substr(0, show.length - 1) + "]";
-			inputs[1].value = show;
 			updateDrawerWidth();
 		}
 		catch(err) {
-			setTimeout(initParams, 100);
+			setTimeout(initParamValues, 100);
 		}
 	};
-	setTimeout(initParams, 100);
+	setTimeout(initParamValues, 100);
 	//for(var i in inputs) {
 	//
 	//}

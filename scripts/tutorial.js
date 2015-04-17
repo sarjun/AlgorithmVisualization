@@ -128,9 +128,12 @@ function tutorialStep5() {
 	var validChildren = Circle.centered.children.filter(function(a) {
 			return !a.elem.hasClass("abbrev");
 		});
+	if(memoDiv.innerWidth() > 0) {
+		tutorialQueue.unshift(tutorialMemoTable);
+	}
 	if(validChildren.length > 0) {
 		tutorialQueue.unshift(function() {
-			tutorialChildCircle(validChildren[0].elem);
+			tutorialChildCircle(validChildren[validChildren.length - 1].elem);
 		});
 	}
 }
@@ -138,6 +141,13 @@ function tutorialStep5() {
 function tutorialChildCircle(elem) {
 	positionSpotlightOnElem(elem);
 	setSpotlightText("This is a recursive call. Click on this circle to zoom in to it.");
+}
+
+function tutorialMemoTable() {
+	positionSpotlightOnElem(memoDiv);
+	setSpotlightText("This is the memoization table used in this dynamic programming algorithm. When zooming to a specific " +
+	"method call, the table will change to reflect what has been stored up to the point where that call returns. You may " +
+	"click on any cell in the table to go to the method call that stored that answer.");
 }
 
 function tutorialConsole() {
