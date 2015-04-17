@@ -46,6 +46,7 @@ function Circle(parentCircle, parentElem, node, height, width) {
 	for (var i in node.start) {
 		var boxedList = null;
 		boxedList = new BoxedList(this, startContainer, true, node.start[i]);
+		boxedList.elem.attr("title", parameterMapping[funcName][i]);
 		this.startStack.push(boxedList);
 		boxedList.generateChildren();
 		boxedList.elem.bind("click", [this, boxedList], startClicked)
@@ -67,6 +68,7 @@ function Circle(parentCircle, parentElem, node, height, width) {
 	for (var i in node.result) {
 		var boxedList = null;
 		boxedList = new BoxedList(this, endContainer, false, node.result[i]);
+		boxedList.elem.attr("title", "return value");
 		this.endStack.push(boxedList);
 		boxedList.generateChildren();
 		boxedList.elem.bind("click", [this, boxedList], endClicked)
