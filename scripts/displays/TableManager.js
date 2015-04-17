@@ -70,6 +70,7 @@ TableManager.prototype.createTable = function(table) {
 	this.tableContainer.append("<span class='vertical-text'><span>" + vAxisName + "</span></span>");
 	this.tableContainer.append(this.tableElem);
 	//this.memoDiv.append("<div>horizontal axis</div>");
+	this.memoDiv.append("<div class='global-label'>Memoization Table</div>");
 	this.memoDiv.append(this.tableContainer);
 	MathJax.Hub.Queue(["Typeset",MathJax.Hub, this.tableContainer[0]]);
 };

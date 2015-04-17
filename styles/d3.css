@@ -52,6 +52,15 @@ td.memo-label {
     text-align: center;
 }
 
+div.memo div.global-label {
+    font-weight: bold;
+    margin: 10px;
+}
+
+div.memo div.global {
+    margin: 8px;
+}
+
 div.table-container {
     display: flex;
     margin-top: 8px;

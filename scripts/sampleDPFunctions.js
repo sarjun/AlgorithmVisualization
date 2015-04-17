@@ -498,7 +498,7 @@ parameterMapping[funcName] = ["s1 : string", "s2 : string"];
 trackerMapping[funcName] = DPTracker;
 
 funcName = "Maximum Random Walk";
-function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
+function maximumRandomWalk(steps, pos, maxRightSeen, pLeft, pRight) {
 	var intermId = 0;
 	tracker.logEntry([steps, pos, maxRightSeen]);
 	var zoomAnim = getEmptyRelativeZoomAnimation();
@@ -945,15 +945,15 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 
 		var ans = 0;
 		if (pLeft.value > 0) {
-			var moveLeft = maximumRandomWalk(walkLeft, newStep, pLeft, pRight, maxRightSeen);
+			var moveLeft = maximumRandomWalk(newStep, walkLeft, maxRightSeen, pLeft, pRight);
 			ans += pLeft.value * moveLeft.value;
 		}
 		if (pStay.value > EPSILON) {
-			var stay = maximumRandomWalk(pos, newStep, pLeft, pRight, maxRightSeen);
+			var stay = maximumRandomWalk(newStep, pos, maxRightSeen, pLeft, pRight);
 			ans += pStay.value * stay.value;
 		}
 		if (pRight.value > 0) {
-			var moveRight = maximumRandomWalk(walkRight, newStep, pLeft, pRight, newMax);
+			var moveRight = maximumRandomWalk(newStep, walkRight, newMax, pLeft, pRight);
 			ans += pRight.value * moveRight.value;
 		}
 		endReset.maxShowID = tracker.maxId - 1;
@@ -1183,7 +1183,7 @@ conquerMapping[funcName] = "This algorithm takes 3 parameters \\((S, P, M)\\), s
 "seen to any problem instance. <br><br>Therefore, we can use a 2-dimensional table where the dimensions are \\(S\\) and \\(M-P\\) " +
 "and add the memoized value to the current position for the final answer. This reduces the running time of the algorithm from " +
 "\\(\\Theta(n^3)\\) with a 3-dimensional table to \\(\\Theta(n^2)\\).";
-parameterMapping[funcName] = ["position : int", "steps : int", "probability step left : float", "probability step right : float", "rightmost seen position : int"];
+parameterMapping[funcName] = ["steps : int", "position : int", "rightmost seen position : int", "probability step left : float", "probability step right : float"];
 trackerMapping[funcName] = DPTracker;
-initParams[funcName] = [new ValueNode(0), new ValueNode(Math.ceil(Math.random() * 4) + 3), new ValueNode(Math.ceil(Math.random() * 4) / 10),
-	new ValueNode(Math.ceil(Math.random() * 4) / 10), new ValueNode(0)];
+initParams[funcName] = [new ValueNode(Math.ceil(Math.random() * 4) + 3), new ValueNode(0), new ValueNode(0), new ValueNode(Math.ceil(Math.random() * 4) / 10),
+	new ValueNode(Math.ceil(Math.random() * 4) / 10)];

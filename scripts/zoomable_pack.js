@@ -31,6 +31,7 @@ function setContentSize() {
 }
 
 function init() {
+	memoDiv = $("div.memo");
 	tableManager = new TableManager();
 	funcName = "Maximum Random Walk";
 	tracker = new trackerMapping[funcName]();
@@ -48,6 +49,7 @@ function init() {
 	}
 	funcMapping[funcName].apply(null, localInitParams);
 	var data = tracker.execution.children[0];
+	initGlobals();
 	if(tracker.table != null) {
 		tableManager.createTable(tracker.table);
 	}
@@ -58,7 +60,6 @@ function init() {
 	btnSetRoot = document.querySelector("#btnSetRoot");
 	mainPanel[0].shadowRoot.getElementById("mainContainer").style.overflow = "hidden";
 	mainDiv = $("<div class='main'></div>");
-	memoDiv = $("div.memo");
 	contentHolderDiv = $("div.content-holder");
 	contentDiv = $("div.content");
 	contentDiv.append(mainDiv);
@@ -80,17 +81,8 @@ function init() {
 		$("section#params").children().each(function (i, e) {
 			e.value = e.value.trim();
 			var type = parameterMapping[funcName][i].split(":")[1].trim();
-			if (type.charAt(0) == '[' && type.charAt(type.length - 1) == ']') {
-				var list = e.value.substring(1, e.value.length - 1).split(",");
-				var listType = type.substring(1, type.length - 1);
-				for (var i in list) {
-					if (list[i].trim().length > 0) {
-						list[i] = new ValueNode(list[i], listType);
-					} else {
-						list.splice(i, 1);
-					}
-				}
-				params.push(list);
+			if (typeIsList(type)) {
+				params.push(stringToValueNodeList(e.value, type));
 			} else {
 				params.push(new ValueNode(e.value, type));
 			}
@@ -103,6 +95,7 @@ function init() {
 		root = null;
 		memoDiv.empty();
 		makeCircle(null, data, mainDiv, 0, 0, 0);
+		initGlobals();
 		if(tracker.table != null) {
 			tableManager.createTable(tracker.table);
 		}
@@ -123,6 +116,41 @@ function init() {
 	$("div.spotlight").hide();
 	setContentSize();
 	//startTutorial();
+}
+
+function typeIsList(type) {
+	return type.charAt(0) == '[' && type.charAt(type.length - 1) == ']';
+}
+
+function stringToValueNodeList(value, type) {
+	var list = value.substring(1, value.length - 1).split(",");
+	var listType = type.substring(1, type.length - 1);
+	for (var i in list) {
+		if (list[i].trim().length > 0) {
+			list[i] = new ValueNode(list[i], listType);
+		} else {
+			list.splice(i, 1);
+		}
+	}
+	return list;
+}
+
+function initGlobals() {
+	var params = $("section#params").children();
+	if (params.length == 0) {
+		params = initParams[funcName];
+	}
+	if (params.length > tracker.execution.children[0].start.length) {
+		memoDiv.append("<div class='global-label'>Globals</div>");
+		for (var i = tracker.execution.children[0].start.length; i < params.length; i++) {
+			var type = parameterMapping[funcName][i].split(":")[1].trim();
+			if (typeIsList(type)) {
+				new BoxedList(null, memoDiv, true, stringToValueNodeList(params[i].value, type));
+			} else {
+				memoDiv.append("<div class='global'>" + parameterMapping[funcName][i].split(":")[0].trim() + " : <span class='text-node'>" + params[i].value + "</span>" + "</div>")
+			}
+		}
+	}
 }
 
 function initMenuValues() {
