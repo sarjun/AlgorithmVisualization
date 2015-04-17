@@ -1100,7 +1100,7 @@ function answerToKey(steps, pos, maxRightSeen, intermId, ans, tEntry) {
 	"that we have been \\(M-P\\) further to the right in the past than we are now. We can " +
 	"then add the current position to that value to get the overall average rightmost position from any specifc value of \\(P\\)."));
 	addEndAnimation(getTextAnim("Therefore, the table will be indexed by \\(S\\) and \\(M-P\\) and the table entry " +
-	"will have this specific value of \\(P\\) subtracted out so that it can be used for any problem with \\(S\\) steps left " +
+	"will have this specific value of \\(P\\) subtracted out. This is so that it can be used for any problem with \\(S\\) steps left " +
 	"and where we have been \\(M-P\\) further to the right in the past than we are now."));
 	var updateVals = getEmptyBundleAnimation();
 	for(var i=0; i<nNodes.length; i++) {
