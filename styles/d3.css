@@ -215,8 +215,14 @@ div.circle.collapse div.circle.engorge {
     flex-grow: 1 !important;
 }
 
+/*div.circle.animated {*/
+    /*transition: width 444ms linear, top 444ms linear, left 444ms linear, height 444ms linear;*/
+    /*transition-property: height, top, left, width;*/
+/*}*/
+
 div.circle.animated div.circle {
-    transition: height 444ms linear, flex-grow 444ms linear;
+    transition: all 444ms linear;
+    transition-property: flex-grow, height;
 }
 
 div.node-stack-container {
