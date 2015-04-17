@@ -505,6 +505,29 @@ function maximumRandomWalk(pos, steps, pLeft, pRight, maxRightSeen) {
 	zoomAnim.circleSpec = getCircleSpecification(0, []);
 	addStartAnimation(zoomAnim);
 	addEndAnimation(zoomAnim);
+
+	// Check error conditions
+	if(isNaN(pos.value)) {
+		tracker.logExit([new ValueNode("The value of position must be a number.")]);
+		return;
+	} else if (steps.value % 1 != 0 || steps.value < 0) {
+		tracker.logExit([new ValueNode("The value of steps must be a non-negative integer.")]);
+		return;
+	} else if (isNaN(pRight.value) || isNaN(pLeft.value) || pRight.value < 0 || pLeft.value < 0 ||
+		pLeft.value > 1 || pRight.value > 1) {
+		tracker.logExit([new ValueNode("'probability step left' and 'probability step right' must be numbers between 0 and 1 inclusive.")]);
+		return;
+	} else if (pLeft.value + pRight.value > 1) {
+		tracker.logExit([new ValueNode("The sum of 'probability step left' and 'probability step right' must be less than or equal to 1.")]);
+		return;
+	} else if(isNaN(maxRightSeen.value)) {
+		tracker.logExit([new ValueNode("The value of 'rightmost seen position' must be a number.")]);
+		return;
+	} else if(maxRightSeen.value < pos.value) {
+		tracker.logExit([new ValueNode("The value of 'rightmost seen position' must be at least as large as the current position.")]);
+		return;
+	}
+
 	var resetTable = getEmptySetTableAnimation();
 	resetTable.maxShowID = tracker.maxId - 1;
 	addStartAnimation(resetTable);
@@ -1151,16 +1174,14 @@ divideMapping[funcName] = "This is done by repeatedly computing the weighted ave
 "one in the sub-problems because the number of steps remaining decreases by 1. P changes according to whether the " +
 "sub-problem represents movement to the right, left, or staying in place. M only has the potential to change when moving " +
 "to the right, because otherwise the maximum location seen so far cannot increase (and it will never decrease).";
-conquerMapping[funcName] = "This algorithm takes 3 parameters \\((S, P, M)\\), so it can be memoized with a 3-dimensional table. " +
+conquerMapping[funcName] = "This algorithm takes 3 parameters \\((S, P, M)\\), so it can be memoized with a 3-dimensional table.<br><br>" +
 	"However, if we knew the average rightmost position reached by taking \\(S\\) steps from position 0, we could add that to any position \\(P\\) " +
 "to get the average rightmost position reached by taking \\(S\\) steps from \\(P\\). However, the rightmost position seen so far could change some " +
 "of our answers if it is higher than the current position. Therefore, we also need to know the rightmost position we have seen relative " +
 "to the current position in addition to the number of steps left. Given those two, we know the average rightmost position relative " +
 "to our distance from the rightmost position already seen. If we add that to the current position, that gives us the overall rightmost position " +
-"seen to any problem instance."+
-//"However, it is sufficient to memoize the expected maximum position relative to the current position \\((t(S,P,M)-P)\\). " +
-//"This expected relative maximum position only depends upon the number of steps left to take \\((S)\\) and the maximum position seen relative to the current position \\((M-P)\\). " +
-"Therefore, we can use a 2-dimensional table where the dimensions are \\(S\\) and \\(M-P\\) and add the memoized value to the current position for the final answer. This reduces the running time of the algorithm from " +
+"seen to any problem instance. <br><br>Therefore, we can use a 2-dimensional table where the dimensions are \\(S\\) and \\(M-P\\) " +
+"and add the memoized value to the current position for the final answer. This reduces the running time of the algorithm from " +
 "\\(\\Theta(n^3)\\) with a 3-dimensional table to \\(\\Theta(n^2)\\).";
 parameterMapping[funcName] = ["position : int", "steps : int", "probability step left : float", "probability step right : float", "rightmost seen position : int"];
 trackerMapping[funcName] = DPTracker;

@@ -242,11 +242,12 @@ function initConsole() {
 
 function reinitConsole() {
 	clearConsole();
-	$("div.console.summary").empty();
+	var summaryTab = $("div.console.summary");
+	summaryTab.empty();
 	addConsoleCard(overviewMapping[funcName]);
 	addConsoleCard(divideMapping[funcName]);
 	addConsoleCard(conquerMapping[funcName]);
-
+	summaryTab.scrollTop(0);
 }
 
 function makeCircle(parentCircle, node, parentElem, height, width, depth) {

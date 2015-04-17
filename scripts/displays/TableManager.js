@@ -8,6 +8,7 @@ function TableManager() {
 }
 
 TableManager.prototype.createTable = function(table) {
+	if(Object.keys(table).length == 0) return;
 	this.tableContainer = $("<div class='table-container'></div>");
 	this.tableElem = $("<table></table>");
 	var sampleEntry = table[Object.keys(table)[0]];
