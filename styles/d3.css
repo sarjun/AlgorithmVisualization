@@ -390,6 +390,22 @@ div.spotlight span {
     display: inline-block;
     z-index: 1;
 }
+
+*.math {
+    font-family: "Caladea", sans-serif;
+    font-weight: bold;
+}
+
+*.math sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+*.math sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
 core-menu {
     /*padding: 8px;*/
 }
