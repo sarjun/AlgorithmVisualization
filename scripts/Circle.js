@@ -103,42 +103,40 @@ Circle.prototype.center = function (animated, shouldLock, renderTable) {
 
 	var engorged = $("div.circle.engorge");
 	var lastRoot = $("div.circle.hideRoot div.circle.currentRoot");
-	$("div.circle").removeClass("hideRoot currentRoot animated");
-	if (true || Circle.centered != null) {
-		engorged.removeClass("engorge");
-		var node = this.parent;
-		var parents = [], visibleParents = [], animatedParents = [];
-		while (node != null) {
-			if (node.depth >= this.depth - 5) visibleParents.push(node.elem[0]);
-			else if (node != root) animatedParents.push(node.elem[0]);
-			parents.push(node.elem[0]);
-			node = node.parent;
-		}
-		parents = $(parents);
-		visibleParents = $(visibleParents);
-		animatedParents = $(animatedParents);
-		root.elem.addClass("collapse");
-		if (this.depth > 4) {
-			root.elem.addClass("hideRoot");
-		}
-		visibleParents.last().addClass("currentRoot");
-		if (visibleParents.length == 0) {
-			root.elem.addClass("currentRoot");
-		}
-
-		//root.elem.addClass("animated");
-		animatedParents.addClass("engorge");
-		var zeros = [], ones = [];
-		root.elem.find("div.circle").each(function (i,e) {
-			if ($(e).css("flex-grow") < 1) {
-				zeros.push(e);
-			} else {
-				ones.push([e, 100 / (e.style.height.replace("%", ""))]);
-			}
-		});
-	} else {
+	$("div.circle").removeClass("hideRoot currentRoot animated engorge");
+	var node = this.parent;
+	var visibleParents = [], animatedParents = [];
+	while (node != null) {
+		if (node.depth >= this.depth - 5) visibleParents.push(node.elem[0]);
+		else if (node != root) animatedParents.push(node.elem[0]);
+		node = node.parent;
+	}
+	visibleParents = $(visibleParents);
+	animatedParents = $(animatedParents);
+	root.elem.addClass("collapse");
+	if (this.depth > 4) {
+		root.elem.addClass("hideRoot");
+	}
+	visibleParents.last().addClass("currentRoot");
+	if (visibleParents.length == 0) {
 		root.elem.addClass("currentRoot");
 	}
+
+	animatedParents.addClass("engorge");
+	var zeros = [], ones = [];
+	root.elem.find("div.circle").each(function (i,e) {
+		if ($(e).css("flex-grow") < 1) {
+			zeros.push(e);
+		} else {
+			if ($(e).height() > $(e).parent().height() * 0.9) {
+				ones.push([e, 100 / (e.style.height.replace("%", ""))]);
+			} else {
+				ones.push([e, 1]);
+			}
+			//console.log(e.style.height + " " + ($(e).height() / $(e).parent().height()));
+		}
+	});
+
 	Circle.centered = this;
 	mainDiv.find("div.circle").removeClass("centered");
 	this.elem.addClass("centered");
@@ -169,11 +167,13 @@ Circle.prototype.center = function (animated, shouldLock, renderTable) {
 			height: zoomHeight,
 			top: centerOfScreen[1] - circleCenter[1],
 			left: centerOfScreen[0] - circleCenter[0]
-		}, 444, "easeInOutQuad", function () {
-			root.elem.addClass("collapse");
+		}, 444, "linear", function () {
+			//root.elem.addClass("collapse");
 			refreshCircleOverflow();
 			if (tracker instanceof DPTracker && renderTable) tableManager.renderTable(thisPointer.methodId);
 		});
+		//root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
+		//refreshCircleOverflow();
 		root.elem.addClass("animated");
 		$(zeros).css({
 			flexGrow: 0.00001
