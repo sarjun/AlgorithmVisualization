@@ -1164,3 +1164,5 @@ conquerMapping[funcName] = "This algorithm takes 3 parameters \\((S, P, M)\\), s
 "\\(\\Theta(n^3)\\) with a 3-dimensional table to \\(\\Theta(n^2)\\).";
 parameterMapping[funcName] = ["position : int", "steps : int", "probability step left : float", "probability step right : float", "rightmost seen position : int"];
 trackerMapping[funcName] = DPTracker;
+initParams[funcName] = [new ValueNode(0), new ValueNode(Math.ceil(Math.random() * 4) + 3), new ValueNode(Math.ceil(Math.random() * 4) / 10),
+	new ValueNode(Math.ceil(Math.random() * 4) / 10), new ValueNode(0)];

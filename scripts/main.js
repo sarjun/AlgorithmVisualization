@@ -12,6 +12,7 @@ var divideMapping = {};
 var conquerMapping = {};
 var parameterMapping = {};
 var trackerMapping = {};
+var initParams = {};
 
 var funcName = "";
 

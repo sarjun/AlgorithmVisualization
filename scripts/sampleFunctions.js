@@ -564,6 +564,14 @@ conquerMapping[funcName] = "The input list is partitioned on the median of media
 " index k. Otherwise, we recurse on the half of the partitioned list that contains the desired index.";
 parameterMapping[funcName] = ["K : uint", "Input List : [int list]"];
 trackerMapping[funcName] = Tracker;
+var toSort = [];
+var kValue = new ValueNode(2);
+for (var i = 15; i > 0; i--) {
+	var newNode = new ValueNode(i);
+	toSort.push(newNode);
+}
+shuffle(toSort);
+initParams[funcName] = [kValue, toSort];
 
 // Set Starting Function
 funcName = "Median of Medians";

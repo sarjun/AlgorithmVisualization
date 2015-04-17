@@ -32,16 +32,9 @@ function setContentSize() {
 
 function init() {
 	tableManager = new TableManager();
-	funcName = "Median of Medians";
-	var dAndC = funcMapping[funcName];
-	var toSort = [];
-	var kValue = new ValueNode(2);
-	for (var i = 15; i > 0; i--) {
-		var newNode = new ValueNode(i);
-		toSort.push(newNode);
-	}
-	shuffle(toSort);
-	dAndC(kValue, toSort.slice(0));
+	funcName = "Maximum Random Walk";
+	tracker = new trackerMapping[funcName]();
+	funcMapping[funcName].apply(null, initParams[funcName]);
 	var data = tracker.execution.children[0];
 
 	initAlgorithm(funcName);
