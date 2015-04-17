@@ -163,23 +163,27 @@ Circle.prototype.center = function (animated, shouldLock, renderTable) {
 		root.elem.css(currentPos);
 		root.elem.width(currentWidth).height(currentHeight);
 		root.elem.animate({
-			width: zoomWidth,
-			height: zoomHeight,
-			top: centerOfScreen[1] - circleCenter[1],
-			left: centerOfScreen[0] - circleCenter[0]
-		}, 444, "linear", function () {
+			opacity: 1//decoy
+		}, TIME_ZOOM, "linear", function () {
 			//root.elem.addClass("collapse");
 			refreshCircleOverflow();
 			if (tracker instanceof DPTracker && renderTable) tableManager.renderTable(thisPointer.methodId);
 		});
+
+		root.elem.css({
+			width: zoomWidth,
+			height: zoomHeight,
+			top: centerOfScreen[1] - circleCenter[1],
+			left: centerOfScreen[0] - circleCenter[0]
+		});
+		root.elem.addClass("animated");
 		//root.elem.css({top: centerOfScreen[1] - circleCenter[1], left: centerOfScreen[0] - circleCenter[0]});
 		//refreshCircleOverflow();
-		root.elem.addClass("animated");
 		$(zeros).css({
 			flexGrow: 0.00001
 		});
 		for (var i in ones) {
-			console.log(ones[i][1]);
+			//console.log(ones[i][1]);
 			$((ones[i][0])).css({
 				flexGrow: ones[i][1]
 			});

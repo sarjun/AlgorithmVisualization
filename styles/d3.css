@@ -176,7 +176,7 @@ div.circle-align-helper {
 }
 
 div.circle.hideRoot {
-    visibility: hidden;
+    /*visibility: hidden;*/
 }
 
 div.circle.collapse div.circle {
@@ -206,7 +206,7 @@ div.circle.collapse div.circle.currentRoot div.circle {
 div.circle.engorge {
     /*position: relative;*/
     height: 100% !important;
-    background: none;
+    background: transparent none;
     /*top: 0;*/
     /*left: 0;*/
 }
@@ -215,14 +215,14 @@ div.circle.collapse div.circle.engorge {
     flex-grow: 1 !important;
 }
 
-/*div.circle.animated {*/
-    /*transition: width 444ms linear, top 444ms linear, left 444ms linear, height 444ms linear;*/
-    /*transition-property: height, top, left, width;*/
-/*}*/
+div.circle.animated {
+    transition: all 750ms linear;
+    transition-property: top, left, width, height;
+}
 
 div.circle.animated div.circle {
-    transition: all 444ms linear;
-    transition-property: flex-grow, height;
+    transition: all 750ms linear;
+    transition-property: flex-grow, height, background-color;
 }
 
 div.node-stack-container {
