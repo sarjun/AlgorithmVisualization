@@ -109,7 +109,7 @@ Circle.prototype.center = function (animated, shouldLock, renderTable) {
 	var node = this.parent;
 	var visibleParents = [], animatedParents = [];
 	while (node != null) {
-		if (node.depth >= this.depth - 5) visibleParents.push(node.elem[0]);
+		if (node.depth >= this.depth - 10) visibleParents.push(node.elem[0]);
 		else if (node != root) animatedParents.push(node.elem[0]);
 		node = node.parent;
 	}
