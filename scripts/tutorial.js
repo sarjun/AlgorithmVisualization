@@ -1,3 +1,5 @@
+var CURRENT_TUTORIAL_VERSION = 1;
+
 function positionSpotlight(top, left, width, height) {
 	var spotlight = $("div.spotlight");
 	spotlight.show();
@@ -77,9 +79,16 @@ function clearSpotlightText() {
 	return spans;
 }
 
+function setTutorialCookie() {
+	setCookie("tutorial_version", CURRENT_TUTORIAL_VERSION, 10000);
+}
+
+
 var tutorialQueue = null;
 
 function startTutorial(){
+	setTutorialCookie();
+
 	if(tutorialQueue == null) {
 		$("div.cell").click(function() {
 			if(tutorialQueue.length > 0) {

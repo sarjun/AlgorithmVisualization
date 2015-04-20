@@ -115,6 +115,14 @@ function init() {
 	initMenuValues();
 	$("div.spotlight").hide();
 	setContentSize();
+	$(document.querySelector("#tutorialDialog paper-button")).click(setTutorialCookie);
+	$(document.querySelector("#tutorialDialog paper-button[autofocus]")).click(function () {
+		document.querySelector("core-drawer-panel").openDrawer();
+		setTimeout(startTutorial, 314);
+	});
+	if (getCookie("tutorial_version") * 1 < CURRENT_TUTORIAL_VERSION) {
+		document.querySelector("#tutorialDialog").toggle();
+	}
 	//startTutorial();
 }
 

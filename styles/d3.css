@@ -438,3 +438,8 @@ paper-button[raised].colored::shadow #focusBg {
 paper-dropdown .core-selected {
     background: greenyellow;
 }
+
+html /deep/ paper-action-dialog paper-button[autofocus] {
+    font-weight: bold;
+    color: #4285f4;
+}
