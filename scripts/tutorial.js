@@ -126,7 +126,8 @@ function tutorialStep4() {
 	positionSpotlightOnElem(root.elem);
 	setSpotlightText("This is the visualization of the selected algorithm on the specified inputs. Each circle is a method call " +
 	"where circles inside other circles are recursive calls. The values at the top of the circle are input parameters to that call" +
-	" in same order as in the menu. The values at the end of the circle are the return values.");
+	" in same order as in the menu. The values at the end of the circle are the return values. The input parameters can also " +
+	"be identified by hovering the mouse cursor over the input parameter in question.");
 }
 
 function tutorialStep5() {
@@ -154,9 +155,10 @@ function tutorialChildCircle(elem) {
 
 function tutorialMemoTable() {
 	positionSpotlightOnElem(memoDiv);
-	setSpotlightText("This is the memoization table used in this dynamic programming algorithm. When zooming to a specific " +
+	setSpotlightText("This section shows any globals used in this algorithm, including the memoization table used in " +
+	"dynamic programming algorithms. When zooming to a specific " +
 	"method call, the table will change to reflect what has been stored up to the point where that call returns. You may " +
-	"click on any cell in the table to go to the method call that stored that answer.");
+	"click on any cell in the memoization table to go to the method call that stored that answer.");
 }
 
 function tutorialConsole() {
@@ -171,7 +173,8 @@ function tutorialConsoleButtons() {
 	positionSpotlightOnElem($("#consoleBtns"));
 	setSpotlightText("These buttons are used to manipulate the console. The \"<\" button shifts the console panel in focus to " +
 	"the panel for the previously executed animation. Similarly, the \">\" button shifts to the panel for the animation " +
-	"after the current one. The \"Clear\" button clear all panels related to specific animations.");
+	"after the current one. Use them to view explanations to previous animations. " +
+	"The \"Clear\" button clear all panels related to specific animations.");
 }
 
 function doneTutorial() {
