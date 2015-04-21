@@ -31,36 +31,35 @@ TableManager.prototype.createTable = function(table) {
 		for (key1 of keys[z]) {
 			sorted.push(key1);
 		}
-		sorted.sort();
+		sorted.sort(function(a,b) {return a*1 - b*1;});
 		keys[z] = sorted;
 	}
 
 
 	var oneKey = keys.length == 1;
 
-	var rowElem = $("<tr><td></td></tr>");
-	for(key2 in keys[1]) {
-		rowElem.append("<td class='memo-label'>" + key2 + "</td>");
-	}
-
 	if (!oneKey) {
 		this.tableElem.append("<tr><td></td><td colspan='" + (keys[1].length + 0) + "'>" + hAxisName + "</td></tr>");
 		//rowElem.append("<td class='expand'></td>");
+		var rowElem = $("<tr><td></td></tr>");
+		for(key2 in keys[1]) {
+			rowElem.append("<td class='memo-label'>" + keys[1][key2] + "</td>");
+		}
 		this.tableElem.append(rowElem);
 		this.tableContainer.addClass("two-dimen");
 	}
 
 	for(key1 in keys[0]) {
 		var rowElem = $("<tr></tr>");
-		rowElem.append("<td class='memo-label'>" + key1 + "</td>");
+		rowElem.append("<td class='memo-label'>" + keys[0][key1] + "</td>");
 		var val = undefined;
 		if(oneKey) {
-			var val = table[key1+""];
+			var val = table[keys[0][key1]+""];
 			rowElem.append(this.createCell(val));
 		}
 		else {
 			for (key2 in keys[1]) {
-				var val = table[key1 + "," + key2];
+				var val = table[keys[0][key1] + "," + keys[1][key2]];
 				rowElem.append(this.createCell(val));
 			}
 			//rowElem.append("<td class='expand'></td>");

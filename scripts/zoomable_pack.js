@@ -33,7 +33,7 @@ function setContentSize() {
 function init() {
 	memoDiv = $("div.memo");
 	tableManager = new TableManager();
-	funcName = "Maximum Random Walk";
+	funcName = "Maximum Random Walk 2";
 	tracker = new trackerMapping[funcName]();
 	var localInitParams = initParams[funcName].slice(0, initParams[funcName].length);
 	for(var i=0; i<localInitParams.length; i++) {

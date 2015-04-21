@@ -1187,3 +1187,462 @@ parameterMapping[funcName] = ["steps : int", "position : int", "rightmost seen p
 trackerMapping[funcName] = DPTracker;
 initParams[funcName] = [new ValueNode(Math.ceil(Math.random() * 4) + 3), new ValueNode(0), new ValueNode(0), new ValueNode(Math.ceil(Math.random() * 4) / 10),
 	new ValueNode(Math.ceil(Math.random() * 4) / 10)];
+
+funcName = "Maximum Random Walk 2";
+function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
+	var intermId = 0;
+	tracker.logEntry([steps, maxRightSeen]);
+	var zoomAnim = getEmptyRelativeZoomAnimation();
+	zoomAnim.circleSpec = getCircleSpecification(0, []);
+	addStartAnimation(zoomAnim);
+	addEndAnimation(zoomAnim);
+
+	// Check error conditions
+	if (steps.value % 1 != 0 || steps.value < 0) {
+		tracker.logExit([new ValueNode("The value of steps must be a non-negative integer.")]);
+		return;
+	} else if (isNaN(pRight.value) || isNaN(pLeft.value) || pRight.value < 0 || pLeft.value < 0 ||
+		pLeft.value > 1 || pRight.value > 1) {
+		tracker.logExit([new ValueNode("'probability step left' and 'probability step right' must be numbers between 0 and 1 inclusive.")]);
+		return;
+	} else if (pLeft.value + pRight.value > 1) {
+		tracker.logExit([new ValueNode("The sum of 'probability step left' and 'probability step right' must be less than or equal to 1.")]);
+		return;
+	} else if(isNaN(maxRightSeen.value)) {
+		tracker.logExit([new ValueNode("The value of 'rightmost seen position' must be a number.")]);
+		return;
+	} else if(maxRightSeen.value < 0) {
+		tracker.logExit([new ValueNode("The value of 'rightmost seen position' must be at least zero since zero is the starting position.")]);
+		return;
+	}
+
+	var resetTable = getEmptySetTableAnimation();
+	resetTable.maxShowID = tracker.maxId - 1;
+	addStartAnimation(resetTable);
+	var endReset = getEmptySetTableAnimation();
+	endReset.maxShowID = tracker.maxId - 1;
+	addEndAnimation(endReset);
+
+	var oldMax = maxRightSeen;
+	maxRightSeen = new ValueNode(maxRightSeen.value);
+	var key = steps.value + "," + maxRightSeen.value;
+	var ans = tracker.table[key];
+	if(ans != null) {
+		addStartAnimation(getTextAnim("Another similar problem where there was \\(S\\) steps left and where the current position " +
+		"was \\(M-P\\) away from the rightmost spot seen has already been solved. Therefore, the average rightward displacement going forward " +
+		"(taking \\(M-P\\) into account ) is stored in the memoization table."));
+		var getEntry = getEmptyGetFromTableAnimation();
+		getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "start", 3);
+		addStartAnimation(getEntry);
+		addEndAnimation(getTextAnim("This answer was calculated using stored values in the memoization table. Click on the input " +
+		"values to this problem instance to see how."));
+		tracker.logExit([ans.value]);
+		return ans.value;
+	}
+	if (steps.value <= 0) {
+		ans = new ValueNode(maxRightSeen.value);
+		var tEntry = getEmptyDPTableEntry();
+		tEntry.params = {
+			"Steps": steps,
+			"Max Seen": maxRightSeen
+		};
+		tEntry.value = ans;
+		tracker.table[key] = tEntry;
+
+		// Start animation
+		addStartAnimation(getTextAnim("The number of steps remaining, \\(S\\), is zero, so this is a base case. The " +
+		"rightmost position is simply equal to \\(M\\), or the rightmost position seen on the path to here."));
+		var getAnswer = getEmptyTranslateAnimation();
+		getAnswer.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
+		getAnswer.destSpec = getNodeSpecification(ans, 0, [], "end");
+		addStartAnimation(getAnswer);
+
+		// End animation
+		var addTable = getEmptyAddToTableAnimation();
+		addTable.ansSpec = getAnswer.destSpec;
+		addEndAnimation(addTable);
+		var updateTable = getEmptySetTableAnimation();
+		addEndAnimation(updateTable);
+
+		var frame = tracker.logExit([ans]);
+		updateTable.maxShowID = frame.methodId;
+		tEntry.methodId = frame.methodId;
+		return ans;
+	} else {
+
+		var newStep = new ValueNode(steps.value - 1);
+		var newMaxLeft = new ValueNode(maxRightSeen.value + 1);
+		var newMaxRight = new ValueNode(Math.max(maxRightSeen.value - 1, 0));
+		var pStay = new ValueNode(1 - pLeft.value - pRight.value);
+
+		// Start animation
+		var nNodes = [new ValueNode("\\(P_{left}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"),
+			new ValueNode("\\(P_{stay}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"),
+			new ValueNode("\\(P_{right}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"),
+			new ValueNode("0"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)")];
+		var recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		recurrence.list = "start";
+		recurrence.position = "below";
+		recurrence.entities = ["\\(t(\\)", nNodes[10], "\\(,\\)", nNodes[11], "\\() =\\; \\)"];
+		recurrence.inline = true;
+		addStartAnimation(recurrence);
+		recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		var leftId = recurrence.intermediateId;
+		recurrence.list = "start";
+		recurrence.position = "below";
+		recurrence.entities = [nNodes[0], "\\(\\times (t(\\)", nNodes[1], "\\( - 1\\)", "\\(,\\)", nNodes[2], "\\( + 1\\)", "\\()\\)", "\\( - 1)\\)"];
+		recurrence.inline = true;
+		addStartAnimation(recurrence);
+		recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		var stayId = recurrence.intermediateId;
+		recurrence.list = "start";
+		recurrence.position = "below";
+		recurrence.entities = ["\\( + \\)", nNodes[3], "\\(\\times t(\\)", nNodes[4], "\\( - 1\\)", "\\(,\\)", nNodes[5], "\\()\\)"];
+		recurrence.inline = true;
+		addStartAnimation(recurrence);
+		recurrence = getEmptyCreateIntermediateStepAnimation();
+		recurrence.intermediateId = intermId++;
+		var rightId = recurrence.intermediateId;
+		recurrence.list = "start";
+		recurrence.position = "below";
+		recurrence.entities = ["\\( + \\)", nNodes[6], "\\(\\times (t(\\)", nNodes[7], "\\( - 1\\)", "\\(,\\)", "\\(max(\\)", nNodes[8], "\\( - 1 \\)",
+			"\\(,\\)", nNodes[9], "\\()\\)", "\\() + 1 )\\)"];
+		recurrence.inline = true;
+		addStartAnimation(recurrence);
+		addStartAnimation(getTextAnim("The recurrence shown is derived as follows: <br><br> The average " +
+		"rightmost position reached starting from position \\(P\\) with \\(S\\) steps left and having already been as far right as " +
+		"\\(M\\) is equal to a weighted average of the solution after moving to the left (\\(P-1\\)), " +
+		"staying in the same position(\\(P\\)), and moving to the right (\\(P+1\\))."));
+
+		var initRecurrence = getEmptyBundleAnimation();
+		var setRecurrence = getEmptyBundleAnimation();
+		var initS = getEmptyTranslateAnimation();
+		initS.sourceSpec = getNodeSpecification(steps, 0, [], "start");
+		initS.destSpec = getNodeSpecification(nNodes[10], 0, [], "start", 2);
+		initRecurrence.animations.push(initS);
+		var setS = getEmptyChangeValueNodeAnimation();
+		setS.nodeSpec = initS.destSpec;
+		setS.newValue = steps.getDisplayString();
+		setRecurrence.animations.push(setS);
+		var initM = getEmptyTranslateAnimation();
+		initM.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
+		initM.destSpec = getNodeSpecification(nNodes[11], 0, [], "start", 2);
+		initRecurrence.animations.push(initM);
+		var setM = getEmptyChangeValueNodeAnimation();
+		setM.nodeSpec = initM.destSpec;
+		setM.newValue = oldMax.getDisplayString();
+		setRecurrence.animations.push(setM);
+		addStartAnimation(initRecurrence);
+		addStartAnimation(setRecurrence);
+
+		var changeBundle = getEmptyBundleAnimation();
+		var probNodes = [nNodes[0], nNodes[3], nNodes[6]];
+		var probVals = [pLeft.getDisplayString(), pStay.getDisplayString(), pRight.getDisplayString()];
+		for (var i in probNodes) {
+			var changeProbAnim = getEmptyChangeValueNodeAnimation();
+			changeProbAnim.nodeSpec = getNodeSpecification(probNodes[i], 0, [], "start", 3 + i*1);
+			changeProbAnim.newValue = probVals[i];
+			changeBundle.animations.push(changeProbAnim);
+		}
+		addStartAnimation(changeBundle);
+
+		var probs = [pLeft.value, pStay.value, pRight.value];
+		var check = [0, EPSILON, 0];
+		var ids = [leftId, stayId, rightId];
+		var removeZeroBundle = getEmptyBundleAnimation();
+		var deleted = [];
+		for(var i = 2; i >=0; i--) {
+			deleted.unshift(probs[i] <= check[i]);
+			if(deleted[0]) {
+				var removeInterm = getEmptyRemoveIntermediateStepAnimation();
+				removeInterm.intermediateId = ids[i];
+				removeInterm.position = "below";
+				removeInterm.list = "start";
+				removeInterm.effectParams = {width:0};
+				removeZeroBundle.animations.push(removeInterm);
+				if(i == 0) {
+					var removePlus = getEmptyIntermediateRemoveEntityAnimation();
+					if(pStay.value > EPSILON) removePlus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 3);
+					else removePlus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 4);
+					removePlus.effectParams = {width:0};
+					removePlus.entityIndex = 1;
+					removeZeroBundle.animations.push(removePlus);
+				}
+			}
+		}
+		addStartAnimation(removeZeroBundle);
+		var fillBundle = getEmptyBundleAnimation();
+		var updateBundle = getEmptyBundleAnimation();
+		var doMathBundle = getEmptyBundleAnimation();
+		var callChildren = getEmptyBundleAnimation();
+		for(var i=0; i<3; i++) {
+			if(deleted[i]) continue;
+
+			var moveS = getEmptyTranslateAnimation();
+			moveS.sourceSpec = getNodeSpecification(steps, 0, [], "start");
+			moveS.destSpec = getNodeSpecification(nNodes[1+3*i], 0, [], "start", 3+(i*1));
+			fillBundle.animations.push(moveS);
+			var updateS = getEmptyChangeValueNodeAnimation();
+			updateS.nodeSpec = moveS.destSpec;
+			updateS.newValue = steps.value;
+			updateBundle.animations.push(updateS);
+			var deleteMinus = getEmptyIntermediateRemoveEntityAnimation();
+			deleteMinus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 2+i);
+			deleteMinus.entityIndex = i > 0 ? 5 : 4;
+			deleteMinus.effectParams = {width:0};
+			updateS = getEmptyChangeValueNodeAnimation();
+			updateS.nodeSpec = moveS.destSpec;
+			updateS.newValue = newStep.value;
+			doMathBundle.animations.push(deleteMinus);
+			doMathBundle.animations.push(updateS);
+			var toChild = getEmptyTranslateAnimation();
+			toChild.sourceSpec = moveS.destSpec;
+			toChild.destSpec = getNodeSpecification(newStep, 0, [i - deleted.slice(0,i).filter(function(a){return a;}).length], "start");
+			callChildren.animations.push(toChild);
+
+			var moveM = getEmptyTranslateAnimation();
+			moveM.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
+			moveM.destSpec = getNodeSpecification(nNodes[2+3*i], 0, [], "start", 3+(i*1));
+			fillBundle.animations.push(moveM);
+			var updateM = getEmptyChangeValueNodeAnimation();
+			updateM.nodeSpec = moveM.destSpec;
+			updateM.newValue = oldMax.value;
+			updateBundle.animations.push(updateM);
+			if(i%2==0) {
+				var deleteMinus = getEmptyIntermediateRemoveEntityAnimation();
+				deleteMinus.intermSpec = getIntermediateSpecification(0, [], "start", "below", 2 + i);
+				deleteMinus.entityIndex = i == 0 ? 7 : (i==1 ? 8 : 9);
+				deleteMinus.effectParams = {width: 0};
+				updateM = getEmptyChangeValueNodeAnimation();
+				updateM.nodeSpec = moveM.destSpec;
+				updateM.newValue = i == 0 ? (oldMax.value + 1) : (oldMax.value - 1);
+				doMathBundle.animations.push(deleteMinus);
+				doMathBundle.animations.push(updateM);
+			}
+			if(i!= 2) {
+				var toChild = getEmptyTranslateAnimation();
+				toChild.sourceSpec = moveM.destSpec;
+				toChild.destSpec = getNodeSpecification((i == 0) ? newMaxLeft : (i == 1 ? maxRightSeen : newMaxRight), 0, [i - deleted.slice(0, i).filter(function (a) {
+					return a;
+				}).length], "start");
+				callChildren.animations.push(toChild);
+			}
+		}
+		addStartAnimation(fillBundle);
+		addStartAnimation(updateBundle);
+		//addStartAnimation(getTextAnim("Note that \\(M\\) may be different for the method call " +
+		//"representing movement to the right because \\(P+1\\) may be the new rightmost position seen along this path."));
+		addStartAnimation(doMathBundle);
+		var resolveMaxBundle = getEmptyBundleAnimation();
+		if(!deleted[2]) {
+			var intermSpec = getIntermediateSpecification(0, [], "start", "below", 4);
+			var effectParams = {width:0};
+			var remove = getEmptyIntermediateRemoveEntityAnimation();
+			remove.intermSpec = intermSpec;
+			remove.entityIndex = 12;
+			remove.effectParams = effectParams;
+			resolveMaxBundle.animations.push(remove);
+			remove = getEmptyIntermediateRemoveEntityAnimation();
+			remove.intermSpec = intermSpec;
+			remove.entityIndex = 10;
+			remove.effectParams = effectParams;
+			resolveMaxBundle.animations.push(remove);
+			remove = getEmptyIntermediateRemoveEntityAnimation();
+			remove.intermSpec = intermSpec;
+			remove.entityIndex = oldMax.value - 1 > 0 ? 11 : 8;
+			remove.effectParams = effectParams;
+			resolveMaxBundle.animations.push(remove);
+			remove = getEmptyIntermediateRemoveEntityAnimation();
+			remove.intermSpec = intermSpec;
+			remove.entityIndex = 7;
+			remove.effectParams = effectParams;
+			resolveMaxBundle.animations.push(remove);
+
+			var maxToChild = getEmptyTranslateAnimation();
+			maxToChild.sourceSpec = getNodeSpecification(oldMax.value - 1 > 0 ? nNodes[8] : nNodes[9], 0, [], "start", 5);
+			maxToChild.destSpec = getNodeSpecification(newMaxRight, 0, [2 - deleted.slice(0,2).filter(function(a){return a;}).length], "start");
+			callChildren.animations.push(maxToChild);
+		}
+		addStartAnimation(resolveMaxBundle);
+		addStartAnimation(callChildren);
+		var clearInterms = getEmptyBundleAnimation();
+		removeInterm = getEmptyRemoveIntermediateStepAnimation();
+		removeInterm.intermediateId = leftId - 1;
+		removeInterm.position = "below";
+		removeInterm.list = "start";
+		removeInterm.effectParams = {width:0};
+		clearInterms.animations.push(removeInterm);
+		for(var i in deleted) {
+			if(deleted[i]) continue;
+			removeInterm = getEmptyRemoveIntermediateStepAnimation();
+			removeInterm.intermediateId = ids[i];
+			removeInterm.position = "below";
+			removeInterm.list = "start";
+			removeInterm.effectParams = {width:0};
+			clearInterms.animations.push(removeInterm);
+		}
+		addStartAnimation(clearInterms);
+		addStartAnimation(getEmptyClearIntermediateAnimation());
+
+		var ans = 0;
+		if (pLeft.value > 0) {
+			var moveLeft = maximumRandomWalk2(newStep, newMaxLeft, pLeft, pRight);
+			ans += pLeft.value * (moveLeft.value - 1);
+		}
+		if (pStay.value > EPSILON) {
+			var stay = maximumRandomWalk2(newStep, maxRightSeen, pLeft, pRight);
+			ans += pStay.value * stay.value;
+		}
+		if (pRight.value > 0) {
+			var moveRight = maximumRandomWalk2(newStep, newMaxRight, pLeft, pRight);
+			ans += pRight.value * (moveRight.value + 1);
+		}
+		endReset.maxShowID = tracker.maxId - 1;
+		ans = new ValueNode(ans);
+		var tEntry = getEmptyDPTableEntry();
+		tEntry.params = {
+			"Steps": steps,
+			"Max Seen": maxRightSeen
+		};
+		tEntry.value = ans;
+		tracker.table[key] = tEntry;
+
+		// End animations
+		//nNodes = [new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + (pos.value - 1) + "\\(,\\)" + oldMax.value + "\\()\\)"),
+		//	new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + pos.value + "\\(,\\)" + oldMax.value + "\\()\\)"),
+		//	new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + (pos.value + 1) + "\\(,\\)" + newMaxRight.value + "\\()\\)")];
+		//recurrence = getEmptyCreateIntermediateStepAnimation();
+		//recurrence.intermediateId = intermId++;
+		//recurrence.list = "end";
+		//recurrence.position = "above";
+		//recurrence.entities = [new ValueNode("\\(t(" + steps.value + "," + pos.value + "," + oldMax.value + ")\\)"), "\\( = \\;\\)"];
+		//recurrence.inline = true;
+		//addEndAnimation(recurrence);
+		//if(!deleted[0]) {
+		//	recurrence = getEmptyCreateIntermediateStepAnimation();
+		//	leftId = recurrence.intermediateId = intermId++;
+		//	recurrence.list = "end";
+		//	recurrence.position = "above";
+		//	recurrence.entities = ["\\(" + pLeft.getDisplayString() + "\\times\\)", nNodes[0]];
+		//	recurrence.inline = true;
+		//	addEndAnimation(recurrence);
+		//}
+		//if(!deleted[1]) {
+		//	recurrence = getEmptyCreateIntermediateStepAnimation();
+		//	stayId = recurrence.intermediateId = intermId++;
+		//	recurrence.list = "end";
+		//	recurrence.position = "above";
+		//	recurrence.entities = [deleted[0] ? "" : "\\(+\\)", "\\(" + pStay.getDisplayString() + "\\times\\)", nNodes[1]];
+		//	recurrence.inline = true;
+		//	addEndAnimation(recurrence);
+		//}
+		//if(!deleted[2]) {
+		//	recurrence = getEmptyCreateIntermediateStepAnimation();
+		//	rightId = recurrence.intermediateId = intermId++;
+		//	recurrence.list = "end";
+		//	recurrence.position = "above";
+		//	recurrence.entities = [(deleted[0] && deleted[1]) ? "" : "\\(+\\)", "\\(" + pRight.getDisplayString() + "\\times\\)", nNodes[2]];
+		//	recurrence.inline = true;
+		//	addEndAnimation(recurrence);
+		//}
+		//var getFromChildren = getEmptyBundleAnimation();
+		//var updateVals = getEmptyBundleAnimation();
+		//var multiply = getEmptyBundleAnimation();
+		//var add = getEmptyBundleAnimation();
+		//var skipCount = 0;
+		//var intermIds = [leftId, stayId, rightId];
+		//for(var i = 0; i < 3; i++) {
+		//	if(deleted[i]) {
+		//		skipCount++;
+		//		continue;
+		//	}
+		//	var getAnim = getEmptyTranslateAnimation();
+		//	getAnim.sourceSpec = getNodeSpecification(tracker.currentFrame.children[i - skipCount].result[0], 0, [i - skipCount], "end");
+		//	getAnim.destSpec = getNodeSpecification(nNodes[i], 0, [], "end",
+		//		i-3 + deleted.slice(i+1,3).filter(function(a){return a;}).length);
+		//	getFromChildren.animations.push(getAnim);
+		//	var update = getEmptyChangeValueNodeAnimation();
+		//	update.nodeSpec = getAnim.destSpec;
+		//	update.newValue = tracker.currentFrame.children[i - skipCount].result[0].getDisplayString();
+		//	updateVals.animations.push(update);
+		//	update = getEmptyChangeValueNodeAnimation();
+		//	update.nodeSpec = getAnim.destSpec;
+		//	update.newValue = new ValueNode(probVals[i] * tracker.currentFrame.children[i - skipCount].result[0].value).getDisplayString();
+		//	multiply.animations.push(update);
+		//	var removeMult = getEmptyIntermediateRemoveEntityAnimation();
+		//	removeMult.intermSpec = getIntermediateSpecification(0, [], "end", "above", i + 2 - skipCount);
+		//	removeMult.entityIndex = i == 0 ? 1 : 2;
+		//	removeMult.effectParams = {width: 0};
+		//	multiply.animations.push(removeMult);
+		//	if(deleted.slice(0,i).filter(function(a){return !a;}).length > 0) {
+		//		var deleteAnim = getEmptyRemoveIntermediateStepAnimation();
+		//		deleteAnim.intermediateId = intermIds[i];
+		//		deleteAnim.effectParams = {width: 0};
+		//		deleteAnim.list = "end";
+		//		deleteAnim.position = "above";
+		//		add.animations.push(deleteAnim);
+		//	}
+		//}
+		//addEndAnimation(getFromChildren);
+		//addEndAnimation(updateVals);
+		//addEndAnimation(multiply);
+		//var addAnim = getEmptyChangeValueNodeAnimation();
+		//addAnim.nodeSpec = getNodeSpecification(nNodes[deleted.indexOf(false)], 0, [], "end",
+		//	-3 + deleted.filter(function(a){return a}).length);
+		//addAnim.newValue = ans.getDisplayString();
+		//add.animations.push(addAnim);
+		//addEndAnimation(add);
+		//var getAnswer = getEmptyTranslateAnimation();
+		//getAnswer.sourceSpec = addAnim.nodeSpec;
+		//getAnswer.destSpec = getNodeSpecification(ans, 0, [], "end");
+		//addEndAnimation(getAnswer);
+		//var removeRec = getEmptyBundleAnimation();
+		//var removeOne = getEmptyRemoveIntermediateStepAnimation();
+		//removeOne.intermediateId = leftId - 1;
+		//removeOne.effectParams = {width: 0};
+		//removeOne.list = "end";
+		//removeOne.position = "above";
+		//removeRec.animations.push(removeOne);
+		//removeOne = getEmptyRemoveIntermediateStepAnimation();
+		//removeOne.intermediateId = intermIds[deleted.indexOf(false)];
+		//removeOne.effectParams = {width: 0};
+		//removeOne.list = "end";
+		//removeOne.position = "above";
+		//removeRec.animations.push(removeOne);
+		//addEndAnimation(removeRec);
+		//var updateTable = answerToKey(steps, pos, maxRightSeen, intermId, ans, tEntry);
+
+		var frame = tracker.logExit([ans]);
+		tEntry.methodId = frame.methodId;
+		//updateTable.maxShowID = frame.methodId;
+		return ans;
+	}
+}
+
+funcMapping[funcName] = maximumRandomWalk2;
+overviewMapping[funcName] = "This function computes the expected right-most position reached after taking <span class='math'>S</span> random " +
+"steps from starting position <span class='math'>P</span>. The probabilities of moving to the left, staying in the current spot, and moving to " +
+"the right are given by <span class='math'>P<sub>left</sub>, 1-P<sub>left</sub>-P<sub>right</sub>, </span> and <span class='math'>P<sub>right</sub>,</span> respectively. Note that staying in " +
+"the same spot counts as an action that consumes a step.";
+divideMapping[funcName] = "This is done by repeatedly computing the weighted average of the expected results of moving " +
+"left, staying still, and moving right. This can be represented by the following recurrence: <span class='math'>t(S,P,M)=P<sub>left</sub>&times; " +
+"t(S-1, P-1, M) + P<sub>stay</sub>&times; t(S-1,P,M) + P<sub>right</sub>&times; t(S-1, P+1, max(M, P+1))</span>. <span class='math'>S</span> always decreases by " +
+"one in the sub-problems because the number of steps remaining decreases by 1. <span class='math'>P</span> changes according to whether the " +
+"sub-problem represents movement to the right, left, or staying in place. <span class='math'>M</span> only has the potential to change when moving " +
+"to the right, because otherwise the maximum location seen so far cannot increase (and it will never decrease).";
+conquerMapping[funcName] = "This algorithm takes 3 parameters <span class='math'>(S, P, M)</span>, so it can be memoized with a 3-dimensional table.<br><br>" +
+"However, if we knew the average rightmost position reached by taking <span class='math'>S</span> steps from position 0, we could add that to any position <span class='math'>P</span> " +
+"to get the average rightmost position reached by taking <span class='math'>S</span> steps from <span class='math'>P</span>. However, the rightmost position seen so far could change some " +
+"of our answers if it is higher than the current position. Therefore, we also need to know the rightmost position we have seen relative " +
+"to the current position in addition to the number of steps left. Given those two, we know the average rightmost position relative " +
+"to our distance from the rightmost position already seen. If we add that to the current position, that gives us the overall rightmost position " +
+"seen to any problem instance. <br><br>Therefore, we can use a 2-dimensional table where the dimensions are <span class='math'>S</span> and <span class='math'>M-P</span> " +
+"and add the memoized value to the current position for the final answer. This reduces the running time of the algorithm from " +
+"<span class='math'>&Theta;(n<sup>3</sup>)</span> with a 3-dimensional table to <span class='math'>&Theta;(n<sup>2</sup>)</span>.";
+parameterMapping[funcName] = ["steps : int", "rightmost seen position : int", "probability step left : float", "probability step right : float"];
+trackerMapping[funcName] = DPTracker;
+initParams[funcName] = [new ValueNode(Math.ceil(Math.random() * 4) + 3), new ValueNode(0), new ValueNode(Math.ceil(Math.random() * 4) / 10),
+	new ValueNode(Math.ceil(Math.random() * 4) / 10)];
