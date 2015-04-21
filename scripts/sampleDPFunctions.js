@@ -1228,14 +1228,12 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 	var key = steps.value + "," + maxRightSeen.value;
 	var ans = tracker.table[key];
 	if(ans != null) {
-		addStartAnimation(getTextAnim("Another similar problem where there was \\(S\\) steps left and where the current position " +
-		"was \\(M-P\\) away from the rightmost spot seen has already been solved. Therefore, the average rightward displacement going forward " +
-		"(taking \\(M-P\\) into account ) is stored in the memoization table."));
+		addStartAnimation(getTextAnim("Another similar problem where there were \\(S\\) steps left and where the rightmost position " +
+		"seen was \\(M\\) has already been solved. We will lookup the answer in the memoization table."));
 		var getEntry = getEmptyGetFromTableAnimation();
 		getEntry.ansSpec = getNodeSpecification(ans.value, 0, [], "end");
 		addStartAnimation(getEntry);
-		addEndAnimation(getTextAnim("This answer was calculated using stored values in the memoization table. Click on the input " +
-		"values to this problem instance to see how."));
+		addEndAnimation(getTextAnim("This answer was calculated using stored values in the memoization table."));
 		tracker.logExit([ans.value]);
 		return ans.value;
 	}
@@ -1250,7 +1248,7 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 		tracker.table[key] = tEntry;
 
 		// Start animation
-		addStartAnimation(getTextAnim("The number of steps remaining, \\(S\\), is zero, so this is a base case. The " +
+		addStartAnimation(getTextAnim("The number of steps remaining, \\(S\\), is zero so this is a base case. The " +
 		"rightmost position is simply equal to \\(M\\), or the rightmost position seen on the path to here."));
 		var getAnswer = getEmptyTranslateAnimation();
 		getAnswer.sourceSpec = getNodeSpecification(oldMax, 0, [], "start");
@@ -1258,6 +1256,7 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 		addStartAnimation(getAnswer);
 
 		// End animation
+		addEndAnimation(getTextAnim("Now we memoize the result of this problem for lookup later."));
 		var addTable = getEmptyAddToTableAnimation();
 		addTable.ansSpec = getAnswer.destSpec;
 		addEndAnimation(addTable);
@@ -1280,6 +1279,9 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 			new ValueNode("\\(P_{stay}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"),
 			new ValueNode("\\(P_{right}\\)"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)"),
 			new ValueNode("0"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)")];
+		addStartAnimation(getTextAnim("We will now form the recurrence used to solve this problem. The recurrence " +
+		"is a weighted average of the answers for moving to the left, staying in the same spot, and moving to the right." +
+		"In all sub-problems, <span class='math'>S</span>, then number of steps left, will be decreased by 1."));
 		var recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
 		recurrence.list = "start";
@@ -1295,6 +1297,13 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 		recurrence.entities = [nNodes[0], "\\(\\times (t(\\)", nNodes[1], "\\( - 1\\)", "\\(,\\)", nNodes[2], "\\( + 1\\)", "\\()\\)", "\\( - 1)\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
+		addStartAnimation(getTextAnim("This part of the recurrence represents the posibility of moving to the left. " +
+		"Recall that the following two answers are identical: " +
+		"<ol><li> The answer when the starting position is -1 and having been as far right as <span class='math'>M</span>, and</li>" +
+		"<li><span class='math'>Ans-1</span>, where <span class='math'>Ans</span> is the answer when starting from position 0" +
+		" and having been as far right as <span class='math'>M + 1</span></li></ol>The " +
+		"sub-problem is considered to be at position 0 like this problem instance, so <span class='math'>M</span> is " +
+		"increased by 1 and the final answer is decreased by 1."));
 		recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
 		var stayId = recurrence.intermediateId;
@@ -1303,6 +1312,8 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 		recurrence.entities = ["\\( + \\)", nNodes[3], "\\(\\times t(\\)", nNodes[4], "\\( - 1\\)", "\\(,\\)", nNodes[5], "\\()\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
+		addStartAnimation(getTextAnim("This part of the recurrence represents the posibility of staying in the same position. As such," +
+		"<span class='math'>M</span>, the rightmost position seen, stays the same"));
 		recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
 		var rightId = recurrence.intermediateId;
@@ -1312,10 +1323,15 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 			"\\(,\\)", nNodes[9], "\\()\\)", "\\() + 1 )\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
-		addStartAnimation(getTextAnim("The recurrence shown is derived as follows: <br><br> The average " +
-		"rightmost position reached starting from position \\(P\\) with \\(S\\) steps left and having already been as far right as " +
-		"\\(M\\) is equal to a weighted average of the solution after moving to the left (\\(P-1\\)), " +
-		"staying in the same position(\\(P\\)), and moving to the right (\\(P+1\\))."));
+		addStartAnimation(getTextAnim("This part of the recurrence represents the posibility of moving to the right. " +
+		"Note that the following two answers are identical: " +
+		"<ol><li> The answer when the starting position is 1 and having been as far right as <span class='math'>M</span>, and</li>" +
+		"<li><span class='math'>Ans+1</span>, where <span class='math'>Ans</span> is the answer when starting from position 0" +
+		" and having been as far right as <span class='math'>M - 1</span></li></ol>The " +
+		"sub-problem is considered to be at position 0 like this problem instance, so <span class='math'>M</span> is " +
+		"decreased by 1 and the final answer is increased by 1. Note that <span class='math'>M - 1</span></li> may be less " +
+		"than 0 even though the sub-problem is at position 0. Taking the max of <span class='math'>M - 1</span></li> and 0 " +
+		"solves that problem."));
 
 		var initRecurrence = getEmptyBundleAnimation();
 		var setRecurrence = getEmptyBundleAnimation();
@@ -1511,6 +1527,8 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 		tracker.table[key] = tEntry;
 
 		// End animations
+		addEndAnimation(getTextAnim("Now we simply combine the answer of the sub-problems according to the recurrence" +
+		" created before."));
 		nNodes = [new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + (oldMax.value + 1) + "\\()\\)"),
 			new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + oldMax.value + "\\()\\)"),
 			new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + newMaxRight.value + "\\()\\)")];
@@ -1613,6 +1631,7 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 		removeOne.position = "above";
 		removeRec.animations.push(removeOne);
 		addEndAnimation(removeRec);
+		addEndAnimation(getTextAnim("Now we memoize the result of this problem for lookup later."));
 		var addTable = getEmptyAddToTableAnimation();
 		addTable.ansSpec = getAnswer.destSpec;
 		addEndAnimation(addTable);
@@ -1629,9 +1648,9 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 funcMapping[funcName] = maximumRandomWalk2;
 overviewMapping[funcName] = "This function computes the expected right-most position reached after taking <span class='math'>S</span> random " +
 "steps starting from position 0 and having already been as far right as <span class='math'>M</span>. " +
-"The probabilities of moving to the left, staying in the current spot, and moving to " +
-"the right are given by <span class='math'>P<sub>left</sub>, 1-P<sub>left</sub>-P<sub>right</sub>, </span> and " +
-"<span class='math'>P<sub>right</sub>,</span> respectively. Note that staying in " +
+"The probabilities of moving to the left, moving to the right, and staying in the current spot are given by " +
+"<span class='math'>P<sub>left</sub>, P<sub>right</sub>, </span> and <span class='math'>(1-P<sub>left</sub>-P<sub>right</sub>)</span> " +
+"respectively. Note that staying in " +
 "the same spot counts as an action that consumes a step.";
 divideMapping[funcName] = "The answer is found by repeatedly computing the weighted average of the expected results of moving " +
 "left, staying still, and moving right. This can be represented by the following recurrence: <span class='math'>t(S,M)=P<sub>left</sub>&times; " +
