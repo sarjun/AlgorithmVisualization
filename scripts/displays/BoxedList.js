@@ -94,6 +94,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 			case "addToTable":
 				var sourceElem = boxedList.getElem(animationList[i].ansSpec);
 				var destElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
+				destElem[0].scrollIntoView();
 				console.log(sourceElem);
 				console.log(destElem);
 				if(sourceElem == null || destElem == null) break;
