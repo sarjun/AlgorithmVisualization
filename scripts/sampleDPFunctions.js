@@ -1628,24 +1628,26 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 
 funcMapping[funcName] = maximumRandomWalk2;
 overviewMapping[funcName] = "This function computes the expected right-most position reached after taking <span class='math'>S</span> random " +
-"steps from starting position <span class='math'>P</span>. The probabilities of moving to the left, staying in the current spot, and moving to " +
-"the right are given by <span class='math'>P<sub>left</sub>, 1-P<sub>left</sub>-P<sub>right</sub>, </span> and <span class='math'>P<sub>right</sub>,</span> respectively. Note that staying in " +
+"steps starting from position 0 and having already been as far right as <span class='math'>M</span>. " +
+"The probabilities of moving to the left, staying in the current spot, and moving to " +
+"the right are given by <span class='math'>P<sub>left</sub>, 1-P<sub>left</sub>-P<sub>right</sub>, </span> and " +
+"<span class='math'>P<sub>right</sub>,</span> respectively. Note that staying in " +
 "the same spot counts as an action that consumes a step.";
-divideMapping[funcName] = "This is done by repeatedly computing the weighted average of the expected results of moving " +
-"left, staying still, and moving right. This can be represented by the following recurrence: <span class='math'>t(S,P,M)=P<sub>left</sub>&times; " +
-"t(S-1, P-1, M) + P<sub>stay</sub>&times; t(S-1,P,M) + P<sub>right</sub>&times; t(S-1, P+1, max(M, P+1))</span>. <span class='math'>S</span> always decreases by " +
-"one in the sub-problems because the number of steps remaining decreases by 1. <span class='math'>P</span> changes according to whether the " +
-"sub-problem represents movement to the right, left, or staying in place. <span class='math'>M</span> only has the potential to change when moving " +
-"to the right, because otherwise the maximum location seen so far cannot increase (and it will never decrease).";
-conquerMapping[funcName] = "This algorithm takes 3 parameters <span class='math'>(S, P, M)</span>, so it can be memoized with a 3-dimensional table.<br><br>" +
-"However, if we knew the average rightmost position reached by taking <span class='math'>S</span> steps from position 0, we could add that to any position <span class='math'>P</span> " +
-"to get the average rightmost position reached by taking <span class='math'>S</span> steps from <span class='math'>P</span>. However, the rightmost position seen so far could change some " +
-"of our answers if it is higher than the current position. Therefore, we also need to know the rightmost position we have seen relative " +
-"to the current position in addition to the number of steps left. Given those two, we know the average rightmost position relative " +
-"to our distance from the rightmost position already seen. If we add that to the current position, that gives us the overall rightmost position " +
-"seen to any problem instance. <br><br>Therefore, we can use a 2-dimensional table where the dimensions are <span class='math'>S</span> and <span class='math'>M-P</span> " +
-"and add the memoized value to the current position for the final answer. This reduces the running time of the algorithm from " +
-"<span class='math'>&Theta;(n<sup>3</sup>)</span> with a 3-dimensional table to <span class='math'>&Theta;(n<sup>2</sup>)</span>.";
+divideMapping[funcName] = "The answer is found by repeatedly computing the weighted average of the expected results of moving " +
+"left, staying still, and moving right. This can be represented by the following recurrence: <span class='math'>t(S,M)=P<sub>left</sub>&times; " +
+"(t(S-1, M+1)-1) + P<sub>stay</sub>&times; t(S-1,M) + P<sub>right</sub>&times; (t(S-1, max(M-1, 0))+1)</span>.<br><br>" +
+"This recurrence works by treating all sub-problems as if they were also starting at position 0. It then adjusts the sub-problems " +
+"by subtracting or adding 1 to the result based on if it was representing 1 step to the left or right respectively.";
+conquerMapping[funcName] = "<span class='math'>S</span> always decreases by " +
+"one in the sub-problems because the number of steps remaining decreases by 1. To understand how <span class='math'>M</span> " +
+"is changed for the sub-problems, note that the following two answers are identical: " +
+	"<ol><li> The answer when the starting position is -1 and having been as far right as <span class='math'>M</span>, and</li>" +
+"<li><span class='math'>Ans-1</span>, where <span class='math'>Ans</span> is the answer when starting from position 0" +
+" and having been as far right as <span class='math'>M + 1</span></li></ol>" +
+"This recurrence solves the left sub-problem using step 2 mentioned above. This is to keep the memoization table " +
+"2 dimensional by allowing us to ignore what position each subproblem is at. Similar to moving left, moving right " +
+"subtracts 1 from <span class='math'>M</span>, except if <span class='math'>M - 1</span> is less than 0. Because each sub-problem " +
+"is at position 0, <span class='math'>M</span> is at least equal to 0.";
 parameterMapping[funcName] = ["steps : int", "rightmost seen position : int", "probability step left : float", "probability step right : float"];
 trackerMapping[funcName] = DPTracker;
 initParams[funcName] = [new ValueNode(Math.ceil(Math.random() * 4) + 3), new ValueNode(0), new ValueNode(Math.ceil(Math.random() * 4) / 10),
