@@ -497,8 +497,8 @@ conquerMapping[funcName] = "The input list is partitioned on the median of media
 parameterMapping[funcName] = ["s1 : string", "s2 : string"];
 trackerMapping[funcName] = DPTracker;
 
-funcName = "Maximum Random Walk";
-function maximumRandomWalk(steps, pos, maxRightSeen, pLeft, pRight) {
+funcName = "Maximum Random Walk 3D";
+function maximumRandomWalk3D(steps, pos, maxRightSeen, pLeft, pRight) {
 	var intermId = 0;
 	tracker.logEntry([steps, pos, maxRightSeen]);
 	var zoomAnim = getEmptyRelativeZoomAnimation();
@@ -1163,33 +1163,33 @@ function answerToKey(steps, pos, maxRightSeen, intermId, ans, tEntry) {
 	return updateTable;
 }
 
-funcMapping[funcName] = maximumRandomWalk;
-overviewMapping[funcName] = "This function computes the expected right-most position reached after taking <span class='math'>S</span> random " +
-"steps from starting position <span class='math'>P</span>. The probabilities of moving to the left, staying in the current spot, and moving to " +
-"the right are given by <span class='math'>P<sub>left</sub>, 1-P<sub>left</sub>-P<sub>right</sub>, </span> and <span class='math'>P<sub>right</sub>,</span> respectively. Note that staying in " +
-"the same spot counts as an action that consumes a step.";
-divideMapping[funcName] = "This is done by repeatedly computing the weighted average of the expected results of moving " +
-"left, staying still, and moving right. This can be represented by the following recurrence: <span class='math'>t(S,P,M)=P<sub>left</sub>&times; " +
-"t(S-1, P-1, M) + P<sub>stay</sub>&times; t(S-1,P,M) + P<sub>right</sub>&times; t(S-1, P+1, max(M, P+1))</span>. <span class='math'>S</span> always decreases by " +
-"one in the sub-problems because the number of steps remaining decreases by 1. <span class='math'>P</span> changes according to whether the " +
-"sub-problem represents movement to the right, left, or staying in place. <span class='math'>M</span> only has the potential to change when moving " +
-"to the right, because otherwise the maximum location seen so far cannot increase (and it will never decrease).";
-conquerMapping[funcName] = "This algorithm takes 3 parameters <span class='math'>(S, P, M)</span>, so it can be memoized with a 3-dimensional table.<br><br>" +
-	"However, if we knew the average rightmost position reached by taking <span class='math'>S</span> steps from position 0, we could add that to any position <span class='math'>P</span> " +
-"to get the average rightmost position reached by taking <span class='math'>S</span> steps from <span class='math'>P</span>. However, the rightmost position seen so far could change some " +
-"of our answers if it is higher than the current position. Therefore, we also need to know the rightmost position we have seen relative " +
-"to the current position in addition to the number of steps left. Given those two, we know the average rightmost position relative " +
-"to our distance from the rightmost position already seen. If we add that to the current position, that gives us the overall rightmost position " +
-"seen to any problem instance. <br><br>Therefore, we can use a 2-dimensional table where the dimensions are <span class='math'>S</span> and <span class='math'>M-P</span> " +
-"and add the memoized value to the current position for the final answer. This reduces the running time of the algorithm from " +
-"<span class='math'>&Theta;(n<sup>3</sup>)</span> with a 3-dimensional table to <span class='math'>&Theta;(n<sup>2</sup>)</span>.";
-parameterMapping[funcName] = ["steps : int", "position : int", "rightmost seen position : int", "probability step left : float", "probability step right : float"];
-trackerMapping[funcName] = DPTracker;
-initParams[funcName] = [new ValueNode(Math.ceil(Math.random() * 4) + 3), new ValueNode(0), new ValueNode(0), new ValueNode(Math.ceil(Math.random() * 4) / 10),
-	new ValueNode(Math.ceil(Math.random() * 4) / 10)];
+//funcMapping[funcName] = maximumRandomWalk3D;
+//overviewMapping[funcName] = "This function computes the expected right-most position reached after taking <span class='math'>S</span> random " +
+//"steps from starting position <span class='math'>P</span>. The probabilities of moving to the left, staying in the current spot, and moving to " +
+//"the right are given by <span class='math'>P<sub>left</sub>, 1-P<sub>left</sub>-P<sub>right</sub>, </span> and <span class='math'>P<sub>right</sub>,</span> respectively. Note that staying in " +
+//"the same spot counts as an action that consumes a step.";
+//divideMapping[funcName] = "This is done by repeatedly computing the weighted average of the expected results of moving " +
+//"left, staying still, and moving right. This can be represented by the following recurrence: <span class='math'>t(S,P,M)=P<sub>left</sub>&times; " +
+//"t(S-1, P-1, M) + P<sub>stay</sub>&times; t(S-1,P,M) + P<sub>right</sub>&times; t(S-1, P+1, max(M, P+1))</span>. <span class='math'>S</span> always decreases by " +
+//"one in the sub-problems because the number of steps remaining decreases by 1. <span class='math'>P</span> changes according to whether the " +
+//"sub-problem represents movement to the right, left, or staying in place. <span class='math'>M</span> only has the potential to change when moving " +
+//"to the right, because otherwise the maximum location seen so far cannot increase (and it will never decrease).";
+//conquerMapping[funcName] = "This algorithm takes 3 parameters <span class='math'>(S, P, M)</span>, so it can be memoized with a 3-dimensional table.<br><br>" +
+//	"However, if we knew the average rightmost position reached by taking <span class='math'>S</span> steps from position 0, we could add that to any position <span class='math'>P</span> " +
+//"to get the average rightmost position reached by taking <span class='math'>S</span> steps from <span class='math'>P</span>. However, the rightmost position seen so far could change some " +
+//"of our answers if it is higher than the current position. Therefore, we also need to know the rightmost position we have seen relative " +
+//"to the current position in addition to the number of steps left. Given those two, we know the average rightmost position relative " +
+//"to our distance from the rightmost position already seen. If we add that to the current position, that gives us the overall rightmost position " +
+//"seen to any problem instance. <br><br>Therefore, we can use a 2-dimensional table where the dimensions are <span class='math'>S</span> and <span class='math'>M-P</span> " +
+//"and add the memoized value to the current position for the final answer. This reduces the running time of the algorithm from " +
+//"<span class='math'>&Theta;(n<sup>3</sup>)</span> with a 3-dimensional table to <span class='math'>&Theta;(n<sup>2</sup>)</span>.";
+//parameterMapping[funcName] = ["steps : int", "position : int", "rightmost seen position : int", "probability step left : float", "probability step right : float"];
+//trackerMapping[funcName] = DPTracker;
+//initParams[funcName] = [new ValueNode(Math.ceil(Math.random() * 4) + 3), new ValueNode(0), new ValueNode(0), new ValueNode(Math.ceil(Math.random() * 4) / 10),
+//	new ValueNode(Math.ceil(Math.random() * 4) / 10)];
 
-funcName = "Maximum Random Walk 2";
-function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
+funcName = "Maximum Random Walk";
+function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 	var intermId = 0;
 	tracker.logEntry([steps, maxRightSeen]);
 	var zoomAnim = getEmptyRelativeZoomAnimation();
@@ -1505,15 +1505,15 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 
 		var ans = 0;
 		if (pLeft.value > 0) {
-			var moveLeft = maximumRandomWalk2(newStep, newMaxLeft, pLeft, pRight);
+			var moveLeft = maximumRandomWalk(newStep, newMaxLeft, pLeft, pRight);
 			ans += pLeft.value * (moveLeft.value - 1);
 		}
 		if (pStay.value > EPSILON) {
-			var stay = maximumRandomWalk2(newStep, maxRightSeen, pLeft, pRight);
+			var stay = maximumRandomWalk(newStep, maxRightSeen, pLeft, pRight);
 			ans += pStay.value * stay.value;
 		}
 		if (pRight.value > 0) {
-			var moveRight = maximumRandomWalk2(newStep, newMaxRight, pLeft, pRight);
+			var moveRight = maximumRandomWalk(newStep, newMaxRight, pLeft, pRight);
 			ans += pRight.value * (moveRight.value + 1);
 		}
 		endReset.maxShowID = tracker.maxId - 1;
@@ -1681,7 +1681,7 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 	}
 }
 
-funcMapping[funcName] = maximumRandomWalk2;
+funcMapping[funcName] = maximumRandomWalk;
 overviewMapping[funcName] = "This function computes the expected right-most position reached after taking <span class='math'>S</span> random " +
 "steps starting from position 0 and having already been as far right as <span class='math'>M</span>. " +
 "The probabilities of moving to the left, moving to the right, and staying in the current spot are given by " +
