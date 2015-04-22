@@ -75,7 +75,7 @@ TableManager.prototype.createTable = function(table) {
 };
 
 TableManager.prototype.createCell = function(tableEntry) {
-	if(tableEntry == undefined) return $("<td class='text-node'></td>");
+	if(tableEntry == undefined) return $("<td class='text-node disabled'></td>");
 	var elem = $("<td class='text-node'><span nodeId='" + tableEntry.value.id + "' methodID='" + tableEntry.methodId +
 		"'>" + tableEntry.value.getDisplayString() + "</span></td>");
 	elem.bind("click", [tableEntry.methodId, this], function(e) {
