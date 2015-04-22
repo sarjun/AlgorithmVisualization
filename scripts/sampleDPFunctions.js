@@ -1544,7 +1544,7 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 			leftId = recurrence.intermediateId = intermId++;
 			recurrence.list = "end";
 			recurrence.position = "above";
-			recurrence.entities = ["\\(" + pLeft.getDisplayString() + "\\times\\)", nNodes[0]];
+			recurrence.entities = ["\\(" + pLeft.getDisplayString() + "\\times(\\)", nNodes[0], "\\( - 1 \\)", "\\()\\)"];
 			recurrence.inline = true;
 			addEndAnimation(recurrence);
 		}
@@ -1562,12 +1562,14 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 			rightId = recurrence.intermediateId = intermId++;
 			recurrence.list = "end";
 			recurrence.position = "above";
-			recurrence.entities = [(deleted[0] && deleted[1]) ? "" : "\\(+\\)", "\\(" + pRight.getDisplayString() + "\\times\\)", nNodes[2]];
+			recurrence.entities = [(deleted[0] && deleted[1]) ? "" : "\\(+\\)", "\\(" + pRight.getDisplayString() + "\\times(\\)",
+				nNodes[2], "\\( + 1\\)", "\\()\\)"];
 			recurrence.inline = true;
 			addEndAnimation(recurrence);
 		}
 		var getFromChildren = getEmptyBundleAnimation();
 		var updateVals = getEmptyBundleAnimation();
+		var arith = getEmptyBundleAnimation();
 		var multiply = getEmptyBundleAnimation();
 		var add = getEmptyBundleAnimation();
 		var skipCount = 0;
@@ -1582,6 +1584,39 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 			getAnim.destSpec = getNodeSpecification(nNodes[i], 0, [], "end",
 				i-3 + deleted.slice(i+1,3).filter(function(a){return a;}).length);
 			getFromChildren.animations.push(getAnim);
+			if(i==0) {
+				var removeMinus = getEmptyIntermediateRemoveEntityAnimation();
+				removeMinus.intermSpec = getIntermediateSpecification(0, [], "end", "above", 2);
+				removeMinus.entityIndex = 3;
+				removeMinus.effectParams = {width:0};
+				arith.animations.push(removeMinus);
+				var subOne = getEmptyChangeValueNodeAnimation();
+				subOne.nodeSpec = getNodeSpecification(nNodes[0], 0, [], "end", -3 + deleted.filter(
+					function(a) {return a;}).length);
+				subOne.newValue = new ValueNode(moveLeft.value - 1).getDisplayString();
+				arith.animations.push(subOne);
+				var removeParen = getEmptyIntermediateRemoveEntityAnimation();
+				removeParen.intermSpec = removeMinus.intermSpec;
+				removeParen.entityIndex = 4;
+				removeParen.effectParams = {width:0};
+				multiply.animations.push(removeParen);
+			} else if (i==2) {
+				var removePlus = getEmptyIntermediateRemoveEntityAnimation();
+				removePlus.intermSpec = getIntermediateSpecification(0, [], "end", "above", 4 - deleted.filter(
+					function(a) {return a;}).length);
+				removePlus.entityIndex = 4;
+				removePlus.effectParams = {width:0};
+				arith.animations.push(removePlus);
+				var subOne = getEmptyChangeValueNodeAnimation();
+				subOne.nodeSpec = getNodeSpecification(nNodes[2], 0, [], "end", -1);
+				subOne.newValue = new ValueNode(moveRight.value + 1).getDisplayString();
+				arith.animations.push(subOne);
+				var removeParen = getEmptyIntermediateRemoveEntityAnimation();
+				removeParen.intermSpec = removePlus.intermSpec;
+				removeParen.entityIndex = 5;
+				removeParen.effectParams = {width:0};
+				multiply.animations.push(removeParen);
+			}
 			var update = getEmptyChangeValueNodeAnimation();
 			update.nodeSpec = getAnim.destSpec;
 			update.newValue = tracker.currentFrame.children[i - skipCount].result[0].getDisplayString();
@@ -1606,6 +1641,7 @@ function maximumRandomWalk2(steps, maxRightSeen, pLeft, pRight) {
 		}
 		addEndAnimation(getFromChildren);
 		addEndAnimation(updateVals);
+		addEndAnimation(arith);
 		addEndAnimation(multiply);
 		var addAnim = getEmptyChangeValueNodeAnimation();
 		addAnim.nodeSpec = getNodeSpecification(nNodes[deleted.indexOf(false)], 0, [], "end",
