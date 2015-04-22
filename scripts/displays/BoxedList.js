@@ -95,8 +95,6 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var sourceElem = boxedList.getElem(animationList[i].ansSpec);
 				var destElem = tableManager.getElemByNodeId(animationList[i].ansSpec.node.id);
 				destElem[0].scrollIntoView();
-				console.log(sourceElem);
-				console.log(destElem);
 				if(sourceElem == null || destElem == null) break;
 				ValueNode.translate(sourceElem, destElem, false);
 
@@ -108,6 +106,7 @@ BoxedList.prototype.animate = function (animationList, skipDelays) {
 				var destElem = boxedList.getElem(animationList[i].ansSpec);
 
 				if(sourceElem == null || destElem == null) break;
+				sourceElem[0].scrollIntoView();
 				ValueNode.translate(sourceElem, destElem, false);
 
 				maxDelay = Math.max(maxDelay, TIME_GET_ENTRY);
