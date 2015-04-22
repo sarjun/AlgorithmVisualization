@@ -1392,7 +1392,20 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 				}
 			}
 		}
-		addStartAnimation(removeZeroBundle);
+		if(removeZeroBundle.animations.length > 0) {
+			var names = ["\\(P_{left}\\)", "\\(P_{stay}\\)", "\\(P_{right}\\)"];
+			var out = [];
+			for(var z=0; z<3; z++) {
+				if(deleted[z]) {
+					out.push(names[z]);
+				}
+			}
+			if(out.length > 1) addStartAnimation(getTextAnim("Note that " + out[0] + " and " + out[1] + " are equal to zero." +
+			" Those sub-problems are unnecessary."));
+			else addStartAnimation(getTextAnim("Note that " + out[0] + " is equal to zero." +
+			" That sub-problem is unnecessary."));
+			addStartAnimation(removeZeroBundle);
+		}
 		var fillBundle = getEmptyBundleAnimation();
 		var updateBundle = getEmptyBundleAnimation();
 		var doMathBundle = getEmptyBundleAnimation();
