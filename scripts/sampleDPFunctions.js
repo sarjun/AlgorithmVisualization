@@ -1639,7 +1639,8 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 			updateVals.animations.push(update);
 			update = getEmptyChangeValueNodeAnimation();
 			update.nodeSpec = getAnim.destSpec;
-			update.newValue = new ValueNode(probVals[i] * tracker.currentFrame.children[i - skipCount].result[0].value).getDisplayString();
+			update.newValue = new ValueNode(probVals[i] * (tracker.currentFrame.children[i - skipCount].result[0].value +
+			(i==0 ? -1 : (i==1 ? 0 : 1)))).getDisplayString();
 			multiply.animations.push(update);
 			var removeMult = getEmptyIntermediateRemoveEntityAnimation();
 			removeMult.intermSpec = getIntermediateSpecification(0, [], "end", "above", i + 2 - skipCount);
@@ -1671,7 +1672,7 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 		addEndAnimation(getAnswer);
 		var removeRec = getEmptyBundleAnimation();
 		var removeOne = getEmptyRemoveIntermediateStepAnimation();
-		removeOne.intermediateId = leftId - 1;
+		removeOne.intermediateId = intermIds[deleted.indexOf(false)] - 1;
 		removeOne.effectParams = {width: 0};
 		removeOne.list = "end";
 		removeOne.position = "above";
@@ -1683,6 +1684,7 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 		removeOne.position = "above";
 		removeRec.animations.push(removeOne);
 		addEndAnimation(removeRec);
+		addEndAnimation(getEmptyClearIntermediateAnimation());
 		addEndAnimation(getTextAnim("Now we memoize the result of this problem for lookup later."));
 		var addTable = getEmptyAddToTableAnimation();
 		addTable.ansSpec = getAnswer.destSpec;
