@@ -1281,7 +1281,7 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 			new ValueNode("0"), new ValueNode("\\(S\\)"), new ValueNode("\\(M\\)")];
 		addStartAnimation(getTextAnim("We will now form the recurrence used to solve this problem. The recurrence " +
 		"is a weighted average of the answers for moving to the left, staying in the same spot, and moving to the right." +
-		"In all sub-problems, <span class='math'>S</span>, then number of steps left, will be decreased by 1."));
+		"In all sub-problems, the number of steps left, <span class='math'>S</span>, will be decreased by 1."));
 		var recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
 		recurrence.list = "start";
@@ -1297,7 +1297,8 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 		recurrence.entities = [nNodes[0], "\\(\\times (t(\\)", nNodes[1], "\\( - 1\\)", "\\(,\\)", nNodes[2], "\\( + 1\\)", "\\()\\)", "\\( - 1)\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
-		addStartAnimation(getTextAnim("This part of the recurrence represents the posibility of moving to the left. " +
+		addStartAnimation(getTextAnim("This part of the recurrence, <span class='math'>P<sub>left</sub>&times; (t(S-1,M+1) - 1)</span>," +
+		" represents the posibility of moving to the left. " +
 		"Recall that the following two answers are identical: " +
 		"<ol><li> The answer when the starting position is -1 and having been as far right as <span class='math'>M</span>, and</li>" +
 		"<li><span class='math'>Ans-1</span>, where <span class='math'>Ans</span> is the answer when starting from position 0" +
@@ -1312,7 +1313,8 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 		recurrence.entities = ["\\( + \\)", nNodes[3], "\\(\\times t(\\)", nNodes[4], "\\( - 1\\)", "\\(,\\)", nNodes[5], "\\()\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
-		addStartAnimation(getTextAnim("This part of the recurrence represents the posibility of staying in the same position. As such," +
+		addStartAnimation(getTextAnim("This part of the recurrence, <span class='math'>P<sub>stay</sub>&times; t(S-1,M)</span>," +
+		" represents the posibility of staying in the same position. As such," +
 		"<span class='math'>M</span>, the rightmost position seen, stays the same"));
 		recurrence = getEmptyCreateIntermediateStepAnimation();
 		recurrence.intermediateId = intermId++;
@@ -1323,7 +1325,8 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 			"\\(,\\)", nNodes[9], "\\()\\)", "\\() + 1 )\\)"];
 		recurrence.inline = true;
 		addStartAnimation(recurrence);
-		addStartAnimation(getTextAnim("This part of the recurrence represents the posibility of moving to the right. " +
+		addStartAnimation(getTextAnim("This part of the recurrence, <span class='math'>P<sub>right</sub>&times; (t(S-1,max(M-1,0)) + 1)</span>," +
+		" represents the posibility of moving to the right. " +
 		"Note that the following two answers are identical: " +
 		"<ol><li> The answer when the starting position is 1 and having been as far right as <span class='math'>M</span>, and</li>" +
 		"<li><span class='math'>Ans+1</span>, where <span class='math'>Ans</span> is the answer when starting from position 0" +
@@ -1527,7 +1530,7 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 		tracker.table[key] = tEntry;
 
 		// End animations
-		addEndAnimation(getTextAnim("Now we simply combine the answer of the sub-problems according to the recurrence" +
+		addEndAnimation(getTextAnim("Now we simply combine the answers from the sub-problems according to the recurrence" +
 		" created before."));
 		nNodes = [new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + (oldMax.value + 1) + "\\()\\)"),
 			new ValueNode("\\(t(\\)" + (steps.value - 1) + "\\(,\\)" + oldMax.value + "\\()\\)"),
@@ -1682,7 +1685,7 @@ function maximumRandomWalk(steps, maxRightSeen, pLeft, pRight) {
 }
 
 funcMapping[funcName] = maximumRandomWalk;
-overviewMapping[funcName] = "This function computes the expected right-most position reached after taking <span class='math'>S</span> random " +
+overviewMapping[funcName] = "This function computes the expected rightmost position reached after taking <span class='math'>S</span> random " +
 "steps starting from position 0 and having already been as far right as <span class='math'>M</span>. " +
 "The probabilities of moving to the left, moving to the right, and staying in the current spot are given by " +
 "<span class='math'>P<sub>left</sub>, P<sub>right</sub>, </span> and <span class='math'>(1-P<sub>left</sub>-P<sub>right</sub>)</span> " +
@@ -1692,7 +1695,7 @@ divideMapping[funcName] = "The answer is found by repeatedly computing the weigh
 "left, staying still, and moving right. This can be represented by the following recurrence: <span class='math'>t(S,M)=P<sub>left</sub>&times; " +
 "(t(S-1, M+1)-1) + P<sub>stay</sub>&times; t(S-1,M) + P<sub>right</sub>&times; (t(S-1, max(M-1, 0))+1)</span>.<br><br>" +
 "This recurrence works by treating all sub-problems as if they were also starting at position 0. It then adjusts the sub-problems " +
-"by subtracting or adding 1 to the result based on if it was representing 1 step to the left or right respectively.";
+"by subtracting or adding 1 to the result based on if it was representing 1 step to the left or right, respectively.";
 conquerMapping[funcName] = "<span class='math'>S</span> always decreases by " +
 "one in the sub-problems because the number of steps remaining decreases by 1. To understand how <span class='math'>M</span> " +
 "is changed for the sub-problems, note that the following two answers are identical: " +
