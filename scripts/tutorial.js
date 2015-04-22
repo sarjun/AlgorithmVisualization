@@ -125,8 +125,8 @@ function tutorialStep3() {
 function tutorialStep4() {
 	positionSpotlightOnElem(root.elem);
 	setSpotlightText("This is the visualization of the selected algorithm on the specified inputs. Each circle is a method call " +
-	"where circles inside other circles are recursive calls. The values at the top of the circle are input parameters to that call" +
-	" in same order as in the menu. The values at the end of the circle are the return values. The input parameters can also " +
+	"where circles inside other circles are recursive calls. The values at the top of the circle are the input parameters " +
+	"in same order as in the settings menu. The values at the bottom of the circle are the return values. The input parameters can also " +
 	"be identified by hovering the mouse cursor over the input parameter in question.");
 }
 

@@ -154,6 +154,11 @@ div.circle {
     align-items: center;
     flex-basis: 0;
     flex-grow: 1;
+    justify-content: center;
+}
+
+div.circle div.circle {
+    max-width: 50%;
 }
 
 div.circle.circle-leaf {
@@ -198,6 +203,7 @@ div.circle.currentRoot {
 
 div.circle.hideRoot div.circle.currentRoot {
     height: 100% !important;
+    max-width: 100% !important;
 }
 
 div.circle.collapse div.circle.currentRoot {
@@ -213,6 +219,7 @@ div.circle.collapse div.circle.currentRoot div.circle {
 }
 
 div.circle.engorge {
+    max-width: 100% !important;
     /*position: relative;*/
     height: 100% !important;
     background: transparent none;
@@ -231,7 +238,7 @@ div.circle.animated {
 
 div.circle.animated div.circle {
     transition: all 750ms linear;
-    transition-property: flex-grow, height, background-color;
+    transition-property: flex-grow, height, background-color, max-width;
 }
 
 div.node-stack-container {
