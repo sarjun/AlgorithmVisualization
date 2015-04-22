@@ -31,7 +31,11 @@ TableManager.prototype.createTable = function(table) {
 		for (key1 of keys[z]) {
 			sorted.push(key1);
 		}
-		sorted.sort(function(a,b) {return a*1 - b*1;});
+		sorted.sort(function(a,b) {
+			a = isNaN(a) ? a.length : a*1;
+			b = isNaN(b) ? b.length : b*1;
+			return a - b;
+		});
 		keys[z] = sorted;
 	}
 

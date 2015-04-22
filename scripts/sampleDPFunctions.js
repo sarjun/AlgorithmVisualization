@@ -210,7 +210,7 @@ function lcs(x, y) {
 	endReset.maxShowID = tracker.maxId - 1;
 	addEndAnimation(endReset);
 	
-	var key = x.value.length + "," + y.value.length;
+	var key = x.value + "," + y.value;
 	var ans = tracker.table[key];
 	if(ans != null) {
 		var getEntry = getEmptyGetFromTableAnimation();
