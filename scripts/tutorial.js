@@ -174,7 +174,7 @@ function tutorialConsoleButtons() {
 	setSpotlightText("These buttons are used to manipulate the console. The \"<\" button shifts the console panel in focus to " +
 	"the panel for the previously executed animation. Similarly, the \">\" button shifts to the panel for the animation " +
 	"after the current one. Use them to view explanations to previous animations. " +
-	"The \"Clear\" button clear all panels related to specific animations.");
+	"The \"Clear\" button clears all panels related to specific animations.");
 }
 
 function doneTutorial() {

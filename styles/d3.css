@@ -439,6 +439,11 @@ paper-dropdown .core-selected {
     background: greenyellow;
 }
 
+paper-icon-button {
+    border-radius: 50%;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.2) ,0 -2px 2px rgba(0,0,0,0.1) ,0 1px 0px rgba(0,0,0,0.2) ;
+}
+
 html /deep/ paper-action-dialog paper-button[autofocus] {
     font-weight: bold;
     color: #4285f4;
