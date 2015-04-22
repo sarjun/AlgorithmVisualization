@@ -31,7 +31,11 @@ TableManager.prototype.createTable = function(table) {
 		for (key1 of keys[z]) {
 			sorted.push(key1);
 		}
-		sorted.sort(function(a,b) {return a*1 - b*1;});
+		sorted.sort(function(a,b) {
+			a = isNaN(a) ? a.length : a*1;
+			b = isNaN(b) ? b.length : b*1;
+			return a - b;
+		});
 		keys[z] = sorted;
 	}
 
@@ -75,7 +79,7 @@ TableManager.prototype.createTable = function(table) {
 };
 
 TableManager.prototype.createCell = function(tableEntry) {
-	if(tableEntry == undefined) return $("<td class='text-node'></td>");
+	if(tableEntry == undefined) return $("<td class='text-node disabled'></td>");
 	var elem = $("<td class='text-node'><span nodeId='" + tableEntry.value.id + "' methodID='" + tableEntry.methodId +
 		"'>" + tableEntry.value.getDisplayString() + "</span></td>");
 	elem.bind("click", [tableEntry.methodId, this], function(e) {

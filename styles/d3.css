@@ -334,6 +334,11 @@ div.intermediateContainer > div.inline {
     /*margin: 0 1px;*/
 }
 
+*.text-node.disabled {
+    cursor: auto;
+    opacity: 0.3;
+}
+
 span.text-node:not(:empty) {
     display: inline-block;
 }
