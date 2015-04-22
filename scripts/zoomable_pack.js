@@ -216,6 +216,7 @@ function initAlgoSelect() {
 		if (details.isSelected) {
 			funcName = details.item.templateInstance.model.value;
 			initAlgorithm(funcName);
+			document.querySelector("#param0").focus();
 		}
 	};
 	updateDrawerWidth();
